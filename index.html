@@ -337,6 +337,143 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   border-left: 3px solid var(--gold);
 }
 
+/* ============================================================
+   Wochenansicht (Tablet)
+   ============================================================ */
+.week-wrap { padding: 10px 12px 12px; }
+.week-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.week-toolbar .mini-btn { min-height: 38px; }
+.week-title { font-size: 15px; font-weight: 800; color: var(--navy); text-align: center; }
+.week-grid-scroll { overflow-x: auto; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.week-grid { display: grid; min-width: 640px; }
+.wg-corner, .wg-head {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--navy); color: #fff;
+  font-size: 11px; font-weight: 700; text-align: center;
+  padding: 7px 4px; border-bottom: 2px solid var(--gold);
+}
+.wg-corner { text-align: left; padding-left: 12px; border-right: 1px solid rgba(255,255,255,0.15); }
+.wg-head { display: flex; flex-direction: column; gap: 0; }
+.wg-head .wg-wd { text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; color: #c8d4e0; }
+.wg-head .wg-dn { font-size: 12.5px; }
+.wg-head.sunday { background: #33465c; }
+.wg-head.sunday .wg-wd, .wg-head.sunday .wg-dn { color: #8fa0b3; }
+.wg-head.holiday .wg-wd { color: #fca5a5; }
+.wg-head.holiday .wg-dn { color: #fca5a5; }
+.wg-head.today { background: var(--gold); }
+.wg-head.today .wg-wd { color: #5c4308; }
+.wg-head.today .wg-dn { color: #2d2104; }
+.wg-name {
+  position: sticky; left: 0; z-index: 1;
+  background: #f6f8fa; border: none; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line);
+  text-align: left; padding: 6px 10px; min-height: 58px;
+  font-size: 13px; font-weight: 700; color: var(--navy);
+  display: flex; align-items: center;
+}
+.wg-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wg-cell {
+  border: none; border-bottom: 1px solid var(--line); border-right: 1px solid #eceff3;
+  background: #fff; min-height: 58px; padding: 4px 5px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1px;
+  font-size: 11px; color: var(--ink); text-align: left;
+}
+.wg-cell.sunday { background: #f0f2f5; }
+.wg-cell.empty .wg-plus { color: #c3ccd6; font-size: 15px; font-weight: 700; margin: 0 auto; }
+.wg-cell.editing { outline: 3px solid var(--gold); outline-offset: -3px; z-index: 1; }
+.wg-cell-top { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.wg-cell-info { opacity: 0.85; line-height: 1.25; }
+.wg-cell-info.trunc { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kh-badge.sm { font-size: 9px; padding: 0 4px; }
+
+/* Woche-Tab nur auf breiten Bildschirmen */
+@media (max-width: 767.98px) {
+  .bottom-nav .week-tab { display: none; }
+}
+
+/* ============================================================
+   Tablet-Layout (ab 768px)
+   ============================================================ */
+@media (min-width: 768px) {
+  /* Karten-Raster */
+  .day-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 10px; padding: 12px 16px 16px;
+  }
+  .patients-list {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 10px; padding: 14px 16px 16px;
+  }
+  .pl-header { grid-column: 1 / -1; }
+  .empty-state { grid-column: 1 / -1; }
+  .day-card, .patient-card { align-self: start; }
+  .day-toolbar { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 16px 4px; }
+  .day-note-box { padding: 6px 16px 0; }
+  .date-strip { padding: 10px 14px 6px; }
+  .content { padding-bottom: calc(74px + var(--safe-b)); }
+
+  /* Zentrierte Dialoge statt Bottom-Sheets */
+  .sheet-backdrop { align-items: center; padding: 24px; }
+  .sheet { border-radius: 18px; max-height: 90dvh; }
+  .sheet.tall { height: auto; max-height: 90dvh; }
+  .sheet-header { border-radius: 18px 18px 0 0; }
+
+  /* Editor als rechte Seitenleiste — Liste bleibt sichtbar */
+  .sheet-backdrop.side { justify-content: flex-end; align-items: stretch; padding: 0; background: rgba(16,26,38,0.25); }
+  .sheet-backdrop.side .sheet {
+    border-radius: 0; height: 100dvh; max-height: 100dvh; width: 440px; max-width: 92vw;
+    box-shadow: -8px 0 28px rgba(10,20,32,0.25);
+    animation: slideLeft 0.18s ease;
+  }
+  .sheet-backdrop.side .sheet-header { border-radius: 0; }
+  @keyframes slideLeft { from { transform: translateX(50px); opacity: 0.5; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .sheet-backdrop.side .sheet { animation: none; } }
+
+  /* Breiter Dialog + zweispaltiges Patientenblatt */
+  .sheet-backdrop.wide .sheet { max-width: 960px; width: 100%; }
+  .pd-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+  .pd-cal { margin-bottom: 0; }
+  .archive-btn { margin-top: 14px; }
+
+  /* Untere Navigation kompakter zentriert */
+  .bottom-nav { justify-content: center; gap: 6px; }
+  .bottom-nav button { flex: 0 0 170px; }
+
+  /* Editor-Typraster mit 2 Spalten bleibt; Zellen etwas höher */
+  .type-btn { min-height: 42px; }
+}
+
+@media (max-width: 899.98px) and (min-width: 768px) {
+  .pd-wrap { grid-template-columns: 1fr; gap: 0; }
+  .pd-cal { margin-bottom: 16px; }
+}
+
+/* Sehr breite Tablets / Querformat */
+@media (min-width: 1100px) {
+  .day-list, .patients-list { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); max-width: 1480px; }
+}
+
+/* ============================================================
+   KH-Übersteuerung: Krankenhaus überdeckt jede Behandlung
+   (wie in der Desktop-Version: rote Zelle, weißes KH)
+   ============================================================ */
+.day-card.kh {
+  background: #dc2626; border-color: #991b1b; border-left-color: #7f1d1d; color: #fff;
+}
+.day-card.kh .dc-name em { color: #fecaca; }
+.dc-kh-big {
+  font-size: 15px; font-weight: 900; letter-spacing: 0.06em;
+  background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 7px; padding: 1px 9px;
+}
+.day-card.kh .dc-type { color: #fee2e2; font-weight: 600; }
+
+.wg-cell.kh, .wg-cell.kh.sunday { background: #dc2626; }
+.wg-kh { margin: 0 auto; color: #fff; font-size: 14px; font-weight: 900; letter-spacing: 0.05em; }
+
+.pd-cell.kh, .pd-cell.kh.sunday { background: #dc2626; border-color: #991b1b; color: #fff; }
+.pd-cell.kh .pd-cell-day { color: #fecaca; }
+.pd-cell-khtext { font-size: 10px; font-weight: 900; letter-spacing: 0.04em; }
+
   </style>
 </head>
 <body>
@@ -13347,6 +13484,27 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z" }),
     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M15 3v6h6" })
   ] });
+  var IGrid = (p) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("svg", { ...ib, ...p, children: [
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("rect", { width: "18", height: "18", x: "3", y: "3", rx: "2" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 9h18" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M3 15h18" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M9 3v18" }),
+    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: "M15 3v18" })
+  ] });
+  function useIsWide() {
+    const [wide, setWide] = (0, import_react.useState)(() => typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches);
+    (0, import_react.useEffect)(() => {
+      const mq = window.matchMedia("(min-width: 768px)");
+      const fn = (e) => setWide(e.matches);
+      if (mq.addEventListener) mq.addEventListener("change", fn);
+      else mq.addListener(fn);
+      return () => {
+        if (mq.removeEventListener) mq.removeEventListener("change", fn);
+        else mq.removeListener(fn);
+      };
+    }, []);
+    return wide;
+  }
   function App() {
     const now = /* @__PURE__ */ new Date();
     const [month, setMonth] = (0, import_react.useState)(now.getMonth() + 1);
@@ -13363,12 +13521,32 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const saveTimerRef = (0, import_react.useRef)(null);
     const fileInputRef = (0, import_react.useRef)(null);
     const [view, setView] = (0, import_react.useState)("day");
+    const isWide = useIsWide();
     const todayIdx = (() => {
       const n = /* @__PURE__ */ new Date();
       if (n.getFullYear() === year && n.getMonth() + 1 === month) return n.getDate() - 1;
       return 0;
     })();
     const [selectedDayIdx, setSelectedDayIdx] = (0, import_react.useState)(todayIdx);
+    const weeks = (0, import_react.useMemo)(() => {
+      const result = [];
+      let current = [];
+      daysList.forEach((d, idx) => {
+        if (d.weekday === 1 && current.length) {
+          result.push(current);
+          current = [];
+        }
+        current.push(idx);
+      });
+      if (current.length) result.push(current);
+      return result;
+    }, [daysList]);
+    const [selectedWeekIdx, setSelectedWeekIdx] = (0, import_react.useState)(null);
+    const effWeekIdx = (0, import_react.useMemo)(() => {
+      if (selectedWeekIdx != null && selectedWeekIdx < weeks.length) return selectedWeekIdx;
+      const wi = weeks.findIndex((w) => w.includes(selectedDayIdx));
+      return wi >= 0 ? wi : 0;
+    }, [selectedWeekIdx, weeks, selectedDayIdx]);
     const [editor, setEditor] = (0, import_react.useState)(null);
     const [detailId, setDetailId] = (0, import_react.useState)(null);
     const [menuOpen, setMenuOpen] = (0, import_react.useState)(false);
@@ -13594,6 +13772,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setHolidays(/* @__PURE__ */ new Set());
       setDayNotes({});
       setSelectedDayIdx(0);
+      setSelectedWeekIdx(null);
       setEditor(null);
     }
     function changeMonth(delta) {
@@ -13875,6 +14054,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               const c = r.cells[selectedDayIdx] || emptyCell();
               const t = typeInfo(c.type);
               const has = cellHasContent(c);
+              if (c.kh) {
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card kh", onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-kh-big", children: "KH" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: "Patient im Krankenhaus \u2014 keine Behandlung" }) })
+                ] }, r.id);
+              }
               return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                 "button",
                 {
@@ -13884,10 +14072,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-badges", children: [
-                        c.kh && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "kh-badge", children: "KH" }),
-                        c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge", children: c.behandlung })
-                      ] })
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-badges", children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge", children: c.behandlung }) })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\u2013 leer \u2013" ? t.label : "" }),
@@ -13906,6 +14091,82 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             })
           ] })
         ] }),
+        view === "week" && (() => {
+          const w = weeks[effWeekIdx] || [];
+          const first = daysList[w[0]];
+          const last = daysList[w[w.length - 1]];
+          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-toolbar", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: effWeekIdx === 0, onClick: () => setSelectedWeekIdx(Math.max(0, effWeekIdx - 1)), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, { width: 15, height: 15 }),
+                " Woche"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-title", children: [
+                pad2(first.day),
+                ".",
+                pad2(month),
+                ". \u2013 ",
+                pad2(last.day),
+                ".",
+                pad2(month),
+                ".",
+                year
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: effWeekIdx >= weeks.length - 1, onClick: () => setSelectedWeekIdx(Math.min(weeks.length - 1, effWeekIdx + 1)), children: [
+                "Woche ",
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, { width: 15, height: 15 })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "week-grid-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-grid", style: { gridTemplateColumns: `minmax(130px, 180px) repeat(${w.length}, minmax(96px, 1fr))` }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-corner", children: "Patient" }),
+              w.map((di) => {
+                const d = daysList[di];
+                const cls = ["wg-head", d.isSunday ? "sunday" : "", d.isSaturday ? "saturday" : "", holidays.has(d.day) ? "holiday" : "", isCurrentMonthToday(di) ? "today" : ""].join(" ");
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: cls, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
+                    pad2(d.day),
+                    ".",
+                    pad2(month),
+                    "."
+                  ] })
+                ] }, di);
+              }),
+              activeRows.map((r) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react.default.Fragment, { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "wg-name", onClick: () => setDetailId(r.id), title: r.name, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }) }),
+                w.map((di) => {
+                  const d = daysList[di];
+                  const c = r.cells[di] || emptyCell();
+                  const t = typeInfo(c.type);
+                  const has = cellHasContent(c);
+                  const isEditing = editor && editor.rowId === r.id && editor.dayIdx === di;
+                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                    "button",
+                    {
+                      className: "wg-cell" + (d.isSunday ? " sunday" : "") + (has ? "" : " empty") + (isEditing ? " editing" : "") + (c.kh ? " kh" : ""),
+                      style: has && !c.kh ? { background: t.bg, borderColor: isEditing ? void 0 : t.border, color: t.text } : void 0,
+                      onClick: () => {
+                        setSelectedDayIdx(di);
+                        setEditor({ rowId: r.id, dayIdx: di });
+                      },
+                      children: c.kh ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-kh", children: "KH" }) : has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-top", children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: c.behandlung }) }),
+                        c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info", children: c.time }),
+                        c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: c.therapeut }),
+                        c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-info", children: [
+                          c.einheiten,
+                          " E"
+                        ] })
+                      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-plus", children: "+" })
+                    },
+                    di
+                  );
+                })
+              ] }, r.id))
+            ] }) }),
+            activeRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Keine aktiven Patienten." })
+          ] });
+        })(),
         view === "patients" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "patients-list", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pl-header", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
@@ -13965,6 +14226,14 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICal, {}),
           " ",
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Tag" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "week-tab" + (view === "week" ? " active" : ""), onClick: () => {
+          setSelectedWeekIdx(null);
+          setView("week");
+        }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IGrid, {}),
+          " ",
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Woche" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: view === "patients" ? "active" : "", onClick: () => setView("patients"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IUsers, {}),
@@ -14095,8 +14364,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       )
     ] });
   }
-  function Sheet({ title, onClose, children, tall }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sheet-backdrop", onClick: (e) => {
+  function Sheet({ title, onClose, children, tall, variant }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sheet-backdrop" + (variant ? " " + variant : ""), onClick: (e) => {
       if (e.target === e.currentTarget) onClose();
     }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sheet" + (tall ? " tall" : ""), children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sheet-header", children: [
@@ -14142,134 +14411,137 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       if (current.some((x) => x !== null)) result.push(current);
       return result;
     }, [daysList]);
-    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { title: row.name || "Patient", onClose, tall: true, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-stats", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat" + (usedT >= effMaxT ? " warn" : ""), children: [
-          "T ",
-          usedT,
-          " / ",
-          effMaxT
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal", children: [
-          "E ",
-          usedE % 1 === 0 ? usedE : usedE.toFixed(1),
-          row.genehmigteEinheiten !== "" ? ` / ${row.genehmigteEinheiten}` : ""
-        ] }),
-        row.aufnahmedatum && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat dim", children: [
-          "Aufn. ",
-          row.aufnahmedatum
-        ] }),
-        row.entlassungsdatum && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat dim", children: [
-          "Entl. ",
-          row.entlassungsdatum
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal-label", children: [
-        "Behandlungen im ",
-        MONTH_NAMES_DE[month - 1],
-        " \u2014 Tag antippen zum Bearbeiten"
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-head", children: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((w) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: w }, w)) }),
-        weeks.map((w, wi) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-row", children: w.map((di, ci) => {
-          if (di === null) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell blank" }, ci);
-          const d = daysList[di];
-          const c = row.cells[di] || emptyCell();
-          const t = typeInfo(c.type);
-          const has = cellHasContent(c);
-          return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-            "button",
-            {
-              className: "pd-cell" + (d.isSunday ? " sunday" : "") + (holidays.has(d.day) ? " holiday" : ""),
-              style: has ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
-              onClick: () => onOpenCell(di),
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-day", children: d.day }),
-                c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-t", children: c.behandlung }),
-                c.kh && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-kh", children: "KH" })
-              ]
-            },
-            ci
-          );
-        }) }, wi))
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "form-grid", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Name" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.name, onChange: (e) => onField("name", e.target.value), placeholder: "Name, Vorname" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Roter Tag" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
-            "T",
-            o
-          ] }, o)) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Tage" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genemhmigteTage, inputMode: "numeric", onChange: (e) => onField("genemhmigteTage", e.target.value), placeholder: "z.B. 22" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Einheiten" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genehmigteEinheiten, inputMode: "numeric", onChange: (e) => onField("genehmigteEinheiten", e.target.value), placeholder: "z.B. 30" })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Verl\xE4ngerung" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "vl-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.verlaengerung, onChange: (e) => onField("verlaengerung", Number(e.target.value)), children: VERLAENGERUNG_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
-              "+",
-              o
-            ] }, o)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "check-inline", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "checkbox", checked: row.verlaengerungFlag, onChange: (e) => onField("verlaengerungFlag", e.target.checked) }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "beantragt" })
-            ] })
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { title: row.name || "Patient", onClose, tall: true, variant: "wide", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-wrap", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-left", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-stats", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat" + (usedT >= effMaxT ? " warn" : ""), children: [
+            "T ",
+            usedT,
+            " / ",
+            effMaxT
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal", children: [
+            "E ",
+            usedE % 1 === 0 ? usedE : usedE.toFixed(1),
+            row.genehmigteEinheiten !== "" ? ` / ${row.genehmigteEinheiten}` : ""
+          ] }),
+          row.aufnahmedatum && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat dim", children: [
+            "Aufn. ",
+            row.aufnahmedatum
+          ] }),
+          row.entlassungsdatum && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat dim", children: [
+            "Entl. ",
+            row.entlassungsdatum
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "km" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.km, inputMode: "decimal", onChange: (e) => onField("km", e.target.value) })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal-label", children: [
+          "Behandlungen im ",
+          MONTH_NAMES_DE[month - 1],
+          " \u2014 Tag antippen zum Bearbeiten"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Minuten" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.minutes, inputMode: "numeric", onChange: (e) => onField("minutes", e.target.value) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Richtung" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.direction, onChange: (e) => onField("direction", e.target.value), children: DIRECTIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: d, children: d || "\u2013" }, d)) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "M" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.m, onChange: (e) => onField("m", e.target.value), children: M_OPTIONS.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: m, children: m || "\u2013" }, m)) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Start-Monat" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "month", value: row.startMonth || "", onChange: (e) => onField("startMonth", e.target.value) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Adresse" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.address, onChange: (e) => onField("address", e.target.value) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Kontakt" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, onChange: (e) => onField("contact", e.target.value) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Versicherung" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.versicherung, onChange: (e) => onField("versicherung", e.target.value) })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Anordnungen" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.anordnungen, onChange: (e) => onField("anordnungen", e.target.value) })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-head", children: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((w) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: w }, w)) }),
+          weeks.map((w, wi) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-row", children: w.map((di, ci) => {
+            if (di === null) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell blank" }, ci);
+            const d = daysList[di];
+            const c = row.cells[di] || emptyCell();
+            const t = typeInfo(c.type);
+            const has = cellHasContent(c);
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              "button",
+              {
+                className: "pd-cell" + (d.isSunday ? " sunday" : "") + (holidays.has(d.day) ? " holiday" : "") + (c.kh ? " kh" : ""),
+                style: has && !c.kh ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+                onClick: () => onOpenCell(di),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-day", children: d.day }),
+                  c.kh ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-khtext", children: "KH" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-t", children: c.behandlung }) })
+                ]
+              },
+              ci
+            );
+          }) }, wi))
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
-        if (window.confirm(`\u201E${row.name || "Patient"}" wirklich archivieren?`)) onArchive();
-      }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IArchive, { width: 16, height: 16 }),
-        " Patient archivieren"
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-right", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "form-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Name" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.name, onChange: (e) => onField("name", e.target.value), placeholder: "Name, Vorname" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Roter Tag" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
+              "T",
+              o
+            ] }, o)) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Tage" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genemhmigteTage, inputMode: "numeric", onChange: (e) => onField("genemhmigteTage", e.target.value), placeholder: "z.B. 22" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Einheiten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genehmigteEinheiten, inputMode: "numeric", onChange: (e) => onField("genehmigteEinheiten", e.target.value), placeholder: "z.B. 30" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Verl\xE4ngerung" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "vl-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.verlaengerung, onChange: (e) => onField("verlaengerung", Number(e.target.value)), children: VERLAENGERUNG_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
+                "+",
+                o
+              ] }, o)) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "check-inline", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "checkbox", checked: row.verlaengerungFlag, onChange: (e) => onField("verlaengerungFlag", e.target.checked) }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "beantragt" })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "km" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.km, inputMode: "decimal", onChange: (e) => onField("km", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Minuten" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.minutes, inputMode: "numeric", onChange: (e) => onField("minutes", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Richtung" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.direction, onChange: (e) => onField("direction", e.target.value), children: DIRECTIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: d, children: d || "\u2013" }, d)) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "M" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.m, onChange: (e) => onField("m", e.target.value), children: M_OPTIONS.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: m, children: m || "\u2013" }, m)) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Start-Monat" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "month", value: row.startMonth || "", onChange: (e) => onField("startMonth", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Adresse" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.address, onChange: (e) => onField("address", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Kontakt" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, onChange: (e) => onField("contact", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Versicherung" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.versicherung, onChange: (e) => onField("versicherung", e.target.value) })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Anordnungen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.anordnungen, onChange: (e) => onField("anordnungen", e.target.value) })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
+          if (window.confirm(`\u201E${row.name || "Patient"}" wirklich archivieren?`)) onArchive();
+        }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IArchive, { width: 16, height: 16 }),
+          " Patient archivieren"
+        ] })
       ] })
-    ] });
+    ] }) });
   }
   function CellEditor({ row, cell, dayIdx, daysList, month, year, therapeutList, onAddTherapeut, clipboard, onCopy, onPaste, onClear, onChange, onFieldChange, onMoveDay, onClose }) {
     const d = daysList[dayIdx];
@@ -14293,6 +14565,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       Sheet,
       {
         tall: true,
+        variant: "side",
         onClose,
         title: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-title", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", onClick: () => onMoveDay(-1), "aria-label": "Voriger Tag", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, { width: 18, height: 18 }) }),

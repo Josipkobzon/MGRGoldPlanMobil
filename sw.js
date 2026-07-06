@@ -1,7 +1,7 @@
 /* Service Worker — Behandlungsplan MoGeRe Gold Mobil
    Cache-first: nach der Installation funktioniert die App komplett offline.
    Bei einer neuen Version: CACHE_VERSION erhöhen. */
-const CACHE_VERSION = "bplan-mobil-v1";
+const CACHE_VERSION = "bplan-mobil-v3";
 const ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
