@@ -1,0 +1,58 @@
+BEHANDLUNGSPLAN MOBIL - v7 FRISSITES
+==================================================
+Az asztali Behandlungsplan v7 valtozasai atkerultek a mobil
+(telefon es tablet) alkalmazasba is.
+
+UJDONSAGOK:
+
+1. MITTAGSPAUSE (ebedszunet)
+   A cellaszerkesztoben uj mezo: Mittagspause (pl. 11:55-12:25,
+   ures = nincs). Ha ki van toltve, a napi kartyan es a tableten
+   a heti racsban is kulon, sargas savkent jelenik meg, kaves
+   csesze ikonnal.
+
+2. DIENSTAUTO (Auto / Haus jelzok)
+   A cellaszerkesztoben ket uj kapcsologomb: Auto es Haus. Ha
+   mindketto be van kapcsolva egy napi bejegyzesnel, az azt
+   jelzi, hogy a szolgalati auto hazavihetu; ha csak az egyik
+   vagy egyik sem, akkor az auto ikonok a napi kartyan illetve
+   a heti racsban jelzik az allapotot - pontosan ugy, mint az
+   asztali verzioban.
+
+3. PATIENTNUMMER (Pat.Nr.)
+   Uj mezo a beteg-adatlapon, Nev mellett. Az asztali verzioval
+   azonos modon tarolodik es exportalodik, es a betegek listajan
+   is megjelenik a nev mellett, ha ki van toltve.
+
+4. JSON EXPORT/IMPORT - UJ FORMATUM (allMonths)
+   Az export mostantol nemcsak az aktualis honapot tartalmazza,
+   hanem a telefonon/tableten tarolt OSSZES honapot egyetlen
+   fajlban (allMonths kulcs alatt) - pontosan úgy, mint az
+   asztali v7-ben. A fajlnev is a v7 formatumot koveti:
+   BhP_NN.HH.EEEE_OO_PP.json (pl. BhP_25.07.2026_16_01.json).
+
+   Import: ha a betoltott fajlban tobb honap van, mindegyik
+   bekerul a telefon/tablet tarolojaba - nem csak az eppen
+   aktualis honap. Igy egy exporttal at lehet vinni a teljes
+   evet a gep es a telefon kozott.
+
+   REGI (v3-v6) formatumu fajlok tovabbra is betolthetok -
+   ezeknel a Mittagspause/Auto/Haus/Pat.Nr. mezok egyszeruen
+   uresen indulnak, minden mas valtozatlan.
+
+5. SZOMBAT MEGJELENITES
+   Az asztali verzioban a hetvege-osszecsukas mostantol csak a
+   vasarnapot rejti el, szombat mindig lathato. A mobil
+   alkalmazasban ez korabban sem volt mas - a telefon napi/heti
+   nezete mindig mutatta a szombatot is, tehat itt nincs
+   valtozas.
+
+TELEPITES:
+Csereld le a repoban az index.html es sw.js fajlokat (a v7
+verzio sw.js-e: bplan-mobil-v7). A telefonon/tableten nyisd meg
+az appot ketszer, hogy a frissites betoltodjon.
+
+FONTOS: mivel az adatmodell bovult uj mezokkel, erdemes a
+frissites elott egy JSON exportot keszíteni a regi verzioval is,
+biztonsagi mentes gyanant - bar az uj verzio a regi adatokat is
+hibamentesen olvassa.
