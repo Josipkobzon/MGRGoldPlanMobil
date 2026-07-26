@@ -1,0 +1,83 @@
+BEHANDLUNGSPLAN MOBIL - v9-v16 FRISSITES (+ KRITIKUS ADATVESZTES-JAVITAS)
+==========================================================================
+
+LEGFONTOSABB: KRITIKUS ADATVESZTES-HIBA JAVITVA (a desktop v11-es hibajaval
+azonos gyokerokkal, ami eddig eszrevetlenul a mobil appban is fennallt)
+
+A mobil app eddig minden mentesnel, archivalasnal, visszaallitasnal es
+vegleges torlesnel a teljes beteg-mesterlistat (behandlungsplan:patients)
+FELULIRTA a jelenleg megnyitott honap adataival, ahelyett hogy osszefesulte
+volna. Ha megnyitottal egy olyan honapot, amiben egy korabban archivalt
+vagy mas honapban elo beteg eppen nem szerepelt a helyi mentesben, az a
+beteg VEGLEGESEN elveszhetett a mesterlistabol.
+
+Javitas: uj upsertPatientsIntoMaster() / removePatientFromMaster()
+fuggvenyek minden irasi ponton (mentes, archivalas, visszaallitas,
+torles, importalas), amik ID alapjan fesulnek ossze, sosem irnak felul.
+Emellett az archivalt betegek most mar minden honapban lathatoak
+maradnak az Archiv panelen (nem csak abban a honapban, ahol eppen
+archivaltad oket) - ez pontosan a desktop viselkedesevel egyezik.
+
+Tesztelve: egy beteg archivalasa utan harom honapot elorelepve, majd
+visszalepve az Archiv panel es a mesterlista is sertetlenul mutatta
+mindket beteget.
+
+--------------------------------------------------
+TOVABBI UJDONSAGOK (desktop v9-v16 kozul, ami a mobilt is erinti)
+--------------------------------------------------
+
+1. SONSTIGES kezelestipus (limezold szin) - uj valaszthato opcio a
+   cellaszerkesztoben, a fejlecben es a napi/heti nezetekben is.
+
+2. T FREI - a "Roter Tag" mezoben az elso opcio mostantol "T frei"
+   (ertek: 0), nem pedig egy szamerteku T0. Ha ez van kivalasztva,
+   a betegnel SOHA nem jelenik meg piros/sarga figyelmeztetes
+   (nincs definialt korlat), es a beteglistan "T x (frei)" formaban
+   latszik a korlat helyett.
+
+3. UJ SZINKODOLASI SZABALY (T + Verlangerung): a napi kartyakon, a
+   heti racsban, a beteg-adatlapon es a beteglistan a T-jelzo es az
+   E-ertek szine mostantol a Roter Tag + (ha aktiv) Verlangerung
+   osszeget veszi alapul, nem a kulon Gen.T/Gen.E mezoket. Az utolso
+   elotti ket nap sarga, az utolso piros - a napi kartyat piros
+   keret is kiemeli, ha eleri a hatart. Emiatt a Gen.T/Gen.E
+   gyorsmezok kikerultek a cellaszerkesztobol (a Patient-adatlapon
+   megmaradt Gen. Tage/Gen. Einheiten mezok tovabbra is elerhetok,
+   de mar csak tajekoztato jelleguek, tobbet nem befolyasoljak a
+   szinezest).
+
+4. SCHLUSS / PAUSE / DIALYSE cellajelolok - a KH mintajara, a
+   cellaszerkesztoben negy gomb egy sorban (KH, SCHLUSS, PAUSE,
+   DIALYSE). Mindegyik felulirja a cella normal megjeleniteset,
+   sajat szinnel:
+   - KH: piros, "KH" felirat (valtozatlan)
+   - SCHLUSS: indigo, "SCHLUSS" felirat
+   - PAUSE: meleg szurke, "PAUSE" felirat
+   - DIALYSE: cian, "DIALYSE" felirat + kis piros "+" jelzessel
+   Fontos: ez a PAUSE gomb (egesz napos jelzo) nem keverendo ossze
+   a korabban mar bevezetett Mittagspause mezovel (ebedszunet
+   idopontja) - a ketto egymastol fuggetlenul hasznalhato.
+
+5. Pat.Nr. mezo - mar a v7-es korben bekerult, valtozatlan.
+
+--------------------------------------------------
+AMI NEM ERINTI A MOBILT (csak az asztali tablazat-nezet)
+--------------------------------------------------
+- v8: egy karakteres asztali tablazat-elcsuszasi hiba javitasa
+- v9: dinamikus Patient-nev oszlopszelesseg (asztali tablazat-fejlec)
+- v10: Patientnummer mezo szelessege (asztali tablazat-oszlop)
+- v16: a napi cella felugro ablak asztali ujraelrendezese (a mobil
+  app sajat, mar eve kulon tervezett also-felugro szerkesztojet
+  hasznalja, ezen nem valtoztattunk, csak az uj mezokkel/gombokkal
+  egeszitettuk ki)
+
+--------------------------------------------------
+TELEPITES
+--------------------------------------------------
+Csereld le a repoban az index.html es sw.js fajlokat (uj verzio:
+bplan-mobil-v8). A telefonon/tableten nyisd meg az appot ketszer.
+
+FONTOS: mivel a mesterlista-kezeles gyokeresen javult, es uj mezok
+kerultek be, keszits JSON exportot a frissites elott biztonsagi
+mentesnek - bar az uj verzio minden regi adatot hibamentesen
+beolvas es kiegesziti a hianyzo mezokkel.

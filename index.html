@@ -152,16 +152,24 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .empty-state { color: var(--dim); font-size: 13.5px; padding: 22px 16px; text-align: center; }
 
 /* KH-Übersteuerung */
-.day-card.kh {
-  background: #dc2626; border-color: #991b1b; border-left-color: #7f1d1d; color: #fff;
-}
-.day-card.kh .dc-name em { color: #fecaca; }
-.dc-kh-big {
+/* Zell-Übersteuerungen: KH (rot), SCHLUSS (indigo), PAUSE (warmgrau), DIALYSE (cyan) */
+.day-card.ov-kh { background: #dc2626; border-color: #991b1b; border-left-color: #7f1d1d; color: #fff; }
+.day-card.ov-schluss { background: #4f46e5; border-color: #3730a3; border-left-color: #312e81; color: #fff; }
+.day-card.ov-pause { background: #78716c; border-color: #57534e; border-left-color: #44403c; color: #fff; }
+.day-card.ov-dialyse { background: #0e7490; border-color: #155e75; border-left-color: #164e63; color: #fff; }
+.day-card[class*="ov-"] .dc-name em { color: rgba(255,255,255,0.75); }
+.dc-ov-big {
+  display: inline-flex; align-items: center; gap: 3px;
   font-size: 15px; font-weight: 900; letter-spacing: 0.06em;
   background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.6);
   border-radius: 7px; padding: 1px 9px;
 }
-.day-card.kh .dc-type { color: #fee2e2; font-weight: 600; }
+.dc-ov-plus {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px; border-radius: 50%; background: #fff; color: #dc2626;
+  font-size: 11px; font-weight: 900; line-height: 1;
+}
+.day-card[class*="ov-"] .dc-type { color: rgba(255,255,255,0.9); font-weight: 600; }
 
 /* ---------- Patientenliste ---------- */
 .patients-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
@@ -287,9 +295,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .pd-cell.blank { border: none; background: none; }
 .pd-cell.sunday { background: #edeff2; color: #9aa4af; }
 .pd-cell.holiday { border-color: #ef4444; }
-.pd-cell.kh, .pd-cell.kh.sunday { background: #dc2626; border-color: #991b1b; color: #fff; }
-.pd-cell.kh .pd-cell-day { color: #fecaca; }
-.pd-cell-khtext { font-size: 10px; font-weight: 900; letter-spacing: 0.04em; }
+.pd-cell.ov-kh, .pd-cell.ov-kh.sunday { background: #dc2626; border-color: #991b1b; color: #fff; }
+.pd-cell.ov-schluss, .pd-cell.ov-schluss.sunday { background: #4f46e5; border-color: #3730a3; color: #fff; }
+.pd-cell.ov-pause, .pd-cell.ov-pause.sunday { background: #78716c; border-color: #57534e; color: #fff; }
+.pd-cell.ov-dialyse, .pd-cell.ov-dialyse.sunday { background: #0e7490; border-color: #155e75; color: #fff; }
+.pd-cell[class*="ov-"] .pd-cell-day { color: rgba(255,255,255,0.75); }
+.pd-cell-ovtext { font-size: 9px; font-weight: 900; letter-spacing: 0.03em; }
 .pd-cell-day { font-size: 11px; font-weight: 700; line-height: 1.1; }
 .pd-cell-t { font-size: 9.5px; font-weight: 800; line-height: 1.1; }
 
@@ -343,12 +354,17 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .ce-gen input { padding: 5px 8px; font-size: 13px; text-align: center; border-color: #93b8dd; }
 .ce-gen.teal input { border-color: #7fd0c7; }
 .ce-full { width: 100%; }
-.kh-toggle {
-  display: flex; align-items: center; gap: 9px; margin-top: 14px;
-  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
-  padding: 11px 12px; font-size: 13.5px; font-weight: 600;
+/* Sonderstatus-Umschalter (KH / SCHLUSS / PAUSE / DIALYSE) */
+.ce-status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.status-toggle {
+  border: 1.5px solid var(--line); background: #fff; color: var(--dim);
+  border-radius: 9px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.02em;
+  padding: 10px 4px; min-height: 42px;
 }
-.kh-toggle input { width: 20px; height: 20px; }
+.status-toggle.kh.on { background: #dc2626; border-color: #991b1b; color: #fff; }
+.status-toggle.schluss.on { background: #4f46e5; border-color: #3730a3; color: #fff; }
+.status-toggle.pause.on { background: #78716c; border-color: #57534e; color: #fff; }
+.status-toggle.dialyse.on { background: #0e7490; border-color: #155e75; color: #fff; }
 
 /* Icon-Toggle (Auto/Haus) */
 .icon-toggle {
@@ -415,8 +431,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .wg-cell-info.trunc { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wg-cell-info.pause { color: #8a6414; font-weight: 700; }
 .kh-badge.sm { font-size: 9px; padding: 0 4px; }
-.wg-cell.kh, .wg-cell.kh.sunday { background: #dc2626; }
-.wg-kh { margin: 0 auto; color: #fff; font-size: 14px; font-weight: 900; letter-spacing: 0.05em; }
+.wg-cell.ov-kh, .wg-cell.ov-kh.sunday { background: #dc2626; color: #fff; }
+.wg-cell.ov-schluss, .wg-cell.ov-schluss.sunday { background: #4f46e5; color: #fff; }
+.wg-cell.ov-pause, .wg-cell.ov-pause.sunday { background: #78716c; color: #fff; }
+.wg-cell.ov-dialyse, .wg-cell.ov-dialyse.sunday { background: #0e7490; color: #fff; }
+.wg-ov { margin: 0 auto; display: inline-flex; align-items: center; gap: 2px; color: #fff; font-size: 11.5px; font-weight: 900; letter-spacing: 0.03em; }
+.wg-ov-plus {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 11px; height: 11px; border-radius: 50%; background: #fff; color: #dc2626; font-size: 8px; font-weight: 900;
+}
 
 /* Woche-Tab nur auf breiten Bildschirmen */
 @media (max-width: 767.98px) {
@@ -477,6 +500,23 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 @media (min-width: 1100px) {
   .day-list, .patients-list { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); max-width: 1480px; }
 }
+
+/* T/E-Warnfarben (v15-Regel: T + Verlängerung, E folgt T) */
+.t-badge.warn-pre { background: #fde047 !important; border-color: #ca8a04 !important; color: #713f12 !important; }
+.t-badge.warn-final { background: #fecaca !important; border-color: #dc2626 !important; color: #7f1d1d !important; font-weight: 900; }
+.dc-info.warn-pre { color: #92400e; font-weight: 800; }
+.dc-info.warn-final { color: #b91c1c; font-weight: 900; }
+.day-card.ring-final { box-shadow: 0 0 0 2px #dc2626 inset; }
+.wg-cell.ring-final { box-shadow: 0 0 0 2px #dc2626 inset; }
+.wg-cell-info.warn-pre { color: #92400e; font-weight: 800; }
+.wg-cell-info.warn-final { color: #b91c1c; font-weight: 900; }
+.wg-cell-top b.warn-pre { background: #fde047; color: #713f12; border-radius: 4px; padding: 0 3px; }
+.wg-cell-top b.warn-final { color: #dc2626; }
+.pd-cell.ring-final { box-shadow: 0 0 0 2px #dc2626 inset; }
+.pd-cell-t.warn-pre { background: #fde047; color: #713f12; border-radius: 3px; padding: 0 2px; }
+.pd-cell-t.warn-final { color: #dc2626; font-weight: 900; }
+.pc-stat.warn-pre { background: #fef9c3; color: #854d0e; border-color: #fde047; }
+.pc-stat.warn-final { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; font-weight: 900; }
 
   </style>
 </head>
@@ -13253,7 +13293,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     { value: "Ernaehrungsberatung", label: "Ern\xE4hrungsberatung", bg: "#c89968", border: "#8b5a2b", text: "#3d2410" },
     { value: "AktivierendePflege", label: "Aktivierende Pflege", bg: "#fdba74", border: "#ea580c", text: "#431407" },
     { value: "Entlassung", label: "Entlassung", bg: "#bbf7d0", border: "#16a34a", text: "#14532d" },
-    { value: "Arztvisite", label: "Arztvisite", bg: "#bae6fd", border: "#0ea5e9", text: "#0c4a6e" }
+    { value: "Arztvisite", label: "Arztvisite", bg: "#bae6fd", border: "#0ea5e9", text: "#0c4a6e" },
+    { value: "Sonstiges", label: "Sonstiges", bg: "#d9f99d", border: "#65a30d", text: "#365314" }
   ];
   var DIRECTIONS = ["", "N", "NO", "O", "SO", "S", "SW", "W", "NW"];
   var DIRECTION_COLOR = {
@@ -13274,7 +13315,62 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const g1 = n === 5 || n >= 13 && n <= 18;
     return g1 ? { bg: "#d1fae5", text: "#065f46", border: "#34d399" } : { bg: "#dbeafe", text: "#1e3a8a", border: "#93c5fd" };
   }
-  var RED_DAY_OPTIONS = Array.from({ length: 40 }, (_, i) => i + 1);
+  var RED_DAY_OPTIONS = [0, ...Array.from({ length: 40 }, (_, i) => i + 1)];
+  function tOptionLabel(o) {
+    return o === 0 ? "T frei" : "T" + o;
+  }
+  function effMaxTOf(row) {
+    const base = Number(row.redDay || 0);
+    if (!base) return null;
+    return base + (row.verlaengerungFlag ? Number(row.verlaengerung || 0) : 0);
+  }
+  function tWarnLevel(tNum, effMaxT) {
+    if (tNum == null || effMaxT == null) return "";
+    if (tNum === effMaxT) return "final";
+    if (tNum === effMaxT - 1 || tNum === effMaxT - 2) return "pre";
+    return "";
+  }
+  function tNumOf(behandlung) {
+    const m = String(behandlung || "").trim().toUpperCase().match(/^T(\d+)$/);
+    return m ? parseInt(m[1], 10) : null;
+  }
+  function cellOverride(c) {
+    if (!c) return null;
+    if (c.kh) return { key: "kh", label: "KH", sub: "Patient im Krankenhaus \u2014 keine Behandlung" };
+    if (c.schluss) return { key: "schluss", label: "SCHLUSS", sub: "Behandlung abgeschlossen" };
+    if (c.pause) return { key: "pause", label: "PAUSE", sub: "Pausentag \u2014 keine Behandlung" };
+    if (c.dialyse) return { key: "dialyse", label: "DIALYSE", sub: "Dialyse-Termin" };
+    return null;
+  }
+  function rowHasAufnahmeCell(cells) {
+    return Array.isArray(cells) && cells.some((c) => c && c.type === "Aufnahme");
+  }
+  function isEligibleForMonth(p, ym) {
+    if (p.archived) return !p.startMonth || p.startMonth <= ym;
+    if (p.firstAufnahmeMonth) return p.firstAufnahmeMonth <= ym;
+    return !p.startMonth || p.startMonth <= ym;
+  }
+  function upsertPatientsIntoMaster(rowsToUpsert) {
+    try {
+      const raw = lsGet(PATIENTS_KEY);
+      const all = raw ? JSON.parse(raw) : [];
+      const byId = new Map(all.map((p) => [p.id, p]));
+      for (const r of rowsToUpsert) {
+        const { cells, ...rest } = r;
+        byId.set(r.id, { ...byId.get(r.id) || {}, ...rest });
+      }
+      lsSet(PATIENTS_KEY, JSON.stringify([...byId.values()]));
+    } catch (e) {
+    }
+  }
+  function removePatientFromMaster(id) {
+    try {
+      const raw = lsGet(PATIENTS_KEY);
+      const all = raw ? JSON.parse(raw) : [];
+      lsSet(PATIENTS_KEY, JSON.stringify(all.filter((p) => p.id !== id)));
+    } catch (e) {
+    }
+  }
   var VERLAENGERUNG_OPTIONS = Array.from({ length: 21 }, (_, i) => i);
   var MAX_PATIENTS = 30;
   var MAX_PHYSIO_PER_DAY = 5;
@@ -13305,14 +13401,14 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     return days;
   }
   function emptyCell() {
-    return { type: "", behandlung: "", einheiten: "", time: "", therapeut: "", note: "", kh: false, mittagspause: "", icons: [] };
+    return { type: "", behandlung: "", einheiten: "", time: "", therapeut: "", note: "", kh: false, schluss: false, pause: false, dialyse: false, mittagspause: "", icons: [] };
   }
   function cellHasContent(c) {
-    return !!(c && (c.type || c.behandlung || c.einheiten || c.time || c.therapeut || c.note || c.kh || c.mittagspause));
+    return !!(c && (c.type || c.behandlung || c.einheiten || c.time || c.therapeut || c.note || c.kh || c.mittagspause || c.schluss || c.pause || c.dialyse));
   }
   function expandCellsForSundays(oldCells, nd) {
     if (!oldCells) return Array.from({ length: nd.length }, () => emptyCell());
-    if (oldCells.length === nd.length) return oldCells;
+    if (oldCells.length === nd.length) return oldCells.map((c) => c ? { ...emptyCell(), ...c } : emptyCell());
     const nonSundayCount = nd.filter((d) => !d.isSunday).length;
     if (oldCells.length === nonSundayCount) {
       const expanded = [];
@@ -13321,7 +13417,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         if (d.isSunday) expanded.push(emptyCell());
         else {
           const c = oldCells[oldIdx];
-          expanded.push(c ? { type: c.type || "", behandlung: c.behandlung || "", einheiten: c.einheiten != null ? c.einheiten : "", time: c.time || "", therapeut: c.therapeut || "", note: c.note || "", kh: c.kh || false, mittagspause: c.mittagspause || "", icons: c.icons || [] } : emptyCell());
+          expanded.push(c ? { type: c.type || "", behandlung: c.behandlung || "", einheiten: c.einheiten != null ? c.einheiten : "", time: c.time || "", therapeut: c.therapeut || "", note: c.note || "", kh: c.kh || false, schluss: c.schluss || false, pause: c.pause || false, dialyse: c.dialyse || false, mittagspause: c.mittagspause || "", icons: c.icons || [] } : emptyCell());
           oldIdx++;
         }
       }
@@ -13357,6 +13453,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       aufnahmedatum: null,
       entlassungsdatum: null,
       startMonth,
+      firstAufnahmeMonth: null,
       cells: Array.from({ length: numDays }, () => emptyCell())
     };
   }
@@ -13632,11 +13729,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           const patients = pRaw ? JSON.parse(pRaw) : [];
           const archivedIds = getArchivedIds();
           const currentYM = `${year}-${pad2(month)}`;
-          const eligible = patients.filter(
-            (p) => !archivedIds.has(p.id) && !p.archived && (!p.startMonth || p.startMonth <= currentYM)
-          );
+          const eligible = patients.filter((p) => isEligibleForMonth(p, currentYM));
           if (eligible.length > 0) {
-            setRows(eligible.map((p) => ({ ...p, id: p.id || makeId(), archived: false, cells: expandCellsForSundays(p.cells, nd) })));
+            setRows(eligible.map((p) => ({ ...p, id: p.id || makeId(), archived: archivedIds.has(p.id) || p.archived || false, cells: expandCellsForSundays(p.cells, nd) })));
           } else {
             setRows([newPatientRow(nd.length)]);
           }
@@ -13695,20 +13790,27 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           anordnungen: r.anordnungen || cur?.anordnungen || "",
           versicherung: r.versicherung || cur?.versicherung || "",
           startMonth: r.startMonth || "",
+          firstAufnahmeMonth: (() => {
+            const thisYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
+            const stored = cur?.firstAufnahmeMonth || r.firstAufnahmeMonth || null;
+            return rowHasAufnahmeCell(r.cells) && (!stored || thisYM < stored) ? thisYM : stored;
+          })(),
           cells: expandCellsForSundays(r.cells, nd)
         };
       });
       const patientList = fixedRows.map(({ cells, ...rest }) => rest);
-      lsSet(PATIENTS_KEY, JSON.stringify(patientList));
+      upsertPatientsIntoMaster(patientList);
       const savedIds = new Set(fixedRows.map((r) => r.id));
       const savedNames = new Set(fixedRows.map((r) => r.name).filter(Boolean));
       const mergedYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
       for (const p of pAll) {
         if (savedIds.has(p.id)) continue;
         if (p.name && savedNames.has(p.name)) continue;
-        if (archivedIds.has(p.id) || p.archived) continue;
-        if (p.startMonth && p.startMonth > mergedYM) continue;
-        fixedRows.push({ ...p, id: p.id || makeId(), archived: false, cells: Array.from({ length: nd.length }, () => emptyCell()) });
+        if (!isEligibleForMonth(p, mergedYM)) continue;
+        const newId = p.id || makeId();
+        fixedRows.push({ ...p, id: newId, archived: archivedIds.has(p.id) || p.archived || false, cells: Array.from({ length: nd.length }, () => emptyCell()) });
+        savedIds.add(newId);
+        if (p.name) savedNames.add(p.name);
       }
       setRows(fixedRows.length ? fixedRows : [newPatientRow(nd.length)]);
       setHolidays(new Set(parsed.holidays || []));
@@ -13761,6 +13863,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           aufnahmedatum: r.aufnahmedatum || null,
           entlassungsdatum: r.entlassungsdatum || null,
           startMonth: r.startMonth || "",
+          firstAufnahmeMonth: r.firstAufnahmeMonth || null,
           patientNummer: r.patientNummer || "",
           anordnungen: r.anordnungen || "",
           versicherung: r.versicherung || "",
@@ -13796,7 +13899,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         const payload = buildExportObject();
         lsSet(storageKey, JSON.stringify(payload));
         const patientList = rows.map(({ cells, ...rest }) => rest);
-        lsSet(PATIENTS_KEY, JSON.stringify(patientList));
+        upsertPatientsIntoMaster(patientList);
       } catch (e) {
       }
     }
@@ -13830,18 +13933,23 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       applyMonthYear(m, y);
     }
     function updateCell(rowId, dayIdx, patch) {
+      const thisYM = `${year}-${pad2(month)}`;
       setRows((prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
         cells[dayIdx] = { ...cells[dayIdx] || emptyCell(), ...patch };
-        return { ...r, cells };
+        let firstAufnahmeMonth = r.firstAufnahmeMonth || null;
+        if (patch.type === "Aufnahme" && (!firstAufnahmeMonth || thisYM < firstAufnahmeMonth)) {
+          firstAufnahmeMonth = thisYM;
+        }
+        return { ...r, cells, firstAufnahmeMonth };
       }));
     }
     function setCellFull(rowId, dayIdx, cell) {
       setRows((prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
-        cells[dayIdx] = { type: cell.type || "", behandlung: cell.behandlung || "", einheiten: cell.einheiten != null ? cell.einheiten : "", time: cell.time || "", therapeut: cell.therapeut || "", note: cell.note || "", kh: cell.kh || false, mittagspause: cell.mittagspause || "", icons: Array.isArray(cell.icons) ? cell.icons.slice() : [] };
+        cells[dayIdx] = { type: cell.type || "", behandlung: cell.behandlung || "", einheiten: cell.einheiten != null ? cell.einheiten : "", time: cell.time || "", therapeut: cell.therapeut || "", note: cell.note || "", kh: cell.kh || false, schluss: cell.schluss || false, pause: cell.pause || false, dialyse: cell.dialyse || false, mittagspause: cell.mittagspause || "", icons: Array.isArray(cell.icons) ? cell.icons.slice() : [] };
         return { ...r, cells };
       }));
     }
@@ -13891,7 +13999,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setRows(newRows);
       skipNextAutosave.current = true;
       lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
-      lsSet(PATIENTS_KEY, JSON.stringify(newRows.map(({ cells, ...rest }) => rest)));
+      upsertPatientsIntoMaster(newRows.map(({ cells, ...rest }) => rest));
       setDetailId(null);
       showToast("Patient archiviert");
     }
@@ -13916,7 +14024,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setRows(newRows);
       skipNextAutosave.current = true;
       lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
-      lsSet(PATIENTS_KEY, JSON.stringify(newRows.map(({ cells, ...rest }) => rest)));
+      upsertPatientsIntoMaster(newRows.map(({ cells, ...rest }) => rest));
       showToast("Patient wiederhergestellt");
     }
     function deleteFromArchive(rowId) {
@@ -13927,7 +14035,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setRows(newRows);
       skipNextAutosave.current = true;
       lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
-      lsSet(PATIENTS_KEY, JSON.stringify(newRows.map(({ cells, ...rest }) => rest)));
+      removePatientFromMaster(rowId);
       setConfirmDeleteArchiveId(null);
       showToast("Endg\xFCltig gel\xF6scht");
     }
@@ -14108,33 +14216,40 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               const c = r.cells[selectedDayIdx] || emptyCell();
               const t = typeInfo(c.type);
               const has = cellHasContent(c);
-              if (c.kh) {
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card kh", onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }), children: [
+              const ov = cellOverride(c);
+              if (ov) {
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card ov-" + ov.key, onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }), children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-kh-big", children: "KH" })
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
+                      ov.label,
+                      ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
+                    ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: "Patient im Krankenhaus \u2014 keine Behandlung" }) })
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
                 ] }, r.id);
               }
               const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
               const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
+              const effMaxT = effMaxTOf(r);
+              const tNum = tNumOf(c.behandlung);
+              const warn = tWarnLevel(tNum, effMaxT);
               return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                 "button",
                 {
-                  className: "day-card" + (has ? "" : " empty"),
+                  className: "day-card" + (has ? "" : " empty") + (warn === "final" ? " ring-final" : ""),
                   style: has ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
                   onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }),
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-badges", children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge", children: c.behandlung }) })
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-badges", children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge" + (warn ? " warn-" + warn : ""), children: c.behandlung }) })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\u2013 leer \u2013" ? t.label : "" }),
                       c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.time }),
                       c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.therapeut }),
-                      c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-info", children: [
+                      c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-info" + (warn ? " warn-" + warn : ""), children: [
                         c.einheiten,
                         " E"
                       ] }),
@@ -14205,24 +14320,31 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   const isEditing = editor && editor.rowId === r.id && editor.dayIdx === di;
                   const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
                   const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
+                  const ov = cellOverride(c);
+                  const effMaxT = effMaxTOf(r);
+                  const tNum = tNumOf(c.behandlung);
+                  const warn = tWarnLevel(tNum, effMaxT);
                   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                     "button",
                     {
-                      className: "wg-cell" + (d.isSunday ? " sunday" : "") + (has ? "" : " empty") + (isEditing ? " editing" : "") + (c.kh ? " kh" : ""),
-                      style: has && !c.kh ? { background: t.bg, borderColor: isEditing ? void 0 : t.border, color: t.text } : void 0,
+                      className: "wg-cell" + (d.isSunday ? " sunday" : "") + (has ? "" : " empty") + (isEditing ? " editing" : "") + (ov ? " ov-" + ov.key : "") + (warn === "final" ? " ring-final" : ""),
+                      style: has && !ov ? { background: t.bg, borderColor: isEditing ? void 0 : t.border, color: t.text } : void 0,
                       onClick: () => {
                         setSelectedDayIdx(di);
                         setEditor({ rowId: r.id, dayIdx: di });
                       },
-                      children: c.kh ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-kh", children: "KH" }) : has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                      children: ov ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-ov", children: [
+                        ov.label,
+                        ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-ov-plus", children: "+" })
+                      ] }) : has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-top", children: [
-                          c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: c.behandlung }),
+                          c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { className: warn ? "warn-" + warn : "", children: c.behandlung }),
                           hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 11, height: 11 }),
                           hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 11, height: 11 })
                         ] }),
                         c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info", children: c.time }),
                         c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: c.therapeut }),
-                        c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-info", children: [
+                        c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-info" + (warn ? " warn-" + warn : ""), children: [
                           c.einheiten,
                           " E"
                         ] }),
@@ -14255,9 +14377,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           ] }),
           activeRows.map((r) => {
             const usedT = maxTNumber(r);
-            const effMaxT = r.genemhmigteTage !== "" && !isNaN(Number(r.genemhmigteTage)) ? Number(r.genemhmigteTage) : Number(r.redDay || 20);
+            const effMaxT = effMaxTOf(r);
+            const warn = tWarnLevel(usedT, effMaxT);
             const usedE = sumEinheiten(r);
-            const genE = r.genehmigteEinheiten !== "" && !isNaN(Number(r.genehmigteEinheiten)) ? Number(r.genehmigteEinheiten) : null;
             const dirC = DIRECTION_COLOR[r.direction || ""];
             const mC = mColor(r.m);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "patient-card", onClick: () => setDetailId(r.id), children: [
@@ -14275,16 +14397,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 ] })
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pc-stats", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat" + (usedT >= effMaxT ? " warn" : ""), children: [
-                  "T ",
-                  usedT,
-                  " / ",
-                  effMaxT
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal" + (genE != null && usedE >= genE ? " warn" : ""), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-stat" + (warn ? " warn-" + warn : ""), children: effMaxT == null ? `T ${usedT} (frei)` : `T ${usedT} / ${effMaxT}` }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal" + (warn ? " warn-" + warn : ""), children: [
                   "E ",
-                  usedE % 1 === 0 ? usedE : usedE.toFixed(1),
-                  genE != null ? ` / ${genE}` : ""
+                  usedE % 1 === 0 ? usedE : usedE.toFixed(1)
                 ] }),
                 r.verlaengerungFlag && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat vl", children: [
                   "Verl. +",
@@ -14474,7 +14590,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   }
   function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onClose }) {
     const usedT = maxTNumber(row);
-    const effMaxT = row.genemhmigteTage !== "" && !isNaN(Number(row.genemhmigteTage)) ? Number(row.genemhmigteTage) : Number(row.redDay || 20);
+    const effMaxT = effMaxTOf(row);
+    const pdWarn = tWarnLevel(usedT, effMaxT);
     const usedE = sumEinheiten(row);
     const weeks = (0, import_react.useMemo)(() => {
       const result = [];
@@ -14493,16 +14610,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { title: row.name || "Patient", onClose, tall: true, variant: "wide", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-wrap", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-left", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-stats", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat" + (usedT >= effMaxT ? " warn" : ""), children: [
-            "T ",
-            usedT,
-            " / ",
-            effMaxT
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-stat" + (pdWarn ? " warn-" + pdWarn : ""), children: effMaxT == null ? `T ${usedT} (frei)` : `T ${usedT} / ${effMaxT}` }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat teal" + (pdWarn ? " warn-" + pdWarn : ""), children: [
             "E ",
-            usedE % 1 === 0 ? usedE : usedE.toFixed(1),
-            row.genehmigteEinheiten !== "" ? ` / ${row.genehmigteEinheiten}` : ""
+            usedE % 1 === 0 ? usedE : usedE.toFixed(1)
           ] }),
           row.aufnahmedatum && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat dim", children: [
             "Aufn. ",
@@ -14526,15 +14637,18 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             const c = row.cells[di] || emptyCell();
             const t = typeInfo(c.type);
             const has = cellHasContent(c);
+            const ov = cellOverride(c);
+            const tNum = tNumOf(c.behandlung);
+            const warn = tWarnLevel(tNum, effMaxT);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
               "button",
               {
-                className: "pd-cell" + (d.isSunday ? " sunday" : "") + (holidays.has(d.day) ? " holiday" : "") + (c.kh ? " kh" : ""),
-                style: has && !c.kh ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+                className: "pd-cell" + (d.isSunday ? " sunday" : "") + (holidays.has(d.day) ? " holiday" : "") + (ov ? " ov-" + ov.key : "") + (warn === "final" ? " ring-final" : ""),
+                style: has && !ov ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
                 onClick: () => onOpenCell(di),
                 children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-day", children: d.day }),
-                  c.kh ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-khtext", children: "KH" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-t", children: c.behandlung }) })
+                  ov ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-ovtext", children: ov.label }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(import_jsx_runtime.Fragment, { children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pd-cell-t" + (warn ? " warn-" + warn : ""), children: c.behandlung }) })
                 ]
               },
               ci
@@ -14554,10 +14668,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Roter Tag" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
-              "T",
-              o
-            ] }, o)) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: o, children: tOptionLabel(o) }, o)) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Tage" }),
@@ -14709,10 +14820,6 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: cell.behandlung, placeholder: "T1", onChange: (e) => onChange({ behandlung: e.target.value }) }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", title: "N\xE4chste Nummer", onClick: () => onChange({ behandlung: "T" + nextTNumber(row) }), children: "+" })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-gen", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen.T:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genemhmigteTage, inputMode: "numeric", placeholder: "z.B. 22", onChange: (e) => onFieldChange("genemhmigteTage", e.target.value) })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
@@ -14737,10 +14844,6 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", onClick: () => {
                   if (einheitenNum < 52.5) onChange({ einheiten: String(Math.round((einheitenNum + 0.5) * 2) / 2) });
                 }, children: "+" })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-gen teal", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen.E:" }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genehmigteEinheiten, inputMode: "numeric", placeholder: "z.B. 30", onChange: (e) => onFieldChange("genehmigteEinheiten", e.target.value) })
               ] })
             ] })
           ] }),
@@ -14780,9 +14883,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               }
             }, children: "OK" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "kh-toggle", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "checkbox", checked: !!cell.kh, onChange: (e) => onChange({ kh: e.target.checked }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "KH \u2014 Patient im Krankenhaus" })
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Sonderstatus (\xFCberschreibt die Zellenfarbe)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-status-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle kh" + (cell.kh ? " on" : ""), onClick: () => onChange({ kh: !cell.kh }), children: "KH" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle schluss" + (cell.schluss ? " on" : ""), onClick: () => onChange({ schluss: !cell.schluss }), children: "SCHLUSS" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle pause" + (cell.pause ? " on" : ""), onClick: () => onChange({ pause: !cell.pause }), children: "PAUSE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle dialyse" + (cell.dialyse ? " on" : ""), onClick: () => onChange({ dialyse: !cell.dialyse }), children: "DIALYSE" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Dienstauto am Ende des Tages" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
