@@ -49,9 +49,17 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 
 .app-root { display: flex; flex-direction: column; min-height: 100dvh; }
 
+/* Fixierter Kopfbereich: Topbar + Datum-Strip + Tages-Werkzeugleiste bleiben
+   beim Scrollen als EIN Block oben sichtbar (kein Höhen-Offset nötig, da sie
+   gemeinsam in diesem Wrapper sticky sind, statt einzeln). */
+.pinned-header {
+  position: sticky; top: 0; z-index: 35;
+  background: var(--bg);
+  box-shadow: 0 2px 6px rgba(15, 30, 45, 0.08);
+}
+
 /* ---------- Kopfzeile ---------- */
 .topbar {
-  position: sticky; top: 0; z-index: 30;
   background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
   color: #fff;
   padding: calc(8px + var(--safe-t)) 12px 8px 14px;
@@ -78,7 +86,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .date-strip {
   display: flex; gap: 5px; overflow-x: auto; padding: 10px 10px 6px;
   background: var(--card); border-bottom: 1px solid var(--line);
-  scrollbar-width: none; position: sticky; top: 0; z-index: 5;
+  scrollbar-width: none;
 }
 .date-strip::-webkit-scrollbar { display: none; }
 .day-chip {
@@ -14129,28 +14137,28 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       return n.getFullYear() === year && n.getMonth() + 1 === month && n.getDate() === daysList[di].day;
     };
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "app-root", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", { className: "topbar", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "topbar-title", onClick: () => setMonthPickerOpen(true), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
-            "Behandlungsplan ",
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "brand-gold", children: "MoGeRe Gold" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "month-line", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
-              MONTH_NAMES_DE[month - 1],
-              " ",
-              year
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pinned-header", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("header", { className: "topbar", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "topbar-title", onClick: () => setMonthPickerOpen(true), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
+              "Behandlungsplan ",
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "brand-gold", children: "MoGeRe Gold" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevDown, { width: 14, height: 14 })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "month-line", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
+                MONTH_NAMES_DE[month - 1],
+                " ",
+                year
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevDown, { width: 14, height: 14 })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "topbar-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "Voriger Monat", onClick: () => changeMonth(-1), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, {}) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "N\xE4chster Monat", onClick: () => changeMonth(1), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, {}) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "Men\xFC", onClick: () => setMenuOpen(true), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IMenu, {}) })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "topbar-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "Voriger Monat", onClick: () => changeMonth(-1), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, {}) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "N\xE4chster Monat", onClick: () => changeMonth(1), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, {}) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", "aria-label": "Men\xFC", onClick: () => setMenuOpen(true), children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IMenu, {}) })
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { className: "content", children: [
         view === "day" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "date-strip", ref: dateStripRef, children: daysList.map((d, di) => {
             const isSel = di === selectedDayIdx;
@@ -14200,7 +14208,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 " Notiz"
               ] })
             ] })
-          ] }),
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { className: "content", children: [
+        view === "day" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
           dayNoteOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "day-note-box", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
             "textarea",
             {

@@ -1,0 +1,18 @@
+BEHANDLUNGSPLAN MOBIL - ROGZITETT FEJLEC (dátum mindig lathato)
+==================================================
+Javitas: eddig a napi lista gorgetesekor a "Di, 14.07.2026" formatumu
+datum-cimke (a Feiertag/Notiz gombokkal egyutt) felcsuszott es
+eltunt a kepernyorol, csak visszagorgetve valt ujra lathatova.
+
+Mostantol a fejlec harom resze - a navy sav (Behandlungsplan cim,
+honapvalto nyilak, menu), a napi datum-sav (a napokat mutato
+gombsor) es a kivalasztott nap cimkeje a Physio/Aufnahme
+szamlalokkal - egyetlen egysegkent egyutt marad rogzitve a
+kepernyo tetejen, barmeddig gorgeted is lefele a betegek listajat.
+Csak a betegkartyak listaja gorgethet ez ala.
+
+Erintett: telefon es tablet nezet egyarant.
+
+Telepites: csereld le a repoban az index.html es sw.js fajlokat
+(uj verzio: bplan-mobil-v9). A telefonon/tableten nyisd meg az
+appot ketszer.
