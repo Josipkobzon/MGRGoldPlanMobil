@@ -1,0 +1,58 @@
+BEHANDLUNGSPLAN MOBIL - TELJES SZINKRON A LEGUJABB ASZTALI VERZIOVAL (v31-v36)
+==================================================
+Atnezve: a teljes fejlesztoi csomag (forraskod, README valtozasnaplo,
+es egy valodi, 51 beteges, 9 honapot atfogo augusztusi export).
+
+MOBILT ERINTO JAVITASOK ES UJDONSAGOK:
+
+1. FIRSTENTRYMONTH - PONTOSABB "MIKORTOL LATHATO A BETEG" SZABALY
+   Eddig csak az "Aufnahme" tipusu bejegyzes jelolte ki, mikortol
+   jelenjen meg egy beteg egy adott honapban. Az asztali v35 ezt
+   kiterjesztette: mostantol BARMILYEN kezelestipus szamit. Ezt
+   atvezettem a mobilba is - a jogosultsagi sorrend most:
+   firstEntryMonth > firstAufnahmeMonth > Start-Monat.
+   Tesztelve: egy augusztusban felvett, de csak szeptemberben elso
+   valodi kezelest kapo beteg augusztusban nem, szeptembertol
+   viszont helyesen megjelenik.
+
+2. TORLES-VEDELEM VALODI ADATTAL RENDELKEZO BETEGNEL
+   Az asztali v36 egy sulyos hibat javitott: a torles korabban mas
+   honapok valodi adatait is magaval rantotta. Attekintettem a
+   mobil sajat architekturajat: a mobil sosem nyult mas honapok
+   mentett pillanatkepehez torleskor, igy ez a konkret hiba nala
+   eleve nem allt fenn. Talaltam viszont egy rokon, valodi
+   kockazatot: ha egy archivalt beteget PONT abban a honapban
+   probaltal vegleg torolni, ahol tenyleges kezelese volt, az adatai
+   elvesztek volna. Ez mostantol le van tiltva, ugyanolyan szellemű
+   figyelmezteto uzenettel, mint az asztali verzioban - a beteg es
+   minden adata erintetlen marad, csak a valoban ures honapokban
+   torolhetsz vegleg.
+   Harompontos teszttel leellenorizve: tiltas valodi adatnal,
+   sikeres torles ures honapban, majd visszavaltva az eredeti
+   honapra a beteg es a kezelesi adata bit-pontosan sertetlen.
+
+3. DAYNOTECOLORS - A "SONSTIGES SOR" SZINEZESE MOSTANTOL NEM VESZ EL
+   Az asztali verzioban minden naphoz sajat hatterszin rendelheto a
+   jegyzet-sorhoz (10 szinbol allo paletta). Eddig ezt a mobil
+   import/export egyszeruen figyelmen kivul hagyta volna. Mostantol
+   veszteség nelkul atveszi es visszamenti, es egy visszafogott
+   vizualis jelzest is kapott: a napi Notiz gombon szines pötty
+   jelenik meg, a Notiz-doboz pedig a beallitott szinnel keretezve
+   nyilik meg.
+
+VALTOZATLANUL MEGMARADT (mar korabban szinkronban):
+   Pat.Nr., Mittagspause, Auto/Haus jelzok, KH/SCHLUSS/PAUSE/DIALYSE
+   cellajelolok, Hinweis mezo, T+Verlangerung szinkodolas, T frei,
+   Sonstiges kezelestipus, allMonths tobb-honapos export/import.
+
+DESKTOP-ONLY, MOBILRA NEM VONATKOZIK:
+   Mitarbeiter-szinpaletta finomitas (asztali tablazat sajat
+   terapeuta-szinei - a mobil mas, egyszerubb sajat szinrendszert
+   hasznal), automatikus T/E lancolat-kitoltes uj kezeles
+   valasztasakor (asztali kenyelmi funkcio, a mobil cellaszerkeszto
+   tovabbra is a "+" gombbal es kezi E-lepteto gombokkal mukodik),
+   toolbar-atszervezes es sor-kiemeles (tisztan asztali UI).
+
+Telepites: csereld le a repoban az index.html es sw.js fajlokat
+(uj verzio: bplan-mobil-v11). A telefonon/tableten nyisd meg az
+appot ketszer.
