@@ -1,0 +1,58 @@
+BEHANDLUNGSPLAN MOBIL - SZINKRONIZALVA A V49-ES ASZTALI VERZIOVAL
+==================================================
+
+UJDONSAGOK:
+
+1. HAROM UJ MUNKATARS
+   Zs.Kaposi, M.Garofano, J.S.Ruiz bekerult a terapeuta-listaba,
+   mind az uj telepiteseknel, mind a mar hasznalt appoknal
+   (automatikusan potlodik a mentett listahoz).
+
+2. LYMPHDRAINAGE (a korabbi "Sonstiges" gomb uj neve)
+   A kezelestipus-valasztoban a gomb felirata "Lymphdrainage"-ra
+   valtozott - a mogottes adatertek valtozatlan, tehat a korabban
+   igy mentett cellak (es a most feltoltott regebbi JSON-ok) is
+   hibamentesen betoltodnek.
+
+3. EGYSEGES KEK SZIN: AUFNAHME / ARZTVISITE / ENTLASSUNG
+   A harom kezelestipus mostantol azonos kek szinben jelenik meg,
+   ahogy az asztali verzioban is.
+
+4. GYORS-JELOLO GOMBOK (PhA / AbP / ErA / AbE / SozA / Vis)
+   A cellaszerkesztoben uj "Schnellmarkierung" gombsor - egy
+   koppintassal jeloli a Physioaufnahme / Abschluss Physio /
+   Ergoaufnahme / Abschluss Ergo / Sozialaufnahme / Visite
+   esemenyeket, pontosan ugyanazt a jelolest hasznalva, mint az
+   asztali verzio (a Notiz mezobe kerul). A napi kartyan es a
+   tableten a heti racsban is megjelenik a megfelelo rovidites
+   (PhA, AbP, stb.), az Aufnahme/Entlassung tovabbra is ÄA/Ent
+   rovidnevet kap.
+   "Mar hasznalva ennel a betegnel" jelzes: ha egy jelolest
+   (pl. PhA) mar hasznaltal a beteg BARMELYIK masik napjan EBBEN
+   A HONAPBAN, a gomb sargas kiemelest es pipat kap, hogy ne
+   jelold veletlenul ketszer. (Az asztali v49 ezt tobb honapra
+   visszamenoleg is figyeli - ezt a kiterjesztest a mobil egyelore
+   nem tartalmazza, csak az aktualisan nyitott honapot nezi at;
+   szolj, ha ez fontos, es kesobb potolom.)
+
+VALTOZATLANUL MEGMARADT (mar korabban szinkronban, ujratesztelve):
+   allMonths tobb-honapos export/import, firstEntryMonth-alapu
+   lathatosag, torles-vedelem valodi adatnal, dayNoteColors,
+   Pat.Nr., Mittagspause, Auto/Haus, KH/SCHLUSS/PAUSE/DIALYSE,
+   Hinweis, T+Verlangerung szinkodolas, T frei.
+
+DESKTOP-ONLY, MOBILRA NEM VONATKOZIK:
+   Master/Slave fuggetlen honapvaltas es a kozottuk mukodo
+   megosztott-mappas Auto-Save (a mobil egy-felhasznalos, sajat
+   helyi tarolot hasznal, nincs tobb egyidejű szerkeszto), az
+   automatikus T/E-lanc kitoltes es hataron-atnyulo folytonossag
+   (a mobil cellaszerkesztoje tovabbra is a "+" gombbal es kezi
+   E-lepteto gombokkal mukodik), "#" sorszam-oszlop es a csonka
+   het olvashato napjainak kulon kezelese (tisztan asztali
+   tablazat-elrendezesi kerdesek), Patientnummer mezo eltavolitasa
+   (a mobil megtartotta a mezot - harmtalan, barki hasznalhatja
+   tovabbra is, csak az asztali verzio mar nem irja/olvassa).
+
+Telepites: csereld le a repoban az index.html es sw.js fajlokat
+(uj verzio: bplan-mobil-v12). A telefonon/tableten nyisd meg az
+appot ketszer.

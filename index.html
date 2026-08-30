@@ -375,6 +375,20 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .ce-full { width: 100%; }
 /* Sonderstatus-Umschalter (KH / SCHLUSS / PAUSE / DIALYSE) */
 .ce-status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.ce-note-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.note-btn {
+  border: 1.5px solid var(--line); background: #fff; color: var(--dim);
+  border-radius: 8px; font-size: 11px; font-weight: 800;
+  padding: 8px 2px; min-height: 38px; position: relative;
+}
+.note-btn.active { background: #d9f99d; border-color: #65a30d; color: #365314; }
+.note-btn.used-before { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+.note-btn-check { margin-left: 2px; color: #b45309; font-weight: 900; }
+.marker-badge {
+  font-size: 11px; font-weight: 900; background: rgba(255,255,255,0.75);
+  border: 1px solid currentColor; border-radius: 6px; padding: 0 6px;
+}
+.wg-marker { font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.6); border-radius: 4px; padding: 0 3px; }
 .status-toggle {
   border: 1.5px solid var(--line); background: #fff; color: var(--dim);
   border-radius: 9px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.02em;
@@ -13311,9 +13325,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     { value: "Sozialdienst", label: "Sozialdienst", bg: "#99f6e4", border: "#14b8a6", text: "#134e4a" },
     { value: "Ernaehrungsberatung", label: "Ern\xE4hrungsberatung", bg: "#c89968", border: "#8b5a2b", text: "#3d2410" },
     { value: "AktivierendePflege", label: "Aktivierende Pflege", bg: "#fdba74", border: "#ea580c", text: "#431407" },
-    { value: "Entlassung", label: "Entlassung", bg: "#bbf7d0", border: "#16a34a", text: "#14532d" },
-    { value: "Arztvisite", label: "Arztvisite", bg: "#bae6fd", border: "#0ea5e9", text: "#0c4a6e" },
-    { value: "Sonstiges", label: "Sonstiges", bg: "#d9f99d", border: "#65a30d", text: "#365314" }
+    { value: "Entlassung", label: "Entlassung", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
+    { value: "Arztvisite", label: "Arztvisite", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
+    { value: "Sonstiges", label: "Lymphdrainage", bg: "#d9f99d", border: "#65a30d", text: "#365314" }
   ];
   var DIRECTIONS = ["", "N", "NO", "O", "SO", "S", "SW", "W", "NW"];
   var DIRECTION_COLOR = {
@@ -13335,6 +13349,24 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     return g1 ? { bg: "#d1fae5", text: "#065f46", border: "#34d399" } : { bg: "#dbeafe", text: "#1e3a8a", border: "#93c5fd" };
   }
   var RED_DAY_OPTIONS = [0, ...Array.from({ length: 40 }, (_, i) => i + 1)];
+  var POPUP_NOTE_BUTTONS = [
+    { abbrev: "PhA", phrase: "Physioaufnahme", trackUsage: true },
+    { abbrev: "AbP", phrase: "Abschluss Physio", trackUsage: true },
+    { abbrev: "ErA", phrase: "Ergoaufnahme", trackUsage: true },
+    { abbrev: "AbE", phrase: "Abschluss Ergo", trackUsage: true },
+    { abbrev: "SozA", phrase: "Sozialaufnahme", trackUsage: true },
+    { abbrev: "Vis", phrase: "Visite", trackUsage: false }
+  ];
+  function noteMarkerAbbrev(cell) {
+    if (!cell) return null;
+    if (cell.type === "Aufnahme") return "\xC4A";
+    if (cell.type === "Entlassung") return "Ent";
+    const noteLower = (cell.note || "").trim().toLowerCase();
+    for (var i = 0; i < POPUP_NOTE_BUTTONS.length; i++) {
+      if (noteLower === POPUP_NOTE_BUTTONS[i].phrase.toLowerCase()) return POPUP_NOTE_BUTTONS[i].abbrev;
+    }
+    return null;
+  }
   var SONSTIGES_COLOR_HEX = {
     "bg-yellow-200": "#fef08a",
     "bg-red-300": "#fca5a5",
@@ -13414,7 +13446,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   var PATIENTS_KEY = "behandlungsplan:patients";
   var ARCHIVED_IDS_KEY = "behandlungsplan:archived-ids";
   var STAFF_LIST_KEY = "behandlungsplan:staff-list";
-  var DEFAULT_STAFF = ["K.Radi", "T.Arany", "J.Abraham", "S.Jaballah", "C.Wei\xDFert", "A.Nagy", "A.Miranda", "C.Steiner", "A.Bartelt", "P.Haydn", "Praxis Krause", "D.Gallen", "A.Schubert"];
+  var DEFAULT_STAFF = ["K.Radi", "T.Arany", "J.Abraham", "S.Jaballah", "C.Wei\xDFert", "A.Nagy", "A.Miranda", "C.Steiner", "A.Bartelt", "P.Haydn", "Praxis Krause", "D.Gallen", "A.Schubert", "Zs.Kaposi", "M.Garofano", "J.S.Ruiz"];
   function typeInfo(value) {
     return TREATMENT_TYPES.find((t) => t.value === value) || TREATMENT_TYPES[0];
   }
@@ -13727,7 +13759,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         if (raw) {
           const arr = JSON.parse(raw);
           if (Array.isArray(arr) && arr.length) {
-            const toAdd = ["Praxis Krause", "D.Gallen", "A.Schubert"].filter((n) => !arr.includes(n));
+            const toAdd = ["Praxis Krause", "D.Gallen", "A.Schubert", "Zs.Kaposi", "M.Garofano", "J.S.Ruiz"].filter((n) => !arr.includes(n));
             const merged = toAdd.length ? [...arr, ...toAdd] : arr;
             setTherapeutList(merged);
             if (toAdd.length) lsSet(STAFF_LIST_KEY, JSON.stringify(merged));
@@ -14312,6 +14344,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               const effMaxT = effMaxTOf(r);
               const tNum = tNumOf(c.behandlung);
               const warn = tWarnLevel(tNum, effMaxT);
+              const markerAbbrev = noteMarkerAbbrev(c);
+              const noteConsumed = !!markerAbbrev && c.type !== "Aufnahme" && c.type !== "Entlassung";
               return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
                 "button",
                 {
@@ -14321,7 +14355,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   children: [
                     /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-badges", children: c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge" + (warn ? " warn-" + warn : ""), children: c.behandlung }) })
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-badges", children: [
+                        markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "marker-badge", children: markerAbbrev }),
+                        c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge" + (warn ? " warn-" + warn : ""), children: c.behandlung })
+                      ] })
                     ] }),
                     /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\u2013 leer \u2013" ? t.label : "" }),
@@ -14331,7 +14368,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                         c.einheiten,
                         " E"
                       ] }),
-                      c.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-note-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 12, height: 12 }) }),
+                      c.note && !noteConsumed && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-note-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 12, height: 12 }) }),
                       hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 13, height: 13 }) }),
                       hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 13, height: 13 }) })
                     ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\u2013 leer \u2013 tippen zum Eintragen" }) }),
@@ -14406,6 +14443,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   const effMaxT = effMaxTOf(r);
                   const tNum = tNumOf(c.behandlung);
                   const warn = tWarnLevel(tNum, effMaxT);
+                  const markerAbbrev = noteMarkerAbbrev(c);
                   return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                     "button",
                     {
@@ -14420,6 +14458,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                         ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-ov-plus", children: "+" })
                       ] }) : has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
                         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-top", children: [
+                          markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-marker", children: markerAbbrev }),
                           c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { className: warn ? "warn-" + warn : "", children: c.behandlung }),
                           c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-hinweis-dot", title: c.hinweis, children: "\u26A0" }),
                           hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 11, height: 11 }),
@@ -14985,6 +15024,22 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-hint", children: "Auto + Haus zusammen = Dienstauto darf mit nach Hause. Nur Auto oder keins = zur\xFCck zum Standort." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Schnellmarkierung" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-note-grid", children: POPUP_NOTE_BUTTONS.map((nb) => {
+            const noteVal = (cell.note || "").trim().toLowerCase();
+            const active = noteVal === nb.phrase.toLowerCase();
+            const usedBefore = !active && nb.trackUsage && (row.cells || []).some((c) => c && (c.note || "").toLowerCase().trim() === nb.phrase.toLowerCase());
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+              "button",
+              {
+                key: nb.abbrev,
+                title: usedBefore ? `${nb.abbrev} bei diesem Patienten in diesem Monat bereits verwendet` : void 0,
+                className: "note-btn" + (active ? " active" : usedBefore ? " used-before" : ""),
+                onClick: () => onChange({ note: active ? "" : nb.phrase }),
+                children: [nb.abbrev, usedBefore && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-btn-check", children: "\u2713" })]
+              }
+            );
+          }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label hinweis", children: "\u26A0 Wichtiger Hinweis" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-hinweis-input", value: cell.hinweis || "", placeholder: "z.B. Sturzgefahr, nur mit Begleitung", onChange: (e) => onChange({ hinweis: e.target.value }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Notiz" }),
