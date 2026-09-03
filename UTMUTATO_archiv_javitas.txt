@@ -1,0 +1,51 @@
+BEHANDLUNGSPLAN MOBIL - ARCHIVUM-FELISMERES JAVITVA
+==================================================
+
+A HIBA OKA
+Az applikacio minden JSON-betolteskor osszefesulte a friss adatot
+a telefonon mar korabban helyben tarolt beteg-mesterlistaval. Ez a
+fesules egy helyen HIBAS SORRENDBEN tortent: ha egy beteg MAR
+LETEZETT a telefon helyi tarolojaban (peldaul mert korabban egy
+regebbi, meg-nem-archivalt allapotu export volt betoltve rola),
+az alkalmazas a REGI, HELYI "archivalt" jelzest reszesitette
+elonyben a frissen betoltott JSON VALODI allapotaval szemben.
+
+Igy fordulhatott elo, hogy annak ellenere, hogy az asztali export
+augusztusban 16, szeptemberben 17 archivalt beteget tartalmazott,
+a mobil csak azokat ismerte fel archivaltkent, akik meg SOHA nem
+szerepeltek korabban a telefon helyi elozmenyeiben - a tobbi
+(regebb ota ismert) beteg tovabbra is aktivkent, ures cellakkal
+jelent meg, holott mar regen kikerult a kezelesbol.
+
+A JAVITAS
+Mostantol minden JSON-betolteskor a FRISSEN BETOLTOTT ADAT az
+iranyado a "ki van archivalva" kerdesben - pontosan ugy, ahogy az
+asztali verzio elmentette. A helyi elozmenyek csak ott szamitanak,
+ahol a friss adat nem tartalmaz informaciot.
+
+Ennek kozvetlen kovetkezmenye - PONTOSAN AZ, AMIT KERTEL: aki
+peldaul juliusban vagy augusztusban archivalasra kerult, az
+szeptemberi (es minden kesobbi) listan mar NEM jelenik meg
+aktiv betegkent, ures bejegyzesekkel - hanem helyesen az
+Archivum panelen latszik, a tenyleges archivalasi honapjaval es
+Aufnahme/Entlassung datumaival egyutt.
+
+Tesztelve a most feltoltott, 12 honapot es 17 archivalt beteget
+tartalmazo exporttal:
+- Augusztusi Archiv panel: 16 beteg (pontosan a fajl szerint)
+- Szeptemberi Archiv panel: 17 beteg (pontosan a fajl szerint)
+- Egyetlen archivalt beteg sem "szivargott at" az aktiv listara
+- A javitas ellenoriztem kifejezetten arra az esetre is, amikor a
+  telefonon mar VOLT elozmeny ezekrol a betegekrol meg-nem-
+  archivalt allapotban (ez volt a valodi hibaforras) - a friss
+  import ekkor is helyesen felulirja a regi allapotot.
+
+Telepites: csereld le a repoban az index.html es sw.js fajlokat
+(uj verzio: bplan-mobil-v14). A telefonon/tableten nyisd meg az
+appot ketszer.
+
+MEGJEGYZES: mivel a hiba a helyi tarolt adatokat erintette, erdemes
+a frissites utan egyszer ujra importalni a legfrissebb asztali
+exportot minden olyan keszuleken, ahol korabban mar hasznaltad az
+appot - igy biztosan minden archivum-allapot frissul a helyes
+ertekre.

@@ -37,6 +37,12 @@ body {
   overscroll-behavior-y: none;
 }
 button { font-family: inherit; cursor: pointer; }
+button:disabled, input:disabled, select:disabled, textarea:disabled {
+  opacity: 0.5; cursor: not-allowed; background: #f3f4f6;
+}
+.type-btn:disabled, .status-toggle:disabled, .icon-toggle:disabled, .note-btn:disabled {
+  opacity: 0.45; cursor: not-allowed;
+}
 input, select, textarea {
   font-family: inherit; font-size: 16px; color: var(--ink);
   border: 1px solid var(--line); border-radius: 8px;
@@ -68,7 +74,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 }
 .topbar-title { min-width: 0; }
 .brand { font-size: 13px; font-weight: 700; letter-spacing: 0.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brand-gold { color: var(--gold); }
+.brand-gold { color: var(--gold); cursor: pointer; user-select: none; -webkit-user-select: none; }
+.brand-gold.unlocked { color: #4ade80; }
 .month-line { display: flex; align-items: center; gap: 4px; font-size: 17px; font-weight: 800; margin-top: 1px; }
 .topbar-actions { display: flex; gap: 2px; flex-shrink: 0; }
 .icon-btn {
@@ -13748,6 +13755,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const toastTimer = (0, import_react.useRef)(null);
     const dateStripRef = (0, import_react.useRef)(null);
     const [importAllMonthsInfo, setImportAllMonthsInfo] = (0, import_react.useState)(null);
+    const [editUnlocked, setEditUnlocked] = (0, import_react.useState)(false);
+    function toggleEditLock(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      setEditUnlocked((v) => {
+        const next = !v;
+        showToast(next ? "Bearbeitung aktiviert" : "Nur-Lese-Modus aktiv");
+        return next;
+      });
+    }
     function showToast(msg) {
       setToast(msg);
       if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -13836,7 +13852,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const pMap = new Map(pAll.map((p) => [p.id, p]));
       const fixedRows = (parsed.rows || []).map((r) => {
         const cur = pMap.get(r.id);
-        const isArchived = archivedIds.has(r.id) || (cur != null ? cur.archived || false : r.archived || false);
+        const isArchived = archivedIds.has(r.id) || r.archived || false;
         return {
           id: r.id || makeId(),
           name: r.name || "",
@@ -13853,11 +13869,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           contact: r.contact || cur?.contact || "",
           patientNummer: r.patientNummer || cur?.patientNummer || "",
           archived: isArchived,
-          archivedInMonth: cur?.archivedInMonth || r.archivedInMonth || null,
-          archivedInYear: cur?.archivedInYear || r.archivedInYear || null,
-          archivedAt: cur?.archivedAt || r.archivedAt || null,
-          aufnahmedatum: cur?.aufnahmedatum || r.aufnahmedatum || null,
-          entlassungsdatum: cur?.entlassungsdatum || r.entlassungsdatum || null,
+          archivedInMonth: r.archivedInMonth || cur?.archivedInMonth || null,
+          archivedInYear: r.archivedInYear || cur?.archivedInYear || null,
+          archivedAt: r.archivedAt || cur?.archivedAt || null,
+          aufnahmedatum: r.aufnahmedatum || cur?.aufnahmedatum || null,
+          entlassungsdatum: r.entlassungsdatum || cur?.entlassungsdatum || null,
           anordnungen: r.anordnungen || cur?.anordnungen || "",
           versicherung: r.versicherung || cur?.versicherung || "",
           startMonth: r.startMonth || "",
@@ -14172,6 +14188,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             }
           }
           applyLoadedState(parsed, false);
+          setEditUnlocked(false);
           showToast(monthsWritten > 1 ? `Import erfolgreich \u2014 ${monthsWritten} Monate \xFCbernommen` : "Import erfolgreich");
         } catch (err) {
           alert("Die Datei konnte nicht gelesen werden \u2014 ist es eine g\xFCltige Behandlungsplan-JSON-Datei?");
@@ -14234,7 +14251,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "topbar-title", onClick: () => setMonthPickerOpen(true), children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "brand", children: [
               "Behandlungsplan ",
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "brand-gold", children: "MoGeRe Gold" })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "brand-gold" + (editUnlocked ? " unlocked" : ""), onClick: toggleEditLock, children: "MoGeRe Gold" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "month-line", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [
@@ -14294,7 +14311,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 "/",
                 MAX_AUFNAHME_PER_DAY
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (holidays.has(selDay.day) ? " active" : ""), onClick: () => toggleHoliday(selDay.day), children: "Feiertag" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (holidays.has(selDay.day) ? " active" : ""), disabled: !editUnlocked, onClick: () => toggleHoliday(selDay.day), children: "Feiertag" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn" + (dayNotes[selDay.day] ? " has-note" : ""), onClick: () => setDayNoteOpen((o) => !o), children: [
                 SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-color-dot", style: { background: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 14, height: 14 }),
                 " Notiz"
@@ -14312,6 +14329,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 rows: 2,
                 placeholder: `Notiz f\xFCr ${pad2(selDay.day)}.${pad2(month)}.`,
                 value: dayNotes[selDay.day] || "",
+                disabled: !editUnlocked,
                 onChange: (e) => setDayNotes((prev) => ({ ...prev, [selDay.day]: e.target.value }))
               }
             ),
@@ -14492,7 +14510,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               MAX_PATIENTS,
               " Patienten"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "add-btn", onClick: addPatient, children: [
+            editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "add-btn", onClick: addPatient, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPlus, { width: 16, height: 16 }),
               " Patient"
             ] })
@@ -14588,7 +14606,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IUsers, {}),
             " Mitarbeiterliste"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "danger", onClick: clearCurrentMonth, children: [
+          editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "danger", onClick: clearCurrentMonth, children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IEraser, {}),
             " Monat leeren"
           ] })
@@ -14617,8 +14635,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ai-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", onClick: () => restoreFromArchive(a.id), "aria-label": "Wiederherstellen", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IRestore, { width: 16, height: 16 }) }),
-            confirmDeleteArchiveId === a.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => deleteFromArchive(a.id), children: "Wirklich l\xF6schen?" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => setConfirmDeleteArchiveId(a.id), "aria-label": "L\xF6schen", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 16, height: 16 }) })
+            editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", onClick: () => restoreFromArchive(a.id), "aria-label": "Wiederherstellen", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IRestore, { width: 16, height: 16 }) }),
+            editUnlocked && (confirmDeleteArchiveId === a.id ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => deleteFromArchive(a.id), children: "Wirklich l\xF6schen?" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => setConfirmDeleteArchiveId(a.id), "aria-label": "L\xF6schen", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 16, height: 16 }) }))
           ] })
         ] }, a.id)) })
       ] }),
@@ -14628,7 +14646,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           list: therapeutList,
           onAdd: addTherapeut,
           onRemove: removeTherapeut,
-          onClose: () => setStaffOpen(false)
+          onClose: () => setStaffOpen(false),
+          editUnlocked
         }
       ),
       detailRow && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -14644,7 +14663,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             setEditor({ rowId: detailRow.id, dayIdx: di });
           },
           onArchive: () => archivePatient(detailRow.id),
-          onClose: () => setDetailId(null)
+          onClose: () => setDetailId(null),
+          editUnlocked
         }
       ),
       editor && editorRow && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -14676,7 +14696,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             setEditor({ rowId: editor.rowId, dayIdx: di });
             if (view === "day") setSelectedDayIdx(di);
           },
-          onClose: () => setEditor(null)
+          onClose: () => setEditor(null),
+          editUnlocked
         }
       )
     ] });
@@ -14692,10 +14713,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sheet-body", children })
     ] }) });
   }
-  function StaffSheet({ list, onAdd, onRemove, onClose }) {
+  function StaffSheet({ list, onAdd, onRemove, onClose, editUnlocked }) {
     const [name, setName] = (0, import_react.useState)("");
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { title: "Mitarbeiterliste", onClose, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-add", children: [
+      editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-add", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: name, placeholder: "Neuer Name, z.B. M.Muster", onChange: (e) => setName(e.target.value) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn small", onClick: () => {
           onAdd(name);
@@ -14704,13 +14725,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "staff-list", children: list.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-item", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: n }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => {
+        editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => {
           if (window.confirm(`\u201E${n}" aus der Liste entfernen?`)) onRemove(n);
         }, "aria-label": `${n} entfernen`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 14, height: 14 }) })
       ] }, n)) })
     ] });
   }
-  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onClose }) {
+  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onClose, editUnlocked }) {
     const usedT = maxTNumber(row);
     const effMaxT = effMaxTOf(row);
     const pdWarn = tWarnLevel(usedT, effMaxT);
@@ -14782,75 +14803,75 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "form-grid", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Name" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.name, onChange: (e) => onField("name", e.target.value), placeholder: "Name, Vorname" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.name, disabled: !editUnlocked, onChange: (e) => onField("name", e.target.value), placeholder: "Name, Vorname" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Pat.Nr." }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.patientNummer || "", onChange: (e) => onField("patientNummer", e.target.value), placeholder: "z.B. 2026-042" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.patientNummer || "", disabled: !editUnlocked, onChange: (e) => onField("patientNummer", e.target.value), placeholder: "z.B. 2026-042" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Roter Tag" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: o, children: tOptionLabel(o) }, o)) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, disabled: !editUnlocked, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: o, children: tOptionLabel(o) }, o)) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Tage" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genemhmigteTage, inputMode: "numeric", onChange: (e) => onField("genemhmigteTage", e.target.value), placeholder: "z.B. 22" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genemhmigteTage, inputMode: "numeric", disabled: !editUnlocked, onChange: (e) => onField("genemhmigteTage", e.target.value), placeholder: "z.B. 22" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Gen. Einheiten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genehmigteEinheiten, inputMode: "numeric", onChange: (e) => onField("genehmigteEinheiten", e.target.value), placeholder: "z.B. 30" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.genehmigteEinheiten, inputMode: "numeric", disabled: !editUnlocked, onChange: (e) => onField("genehmigteEinheiten", e.target.value), placeholder: "z.B. 30" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Verl\xE4ngerung" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "vl-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.verlaengerung, onChange: (e) => onField("verlaengerung", Number(e.target.value)), children: VERLAENGERUNG_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.verlaengerung, disabled: !editUnlocked, onChange: (e) => onField("verlaengerung", Number(e.target.value)), children: VERLAENGERUNG_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("option", { value: o, children: [
                 "+",
                 o
               ] }, o)) }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "check-inline", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "checkbox", checked: row.verlaengerungFlag, onChange: (e) => onField("verlaengerungFlag", e.target.checked) }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "checkbox", checked: row.verlaengerungFlag, disabled: !editUnlocked, onChange: (e) => onField("verlaengerungFlag", e.target.checked) }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "beantragt" })
               ] })
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "km" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.km, inputMode: "decimal", onChange: (e) => onField("km", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.km, inputMode: "decimal", disabled: !editUnlocked, onChange: (e) => onField("km", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Minuten" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.minutes, inputMode: "numeric", onChange: (e) => onField("minutes", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.minutes, inputMode: "numeric", disabled: !editUnlocked, onChange: (e) => onField("minutes", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Richtung" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.direction, onChange: (e) => onField("direction", e.target.value), children: DIRECTIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: d, children: d || "\u2013" }, d)) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.direction, disabled: !editUnlocked, onChange: (e) => onField("direction", e.target.value), children: DIRECTIONS.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: d, children: d || "\u2013" }, d)) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "M" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.m, onChange: (e) => onField("m", e.target.value), children: M_OPTIONS.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: m, children: m || "\u2013" }, m)) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.m, disabled: !editUnlocked, onChange: (e) => onField("m", e.target.value), children: M_OPTIONS.map((m) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: m, children: m || "\u2013" }, m)) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Start-Monat" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "month", value: row.startMonth || "", onChange: (e) => onField("startMonth", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "month", value: row.startMonth || "", disabled: !editUnlocked, onChange: (e) => onField("startMonth", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Adresse" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.address, onChange: (e) => onField("address", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.address, disabled: !editUnlocked, onChange: (e) => onField("address", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Kontakt" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, onChange: (e) => onField("contact", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, disabled: !editUnlocked, onChange: (e) => onField("contact", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Versicherung" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.versicherung, onChange: (e) => onField("versicherung", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.versicherung, disabled: !editUnlocked, onChange: (e) => onField("versicherung", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Anordnungen" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.anordnungen, onChange: (e) => onField("anordnungen", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.anordnungen, disabled: !editUnlocked, onChange: (e) => onField("anordnungen", e.target.value) })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
+        editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
           if (window.confirm(`\u201E${row.name || "Patient"}" wirklich archivieren?`)) onArchive();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IArchive, { width: 16, height: 16 }),
@@ -14859,7 +14880,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] })
     ] }) });
   }
-  function CellEditor({ row, cell, dayIdx, daysList, month, year, therapeutList, onAddTherapeut, clipboard, onCopy, onPaste, onClear, onChange, onFieldChange, onMoveDay, onClose }) {
+  function CellEditor({ row, cell, dayIdx, daysList, month, year, therapeutList, onAddTherapeut, clipboard, onCopy, onPaste, onClear, onChange, onFieldChange, onMoveDay, onClose, editUnlocked }) {
     const d = daysList[dayIdx];
     const parts = (cell.therapeut || "").split(" + ").map((s) => s.trim()).filter(Boolean);
     const primary = parts[0] || "";
@@ -14912,11 +14933,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 14, height: 14 }),
               " Zelle kopieren"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: !clipboard, onClick: onPaste, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: !clipboard || !editUnlocked, onClick: onPaste, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPaste, { width: 14, height: 14 }),
               " Hier einf\xFCgen"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn danger", onClick: onClear, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn danger", disabled: !editUnlocked, onClick: onClear, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IEraser, { width: 14, height: 14 }),
               " Leeren"
             ] })
@@ -14931,6 +14952,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             {
               className: "type-btn" + (cell.type === t.value ? " sel" : ""),
               style: cell.type === t.value ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+              disabled: !editUnlocked,
               onClick: () => onChange({ type: t.value }),
               children: t.label
             },
@@ -14940,14 +14962,14 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Behandlungstag" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: cell.behandlung, placeholder: "T1", onChange: (e) => onChange({ behandlung: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", title: "N\xE4chste Nummer", onClick: () => onChange({ behandlung: "T" + nextTNumber(row) }), children: "+" })
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: cell.behandlung, placeholder: "T1", disabled: !editUnlocked, onChange: (e) => onChange({ behandlung: e.target.value }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", title: "N\xE4chste Nummer", disabled: !editUnlocked, onClick: () => onChange({ behandlung: "T" + nextTNumber(row) }), children: "+" })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label teal", children: "Einheiten" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", onClick: () => {
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", disabled: !editUnlocked, onClick: () => {
                   if (einheitenNum > 0) onChange({ einheiten: String(Math.round((einheitenNum - 0.5) * 2) / 2) });
                 }, children: "\u2212" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
@@ -14957,39 +14979,40 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                     value: cell.einheiten,
                     inputMode: "decimal",
                     placeholder: "0",
+                    disabled: !editUnlocked,
                     onChange: (e) => {
                       const v = e.target.value;
                       if (v === "" || /^\d*\.?\d*$/.test(v)) onChange({ einheiten: v });
                     }
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", onClick: () => {
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", disabled: !editUnlocked, onClick: () => {
                   if (einheitenNum < 52.5) onChange({ einheiten: String(Math.round((einheitenNum + 0.5) * 2) / 2) });
                 }, children: "+" })
               ] })
             ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Uhrzeit" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.time, placeholder: "z.B. 09:30-10:40", onChange: (e) => onChange({ time: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.time, placeholder: "z.B. 09:30-10:40", disabled: !editUnlocked, onChange: (e) => onChange({ time: e.target.value }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-label", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 13, height: 13 }),
             " Mittagspause"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.mittagspause || "", placeholder: "z.B. 11:55-12:25 (leer = keine)", onChange: (e) => onChange({ mittagspause: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.mittagspause || "", placeholder: "z.B. 11:55-12:25 (leer = keine)", disabled: !editUnlocked, onChange: (e) => onChange({ mittagspause: e.target.value }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Therapeut" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: primary, onChange: (e) => setPrimary(e.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: primary, disabled: !editUnlocked, onChange: (e) => setPrimary(e.target.value), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u2013" }),
               therapeutList.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
               primary && !therapeutList.includes(primary) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: primary, children: primary })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (showSecond || second ? " active" : ""), onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (showSecond || second ? " active" : ""), disabled: !editUnlocked, onClick: () => {
               if (showSecond && second) setSecond("");
               setShowSecond((s) => !s);
             }, children: "+2." }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", onClick: () => setAddingName((a) => !a), children: "Neu" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", disabled: !editUnlocked, onClick: () => setAddingName((a) => !a), children: "Neu" })
           ] }),
-          showSecond && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-inline mt4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: second, onChange: (e) => setSecond(e.target.value), children: [
+          showSecond && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-inline mt4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: second, disabled: !editUnlocked, onChange: (e) => setSecond(e.target.value), children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u2013 zweiter Therapeut \u2013" }),
             therapeutList.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
             second && !therapeutList.includes(second) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: second, children: second })
@@ -15007,18 +15030,18 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Sonderstatus (\xFCberschreibt die Zellenfarbe)" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-status-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle kh" + (cell.kh ? " on" : ""), onClick: () => onChange({ kh: !cell.kh }), children: "KH" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle schluss" + (cell.schluss ? " on" : ""), onClick: () => onChange({ schluss: !cell.schluss }), children: "SCHLUSS" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle pause" + (cell.pause ? " on" : ""), onClick: () => onChange({ pause: !cell.pause }), children: "PAUSE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle dialyse" + (cell.dialyse ? " on" : ""), onClick: () => onChange({ dialyse: !cell.dialyse }), children: "DIALYSE" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle kh" + (cell.kh ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange({ kh: !cell.kh }), children: "KH" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle schluss" + (cell.schluss ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange({ schluss: !cell.schluss }), children: "SCHLUSS" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle pause" + (cell.pause ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange({ pause: !cell.pause }), children: "PAUSE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle dialyse" + (cell.dialyse ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange({ dialyse: !cell.dialyse }), children: "DIALYSE" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Dienstauto am Ende des Tages" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasAuto ? " on" : ""), onClick: () => toggleIcon("auto"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasAuto ? " on" : ""), disabled: !editUnlocked, onClick: () => toggleIcon("auto"), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 15, height: 15 }),
               " Auto"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasHaus ? " on" : ""), onClick: () => toggleIcon("haus"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasHaus ? " on" : ""), disabled: !editUnlocked, onClick: () => toggleIcon("haus"), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 15, height: 15 }),
               " Haus"
             ] })
@@ -15035,15 +15058,16 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 key: nb.abbrev,
                 title: usedBefore ? `${nb.abbrev} bei diesem Patienten in diesem Monat bereits verwendet` : void 0,
                 className: "note-btn" + (active ? " active" : usedBefore ? " used-before" : ""),
+                disabled: !editUnlocked,
                 onClick: () => onChange({ note: active ? "" : nb.phrase }),
                 children: [nb.abbrev, usedBefore && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-btn-check", children: "\u2713" })]
               }
             );
           }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label hinweis", children: "\u26A0 Wichtiger Hinweis" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-hinweis-input", value: cell.hinweis || "", placeholder: "z.B. Sturzgefahr, nur mit Begleitung", onChange: (e) => onChange({ hinweis: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-hinweis-input", value: cell.hinweis || "", placeholder: "z.B. Sturzgefahr, nur mit Begleitung", disabled: !editUnlocked, onChange: (e) => onChange({ hinweis: e.target.value }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Notiz" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { className: "ce-full", rows: 2, value: cell.note, onChange: (e) => onChange({ note: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { className: "ce-full", rows: 2, value: cell.note, disabled: !editUnlocked, onChange: (e) => onChange({ note: e.target.value }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn done", onClick: onClose, children: "Fertig" })
         ]
       }
