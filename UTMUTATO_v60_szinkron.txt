@@ -1,0 +1,71 @@
+BEHANDLUNGSPLAN MOBIL - SZINKRONIZALVA A V60-AS ASZTALI VERZIOVAL
+==================================================
+
+Atvizsgaltam a teljes v50-v60 valtozasnaplot. A legtobb valtozas
+(v57-v57.6) tisztan az asztali negy-tablazatos elrendezes (Table 1/
+Table 2/AUTO/Abgeschlossen) vizualis osszehangolasat celozta -
+gorgetosavok, oszlop-igazitas, sormagassag -, ezek egyike sem
+erinti a mobil appot, mert az sosem hasznalt egyetlen nagy
+tablazatot. Amit viszont ki kellett szurnom es be kellett
+epitenem:
+
+1. PATIENT-LIMIT 30-ROL 100-RA EMELVE
+   Az asztali verzio mar regota 100-at engedelyez, a mobil meg
+   30-on allt. Mostantol egyezik ("100 / 100 Patienten").
+
+2. "TOROLVE" LISTA (TOMBSTONE) - UJ VEDELEM
+   Az asztali v50-es javitasaval azonos elven: egy vegleg torolt
+   beteg mostantol SEMMILYEN korulmenyek kozott nem terhet vissza -
+   meg akkor sem, ha egy regebbi, nem-tisztitott honap-pillanatkep
+   (pl. egy masik eszkozrol erkezo, elavult JSON) tovabbra is
+   tartalmazza az adatait. Torleskor felkerul egy listara, ami
+   exportnal/importnal is szinkronizalodik. Tesztelve: egy beteg
+   torolve, majd UGYANAZ a fajl ujra betoltve - a beteg nem tert
+   vissza.
+
+3. UJ "ANORDNUNG" MEZO - 6 SZINEZHETO/FELIRATOZHATO NEGYZET
+   Az asztali v55-os ujitasa: minden betegnel 6 db egyforma meretu
+   negyzet (2x3 elrendezesben), egyenkent szinezheto (a meglevo
+   kezelesi szinekbol) es egy karakterrel felirathato. A beteg-
+   adatlapon jelenik meg, a statisztikak alatt - egy negyzetre
+   koppintva egy mini felugro ablak nyilik karakter- es
+   szinvalasztassal (ugyanaz a lista, mint a cellaszerkesztoben).
+
+4. UJ "AUTO" SZEKCIO - SZOLGALATI AUTOK NAPI BEOSZTASA
+   Az asztali v57-es nagy ujitasa: a szemelyzeti autok (rendszam
+   szerint) sajat, a betegektol fuggetlen napi beosztassal
+   rendelkeznek. A mobil Tag-nezetben a betegek listaja alatt egy
+   uj "Autos" szekcio jelenik meg, "Verwalten" gombbal (rendszam
+   hozzaadasa/eltavolitasa, max. 20 auto). Egy auto napi cellajara
+   koppintva UGYANAZ a cellaszerkeszto nyilik meg, mint egy beteg
+   cellajanal (kezelestipus, terapeuta, idopont, stb.) - a
+   rendszamok honapok kozott automatikusan megmaradnak, a napi
+   beosztas minden honapban ujrakezdodik, pontosan ugy, mint a
+   betegeknel.
+   MEGJEGYZES: az asztali verzio kulon "Table 1 / Table 2 / AUTO /
+   Abgeschlossen" negy vizualisan elkulonitett tablazatot hasznal;
+   a mobil ezt egyetlen, gorgetheto napi listaba integralja
+   (elobb a betegek, utana az Autok) - funkcionalisan egyenertekű,
+   csak egyszerubb elrendezesben, a mobil kepernyomerethez igazitva.
+   A heti racs (tablet) nezetben az Autok meg NEM jelennek meg -
+   ez egy tudatos egyszerusites ebben a korben, szolj, ha ezt is
+   szeretned.
+
+VALTOZATLANUL MEGMARADT (mar korabban szinkronban, ujratesztelve):
+   allMonths tobb-honapos export/import, firstEntryMonth-alapu
+   lathatosag, archiv-felismeres javitasa, rejtett szerkesztes-zar
+   (MoGeRe Gold felirat), Lymphdrainage, gyors-jelolo gombok,
+   KH/SCHLUSS/PAUSE/DIALYSE, Hinweis, T+Verlangerung szinkodolas.
+
+DESKTOP-ONLY, MOBILRA NEM VONATKOZIK:
+   Negy kulon tablazat vizualis elrendezese es oszlop-igazitasa
+   (v57-v57.6, tisztan asztali tablazat-technikai kerdesek),
+   Master/Slave megosztott mappas elo-szinkronizacio (a mobil
+   egyfelhasznalos, helyi tarolot hasznal), popup nyitva =
+   autosave kikapcsolasa (nincs elo hattersznikron a mobilon,
+   amitol vedeni kellene), munkatars-szin-utkozes javitasok (a
+   mobil nem hasznal sajat terapeuta-szineket a napi kartyakon).
+
+Telepites: csereld le a repoban az index.html es sw.js fajlokat
+(uj verzio: bplan-mobil-v15). A telefonon/tableten nyisd meg az
+appot ketszer.

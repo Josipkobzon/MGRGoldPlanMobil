@@ -144,6 +144,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 
 /* Tagesliste */
 .day-list { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.auto-section { padding: 4px 12px 16px; display: flex; flex-direction: column; gap: 8px; border-top: 1px dashed var(--line); margin-top: 4px; }
+.auto-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; font-weight: 800; color: var(--dim); text-transform: uppercase;
+  letter-spacing: 0.06em; padding: 10px 0 2px;
+}
+.auto-card .dc-name { display: flex; align-items: center; gap: 5px; }
 .day-card {
   text-align: left; background: var(--card);
   border: 1.5px solid var(--line); border-left-width: 5px; border-radius: 12px;
@@ -308,6 +315,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 
 /* Patient-Detail */
 .pd-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.anordnung-block { margin-bottom: 14px; }
+.anordnung-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; max-width: 180px; }
+.anordnung-cell {
+  aspect-ratio: 1; min-height: 34px; border: 1.5px solid var(--line); background: #fff;
+  border-radius: 7px; font-size: 13px; font-weight: 800; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
 .pd-cal-label { font-size: 12px; font-weight: 700; color: var(--dim); margin-bottom: 6px; }
 .pd-cal { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px; margin-bottom: 16px; }
 .pd-cal-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 4px; }
@@ -494,6 +508,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
     gap: 10px; padding: 12px 16px 16px;
   }
+  .auto-section {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 10px; padding: 12px 16px 16px; grid-auto-rows: min-content;
+  }
+  .auto-section-head { grid-column: 1 / -1; }
   .patients-list {
     display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
     gap: 10px; padding: 14px 16px 16px;
@@ -13446,13 +13465,16 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     }
   }
   var VERLAENGERUNG_OPTIONS = Array.from({ length: 21 }, (_, i) => i);
-  var MAX_PATIENTS = 30;
+  var MAX_PATIENTS = 100;
   var MAX_PHYSIO_PER_DAY = 5;
   var MAX_AUFNAHME_PER_DAY = 4;
   var STORAGE_PREFIX = "behandlungsplan";
   var PATIENTS_KEY = "behandlungsplan:patients";
   var ARCHIVED_IDS_KEY = "behandlungsplan:archived-ids";
+  var DELETED_PATIENTS_KEY = "behandlungsplan:deleted-patients";
   var STAFF_LIST_KEY = "behandlungsplan:staff-list";
+  var AUTO_MASTER_KEY = "behandlungsplan:autos";
+  var MAX_AUTO_ROWS = 20;
   var DEFAULT_STAFF = ["K.Radi", "T.Arany", "J.Abraham", "S.Jaballah", "C.Wei\xDFert", "A.Nagy", "A.Miranda", "C.Steiner", "A.Bartelt", "P.Haydn", "Praxis Krause", "D.Gallen", "A.Schubert", "Zs.Kaposi", "M.Garofano", "J.S.Ruiz"];
   function typeInfo(value) {
     return TREATMENT_TYPES.find((t) => t.value === value) || TREATMENT_TYPES[0];
@@ -13502,6 +13524,39 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   function makeId() {
     return typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : "p_" + Date.now() + "_" + Math.random().toString(36).slice(2);
   }
+  var ANORDNUNG_GRID_SIZE = 6;
+  function makeEmptyAnordnungGrid() {
+    return Array.from({ length: ANORDNUNG_GRID_SIZE }, () => ({ color: "", char: "" }));
+  }
+  function getAnordnungCells(row) {
+    const a = row && row.anordnung;
+    if (Array.isArray(a) && a.length === ANORDNUNG_GRID_SIZE) return a;
+    return makeEmptyAnordnungGrid();
+  }
+  /* AUTO-Zeile (Desktop v57): bewusst reduziertes Objekt, das aber alle Felder besitzt,
+     die der (unveraendert wiederverwendete) Tages-Zellen-Editor braucht. */
+  function newAutoRow(numDays, plate) {
+    return {
+      id: makeId(),
+      plate: plate || "",
+      redDay: 20,
+      verlaengerung: 0,
+      verlaengerungFlag: false,
+      cells: Array.from({ length: numDays }, () => emptyCell())
+    };
+  }
+  function getAutoRoster() {
+    try {
+      const raw = lsGet(AUTO_MASTER_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveAutoRoster(plates) {
+    lsSet(AUTO_MASTER_KEY, JSON.stringify(plates));
+  }
   function newPatientRow(numDays, startMonth = "") {
     return {
       id: makeId(),
@@ -13519,6 +13574,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       contact: "",
       versicherung: "",
       anordnungen: "",
+      anordnung: makeEmptyAnordnungGrid(),
       patientNummer: "",
       archived: false,
       archivedInMonth: null,
@@ -13564,6 +13620,45 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   }
   function saveArchivedIds(ids) {
     lsSet(ARCHIVED_IDS_KEY, JSON.stringify([...ids]));
+  }
+  /* Vegleges torles "sirko"-listaja (v50 asztali parral): egy egyszer torolt
+     beteg innentol sehonnan sem terhet vissza, meg akkor sem, ha egy regebbi,
+     ki nem tisztithato honap-pillanatkep tovabbra is tartalmazza az adatait. */
+  function getDeletedPatients() {
+    try {
+      const raw = lsGet(DELETED_PATIENTS_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveDeletedPatients(list) {
+    lsSet(DELETED_PATIENTS_KEY, JSON.stringify(list));
+  }
+  function markPatientDeleted(id, name) {
+    const list = getDeletedPatients();
+    if (!list.some((d) => d.id === id)) {
+      list.push({ id, name: name || "" });
+      saveDeletedPatients(list);
+    }
+  }
+  function mergeDeletedPatients(incoming) {
+    if (!Array.isArray(incoming) || incoming.length === 0) return;
+    const list = getDeletedPatients();
+    const knownIds = new Set(list.map((d) => d.id));
+    let changed = false;
+    for (const d of incoming) {
+      if (d && d.id && !knownIds.has(d.id)) {
+        list.push({ id: d.id, name: d.name || "" });
+        knownIds.add(d.id);
+        changed = true;
+      }
+    }
+    if (changed) saveDeletedPatients(list);
+  }
+  function isDeletedPatient(deletedList, id, name) {
+    return deletedList.some((d) => d.id === id || (d.name && name && d.name === name));
   }
   function nextTNumber(row) {
     let max = 0;
@@ -13706,6 +13801,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const daysList = (0, import_react.useMemo)(() => getDaysInMonth(year, month), [year, month]);
     const storageKey = `${STORAGE_PREFIX}:${year}-${pad2(month)}`;
     const [rows, setRows] = (0, import_react.useState)([]);
+    const [autoRows, setAutoRows] = (0, import_react.useState)([]);
     const [holidays, setHolidays] = (0, import_react.useState)(/* @__PURE__ */ new Set());
     const [dayNotes, setDayNotes] = (0, import_react.useState)({});
     const [dayNoteColors, setDayNoteColors] = (0, import_react.useState)({});
@@ -13747,6 +13843,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const [menuOpen, setMenuOpen] = (0, import_react.useState)(false);
     const [archiveOpen, setArchiveOpen] = (0, import_react.useState)(false);
     const [staffOpen, setStaffOpen] = (0, import_react.useState)(false);
+    const [autoManageOpen, setAutoManageOpen] = (0, import_react.useState)(false);
     const [monthPickerOpen, setMonthPickerOpen] = (0, import_react.useState)(false);
     const [dayNoteOpen, setDayNoteOpen] = (0, import_react.useState)(false);
     const [cellClipboard, setCellClipboard] = (0, import_react.useState)(null);
@@ -13801,6 +13898,24 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         return next;
       });
     }
+    function addAutoRow(plate) {
+      const p = (plate || "").trim();
+      if (!p) return;
+      if (autoRows.length >= MAX_AUTO_ROWS) { showToast(`Maximal ${MAX_AUTO_ROWS} Autos`); return; }
+      const nd = daysList.length;
+      setAutoRows((prev) => {
+        const next = [...prev, newAutoRow(nd, p)];
+        saveAutoRoster(next.map((a) => a.plate));
+        return next;
+      });
+    }
+    function removeAutoRow(id) {
+      setAutoRows((prev) => {
+        const next = prev.filter((a) => a.id !== id);
+        saveAutoRoster(next.map((a) => a.plate));
+        return next;
+      });
+    }
     (0, import_react.useEffect)(() => {
       setLoaded(false);
       try {
@@ -13814,12 +13929,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           const patients = pRaw ? JSON.parse(pRaw) : [];
           const archivedIds = getArchivedIds();
           const currentYM = `${year}-${pad2(month)}`;
-          const eligible = patients.filter((p) => isEligibleForMonth(p, currentYM));
+          const deletedPatients = getDeletedPatients();
+          const eligible = patients.filter((p) => !isDeletedPatient(deletedPatients, p.id, p.name) && isEligibleForMonth(p, currentYM));
           if (eligible.length > 0) {
             setRows(eligible.map((p) => ({ ...p, id: p.id || makeId(), archived: archivedIds.has(p.id) || p.archived || false, cells: expandCellsForSundays(p.cells, nd) })));
           } else {
             setRows([newPatientRow(nd.length)]);
           }
+          const roster = getAutoRoster();
+          setAutoRows(roster.map((plate) => newAutoRow(nd.length, plate)));
           setHolidays(/* @__PURE__ */ new Set());
           setDayNotes({});
           setDayNoteColors({});
@@ -13827,6 +13945,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         }
       } catch (e) {
         setRows([newPatientRow(daysList.length)]);
+        setAutoRows([]);
         setHolidays(/* @__PURE__ */ new Set());
         setDayNotes({});
         setDayNoteColors({});
@@ -13875,6 +13994,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           aufnahmedatum: r.aufnahmedatum || cur?.aufnahmedatum || null,
           entlassungsdatum: r.entlassungsdatum || cur?.entlassungsdatum || null,
           anordnungen: r.anordnungen || cur?.anordnungen || "",
+          anordnung: r.anordnung || cur?.anordnung || makeEmptyAnordnungGrid(),
           versicherung: r.versicherung || cur?.versicherung || "",
           startMonth: r.startMonth || "",
           firstAufnahmeMonth: (() => {
@@ -13893,6 +14013,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         /* Parität zur Desktop-Regel (v35): Patienten ohne echten Eintrag in diesem
            Monat, deren firstEntryMonth erst später beginnt, hier ausblenden. */
         const thisYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
+        if (isDeletedPatient(getDeletedPatients(), r.id, r.name)) return false;
         if (r.archived) return true;
         if (rowHasAnyEntryCell(r.cells)) return true;
         if (r.firstEntryMonth && thisYM < r.firstEntryMonth) return false;
@@ -13903,9 +14024,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const savedIds = new Set(fixedRows.map((r) => r.id));
       const savedNames = new Set(fixedRows.map((r) => r.name).filter(Boolean));
       const mergedYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
+      const deletedPatients = getDeletedPatients();
       for (const p of pAll) {
         if (savedIds.has(p.id)) continue;
         if (p.name && savedNames.has(p.name)) continue;
+        if (isDeletedPatient(deletedPatients, p.id, p.name)) continue;
         if (!isEligibleForMonth(p, mergedYM)) continue;
         const newId = p.id || makeId();
         fixedRows.push({ ...p, id: newId, archived: archivedIds.has(p.id) || p.archived || false, cells: Array.from({ length: nd.length }, () => emptyCell()) });
@@ -13913,6 +14036,19 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         if (p.name) savedNames.add(p.name);
       }
       setRows(fixedRows.length ? fixedRows : [newPatientRow(nd.length)]);
+      const savedAuto = Array.isArray(parsed.autoRows) ? parsed.autoRows.map((a) => ({
+        id: a.id || makeId(),
+        plate: a.plate || "",
+        redDay: a.redDay != null ? a.redDay : 20,
+        verlaengerung: a.verlaengerung != null ? a.verlaengerung : 0,
+        verlaengerungFlag: a.verlaengerungFlag || false,
+        cells: expandCellsForSundays(a.cells, nd)
+      })) : [];
+      const roster = getAutoRoster();
+      const savedPlates = new Set(savedAuto.map((a) => a.plate));
+      const mergedAuto = savedAuto.concat(roster.filter((p) => !savedPlates.has(p)).map((p) => newAutoRow(nd.length, p)));
+      setAutoRows(mergedAuto);
+      saveAutoRoster(mergedAuto.map((a) => a.plate));
       setHolidays(new Set(parsed.holidays || []));
       setDayNotes(parsed.dayNotes || {});
       setDayNoteColors(parsed.dayNoteColors || {});
@@ -13938,7 +14074,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       return () => {
         if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       };
-    }, [rows, colWidths, holidays, dayNotes, loaded]);
+    }, [rows, autoRows, colWidths, holidays, dayNotes, loaded]);
     function buildExportObject(overrideRows) {
       return {
         month,
@@ -13968,13 +14104,23 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           firstEntryMonth: r.firstEntryMonth || null,
           patientNummer: r.patientNummer || "",
           anordnungen: r.anordnungen || "",
+          anordnung: r.anordnung || makeEmptyAnordnungGrid(),
           versicherung: r.versicherung || "",
           cells: r.cells
+        })),
+        autoRows: (autoRows || []).map((a) => ({
+          id: a.id,
+          plate: a.plate || "",
+          redDay: a.redDay,
+          verlaengerung: a.verlaengerung,
+          verlaengerungFlag: a.verlaengerungFlag,
+          cells: a.cells
         })),
         colWidths,
         holidays: Array.from(holidays),
         dayNotes,
-        dayNoteColors
+        dayNoteColors,
+        deletedPatients: getDeletedPatients()
       };
     }
     function buildFullBackupObject() {
@@ -14014,6 +14160,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       skipNextAutosave.current = true;
       const nd = getDaysInMonth(y, m);
       setRows((prev) => prev.map((r) => ({ ...r, cells: expandCellsForSundays(r.cells, nd) })));
+      setAutoRows((prev) => prev.map((a) => ({ ...a, cells: expandCellsForSundays(a.cells, nd) })));
       setColWidths((prev) => ({ ...prev, days: Array.from({ length: nd.length }, (_, i) => prev.days[i] || 64) }));
       setMonth(m);
       setYear(y);
@@ -14036,9 +14183,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       }
       applyMonthYear(m, y);
     }
-    function updateCell(rowId, dayIdx, patch) {
+    function updateCell(rowId, dayIdx, patch, list) {
       const thisYM = `${year}-${pad2(month)}`;
-      setRows((prev) => prev.map((r) => {
+      const updater = (prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
         cells[dayIdx] = { ...cells[dayIdx] || emptyCell(), ...patch };
@@ -14052,15 +14199,17 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           firstEntryMonth = thisYM;
         }
         return { ...r, cells, firstAufnahmeMonth, firstEntryMonth };
-      }));
+      });
+      if (list === "auto") setAutoRows(updater); else setRows(updater);
     }
-    function setCellFull(rowId, dayIdx, cell) {
-      setRows((prev) => prev.map((r) => {
+    function setCellFull(rowId, dayIdx, cell, list) {
+      const updater = (prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
         cells[dayIdx] = { type: cell.type || "", behandlung: cell.behandlung || "", einheiten: cell.einheiten != null ? cell.einheiten : "", time: cell.time || "", therapeut: cell.therapeut || "", note: cell.note || "", kh: cell.kh || false, schluss: cell.schluss || false, pause: cell.pause || false, dialyse: cell.dialyse || false, hinweis: cell.hinweis || "", mittagspause: cell.mittagspause || "", icons: Array.isArray(cell.icons) ? cell.icons.slice() : [] };
         return { ...r, cells };
-      }));
+      });
+      if (list === "auto") setAutoRows(updater); else setRows(updater);
     }
     function updatePatientField(rowId, field, value) {
       setRows((prev) => prev.map((r) => r.id === rowId ? { ...r, [field]: value } : r));
@@ -14146,6 +14295,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const ids = getArchivedIds();
       ids.delete(rowId);
       saveArchivedIds(ids);
+      markPatientDeleted(rowId, target ? target.name : "");
       const newRows = rows.filter((r) => r.id !== rowId);
       setRows(newRows);
       skipNextAutosave.current = true;
@@ -14187,6 +14337,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             } catch (e2) {
             }
           }
+          if (Array.isArray(parsed.deletedPatients)) mergeDeletedPatients(parsed.deletedPatients);
           applyLoadedState(parsed, false);
           setEditUnlocked(false);
           showToast(monthsWritten > 1 ? `Import erfolgreich \u2014 ${monthsWritten} Monate \xFCbernommen` : "Import erfolgreich");
@@ -14220,7 +14371,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const activeRows = rows.filter((r) => !r.archived);
     const archiveRows = rows.filter((r) => r.archived);
     const selDay = daysList[selectedDayIdx] || daysList[0];
-    const editorRow = editor ? rows.find((r) => r.id === editor.rowId) : null;
+    const editorRow = editor ? (editor.list === "auto" ? autoRows : rows).find((r) => r.id === editor.rowId) : null;
     const editorCell = editor && editorRow ? editorRow.cells[editor.dayIdx] || emptyCell() : null;
     const detailRow = detailId ? rows.find((r) => r.id === detailId) : null;
     function dayCounts(dayIdx) {
@@ -14402,6 +14553,51 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   ]
                 },
                 r.id
+              );
+            })
+          ] }),
+          (autoRows.length > 0 || editUnlocked) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "auto-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "auto-section-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Autos" }),
+              editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", onClick: () => setAutoManageOpen(true), children: "Verwalten" })
+            ] }),
+            autoRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine Autos angelegt." }),
+            autoRows.map((a) => {
+              const c = a.cells[selectedDayIdx] || emptyCell();
+              const t = typeInfo(c.type);
+              const has = cellHasContent(c);
+              const ov = cellOverride(c);
+              if (ov) {
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card auto-card ov-" + ov.key, onClick: () => setEditor({ rowId: a.id, dayIdx: selectedDayIdx, list: "auto" }), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" }) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
+                      ov.label,
+                      ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
+                ] }, a.id);
+              }
+              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+                "button",
+                {
+                  className: "day-card auto-card" + (has ? "" : " empty"),
+                  style: has ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+                  onClick: () => setEditor({ rowId: a.id, dayIdx: selectedDayIdx, list: "auto" }),
+                  children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-top", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-name", children: [
+                      "\\u{1F697} ",
+                      a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" })
+                    ] }) }),
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\\u2013 leer \\u2013" ? t.label : "" }),
+                      c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.time }),
+                      c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.therapeut })
+                    ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\\u2013 leer \\u2013 tippen zum Eintragen" }) })
+                  ]
+                },
+                a.id
               );
             })
           ] })
@@ -14650,6 +14846,16 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           editUnlocked
         }
       ),
+      autoManageOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        AutoManageSheet,
+        {
+          list: autoRows,
+          onAdd: addAutoRow,
+          onRemove: removeAutoRow,
+          onClose: () => setAutoManageOpen(false),
+          editUnlocked
+        }
+      ),
       detailRow && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         PatientDetail,
         {
@@ -14670,7 +14876,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       editor && editorRow && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         CellEditor,
         {
-          row: editorRow,
+          row: editor.list === "auto" ? { ...editorRow, name: editorRow.plate || "Auto" } : editorRow,
           cell: editorCell,
           dayIdx: editor.dayIdx,
           daysList,
@@ -14684,17 +14890,17 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             showToast("Zelle kopiert");
           },
           onPaste: () => {
-            if (cellClipboard) setCellFull(editor.rowId, editor.dayIdx, cellClipboard);
+            if (cellClipboard) setCellFull(editor.rowId, editor.dayIdx, cellClipboard, editor.list);
           },
-          onClear: () => setCellFull(editor.rowId, editor.dayIdx, emptyCell()),
-          onChange: (patch) => updateCell(editor.rowId, editor.dayIdx, patch),
+          onClear: () => setCellFull(editor.rowId, editor.dayIdx, emptyCell(), editor.list),
+          onChange: (patch) => updateCell(editor.rowId, editor.dayIdx, patch, editor.list),
           onFieldChange: (f, v) => updatePatientField(editor.rowId, f, v),
           onMoveDay: (delta) => {
             let di = editor.dayIdx + delta;
             if (di < 0) di = 0;
             if (di > daysList.length - 1) di = daysList.length - 1;
-            setEditor({ rowId: editor.rowId, dayIdx: di });
-            if (view === "day") setSelectedDayIdx(di);
+            setEditor({ rowId: editor.rowId, dayIdx: di, list: editor.list });
+            if (view === "day" && editor.list !== "auto") setSelectedDayIdx(di);
           },
           onClose: () => setEditor(null),
           editUnlocked
@@ -14731,6 +14937,25 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] }, n)) })
     ] });
   }
+  function AutoManageSheet({ list, onAdd, onRemove, onClose, editUnlocked }) {
+    const [plate, setPlate] = (0, import_react.useState)("");
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { title: `Autos (${list.length} / ${MAX_AUTO_ROWS})`, onClose, children: [
+      editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-add", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: plate, placeholder: "Kennzeichen, z.B. M-AB 123", onChange: (e) => setPlate(e.target.value) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn small", onClick: () => {
+          onAdd(plate);
+          setPlate("");
+        }, children: "Hinzuf\\xFCgen" })
+      ] }),
+      list.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine Autos angelegt." }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "staff-list", children: list.map((a) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-item", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: a.plate || "\\u2013 ohne Kennzeichen \\u2013" }),
+        editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => {
+          if (window.confirm(`\\u201E${a.plate || "dieses Auto"}\\u201C entfernen?`)) onRemove(a.id);
+        }, "aria-label": `${a.plate} entfernen`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 14, height: 14 }) })
+      ] }, a.id)) })
+    ] });
+  }
   function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onClose, editUnlocked }) {
     const usedT = maxTNumber(row);
     const effMaxT = effMaxTOf(row);
@@ -14750,6 +14975,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       if (current.some((x) => x !== null)) result.push(current);
       return result;
     }, [daysList]);
+    const [anordnungEdit, setAnordnungEdit] = (0, import_react.useState)(null);
+    const anordnungCells = getAnordnungCells(row);
+    function setAnordnungCell(idx, patch) {
+      const next = anordnungCells.map((c, i) => i === idx ? { ...c, ...patch } : c);
+      onField("anordnung", next);
+    }
     return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { title: row.name || "Patient", onClose, tall: true, variant: "wide", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-wrap", children: [
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-left", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-stats", children: [
@@ -14767,6 +14998,40 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             row.entlassungsdatum
           ] })
         ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "anordnung-block", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-label", children: "Anordnung" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "anordnung-grid", children: anordnungCells.map((c, i) => {
+            const tc = c.color ? typeInfo(c.color) : null;
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "button",
+              {
+                className: "anordnung-cell",
+                style: tc ? { background: tc.bg, borderColor: tc.border, color: tc.text } : void 0,
+                onClick: () => setAnordnungEdit(i),
+                children: c.char || ""
+              },
+              i
+            );
+          }) })
+        ] }),
+        anordnungEdit !== null && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { title: `Anordnung ${anordnungEdit + 1}`, onClose: () => setAnordnungEdit(null), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+          !editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Nur-Lese-Modus \\u2014 zum Bearbeiten zuerst \\xFCber \\u201EMoGeRe Gold\\u201C entsperren." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Zeichen (1 Buchstabe/Zahl/Symbol)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", maxLength: 1, disabled: !editUnlocked, value: anordnungCells[anordnungEdit].char || "", onChange: (e) => setAnordnungCell(anordnungEdit, { char: e.target.value.slice(-1) }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", style: { marginTop: "14px" }, children: "Farbe" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: TREATMENT_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+            "button",
+            {
+              className: "type-btn" + (anordnungCells[anordnungEdit].color === t.value ? " sel" : ""),
+              style: anordnungCells[anordnungEdit].color === t.value ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+              disabled: !editUnlocked,
+              onClick: () => setAnordnungCell(anordnungEdit, { color: t.value }),
+              children: t.label
+            },
+            t.value || "leer"
+          )) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn done", onClick: () => setAnordnungEdit(null), children: "Fertig" })
+        ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal-label", children: [
           "Behandlungen im ",
           MONTH_NAMES_DE[month - 1],
