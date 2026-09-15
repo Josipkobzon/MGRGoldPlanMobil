@@ -1,0 +1,88 @@
+BEHANDLUNGSPLAN MOGERE GOLD — MOBIL VERZIÓ FRISSÍTÉS
+======================================================
+Csomag dátuma: 2026.09.15.
+Cache verzió: bplan-mobil-v19 (előző: v17)
+
+MI VAN A CSOMAGBAN
+-------------------
+- index.html            (a mobil app frissített forráskódja)
+- sw.js                 (service worker, verziószám megemelve -> a felhasználók
+                          böngészője automatikusan letölti az új verziót)
+- manifest.webmanifest   (változatlan tartalom, csak a teljesség kedvéért mellékelve)
+- icon-192.png
+- icon-512.png
+- icon-512-maskable.png  (mindhárom ikon háttere világoskékre cserélve, az MG logó
+                          és az arany naptár-jelvény színe és az árnyalás megmaradt)
+
+HOGYAN KELL FELÜLÍRNI A GITHUB-OS VÁLTOZATOT
+---------------------------------------------
+1. Nyisd meg a GitHub repót (ahova korábban a mobil PWA fájljait feltöltötted),
+   pl. a webes felületen vagy git klónnal.
+2. A repóban lévő mappában (ahol eddig is az index.html, sw.js,
+   manifest.webmanifest és a 3 icon-*.png fájl volt) cseréld le MIND A 6 FÁJLT
+   erre az 6 fájlra a csomagból — ugyanazokkal a fájlnevekkel, ugyanabba a
+   mappába, hogy az elérési utak (pl. "./icon-192.png") ne törjenek el.
+3. Commitold és push-old a változást (pl. "Mobil verzió frissítés: hiányosságok
+   pótlása + világoskék ikon háttér").
+4. Ha GitHub Pages-en vagy más statikus hosting-on fut az alkalmazás, várd meg
+   amíg a deploy lefut (általában 1-2 perc).
+
+FONTOS: MIÉRT KELL A CACHE_VERSION EMELÉS?
+-------------------------------------------
+A mobil app Service Worker-rel offline is működik, és a fájlokat a telefonon
+gyorsítótárazza. A sw.js-ben a CACHE_VERSION mostantól "bplan-mobil-v18"
+(korábban "v17" volt) — ez kényszeríti ki, hogy minden felhasználó böngészője/
+telefonja letöltse az új, javított verziót a régi helyett. Ha ezt a lépést
+kihagynád (pl. csak az index.html-t cserélnéd, a sw.js-t nem), a felhasználók
+egy ideig még a RÉGI, hibás verziót látnák a cache miatt.
+
+A felhasználóknak nincs semmi teendőjük: amint online vannak és megnyitják az
+appot, a Service Worker a háttérben letölti az új verziót, és a KÖVETKEZŐ
+megnyitáskor már az frissített változat fut. Ha valaki azonnal látni akarja a
+változást, elég egyszer bezárnia és újranyitnia az appot (esetleg egy
+"húzd le a frissítéshez" / normál újratöltés is elég, mivel a sw.js
+"stale-while-revalidate" stratégiát használ).
+
+MI VÁLTOZOTT EBBEN A FRISSÍTÉSBEN (röviden)
+---------------------------------------------
+1. JSON teljes-import (allMonths) javítás: import után a törzs-páciens lista és
+   a "törölt páciensek" lista most már helyesen frissül minden hónapra,
+   ugyanúgy mint az asztali verzióban.
+2. Automatikus T/E (kezelésszám/egység) sorszámozás: ha egy sorban beírod az
+   első kezelést, a következő napok T és E értékei automatikusan
+   számolódnak — pontosan úgy, mint az asztali verzióban — de kézi felülírás
+   után tiszteletben tartja a felhasználó saját értékét.
+3. Archívum előzmények: az archivált páciens nevére kattintva most megnyílik
+   egy részletes kezelési napló (dátum, T/E érték, megjegyzés) — ugyanaz a
+   funkció, mint asztalon.
+4. Biztosítás mező: szabad szöveg helyett most legördülő választó (GKV / P / S),
+   ugyanúgy mint asztalon.
+5. Páciens közvetlen törlése: ha egy páciensnek nincs egyetlen kezelése sem az
+   adott hónapban, most már archiválás nélkül, közvetlenül törölhető.
+6. "Egész hét" nézet hónaphatáron: ha egy hét két hónap közé esik, a mobil
+   heti nézet most megjeleníti (csak olvasható, színezett formában) az
+   előző/következő hónap napjait is — ugyanúgy, mint az asztali verzióban.
+7. Ikon háttérszín: mindhárom ikon (192px, 512px, maskable) sötétkék háttere
+   világoskékre cserélve, a logó és az arany jelvény színe és az árnyalás
+   (vignette) megtartva.
+8. Hiányzó kezeléstípusok pótlása: a "Neurologie", "Sporttherapie" és
+   "Physikalische Therapie" kezeléstípusok korábban teljesen hiányoztak a
+   mobil verzió típus-választójából (csak asztalon léteztek) — most már
+   mobilon is kiválaszthatók, az asztali verzióval megegyező színkódolással
+   (Neurologie: égkék, Sporttherapie: zöld, Physikalische Therapie: rózsaszín).
+   A "Therapeut" mező a kezeléstípustól függetlenül, mindig a teljes
+   dolgozói listából választható — ez mindkét verzióban már eddig is így
+   működött, ehhez nem kellett külön integráció.
+
+EGYEZTETETT, DE VÁLTOZATLANUL HAGYOTT PONT
+---------------------------------------------
+Az archívum kezelési naplója — mind asztalon, mind mobilon — csak akkor
+mutatja a kezelési adatokat, ha ABBAN a hónapban nézed meg egy páciens
+archív-bejegyzését, amelyben a páciens archiválva lett. Ez egy már meglévő,
+mindkét verzióban azonos működés (nem mobil-specifikus hiba), ezért ezt
+szándékosan nem változtattam meg, hogy a mobil verzió pontosan az asztali
+verzió viselkedését kövesse.
+
+Minden változtatás Node.js szintaxis-ellenőrzéssel és Playwright böngésző-
+teszteléssel (valódi felhasználói adatokkal, a 12 hónapos JSON mentéssel) le
+lett tesztelve.

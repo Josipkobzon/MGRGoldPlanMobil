@@ -329,9 +329,21 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   background: var(--card); border: 1px solid var(--line); border-radius: 12px;
   padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
+.ai-info { cursor: pointer; min-width: 0; flex: 1; }
 .ai-name { font-size: 14px; font-weight: 700; }
 .ai-meta { font-size: 11.5px; color: var(--dim); margin-top: 2px; }
 .ai-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.log-info { font-size: 12.5px; color: var(--dim); margin-bottom: 12px; line-height: 1.5; }
+.log-list { display: flex; flex-direction: column; gap: 8px; }
+.log-entry {
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px;
+}
+.log-entry.last { background: #fef2f2; border-color: #fecaca; }
+.log-date { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: var(--navy); }
+.log-t { font-weight: 800; }
+.log-e { color: var(--teal, #0d9488); font-weight: 700; }
+.log-meta { font-size: 12px; color: var(--ink); margin-top: 2px; }
+.log-note { font-size: 11.5px; color: var(--dim); margin-top: 3px; font-style: italic; }
 
 /* Mitarbeiter */
 .staff-add { display: flex; gap: 8px; margin-bottom: 12px; }
@@ -388,6 +400,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   background: #fff; border: 1.5px dashed #c9a15a; color: #8a6414;
   border-radius: 12px; font-size: 14px; font-weight: 700; padding: 12px; min-height: 48px;
 }
+.archive-btn.danger { margin-top: 10px; border-color: #dc2626; color: #b91c1c; }
 
 /* Zellen-Editor */
 .ce-title { display: flex; align-items: center; gap: 4px; width: 100%; }
@@ -492,6 +505,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .wg-head.today { background: var(--gold); }
 .wg-head.today .wg-wd { color: #5c4308; }
 .wg-head.today .wg-dn { color: #2d2104; }
+.wg-head.cross-month { background: #2d4054; opacity: 0.75; }
+.wg-head.cross-month .wg-wd, .wg-head.cross-month .wg-dn { color: #9fb0c2; }
 .wg-name {
   position: sticky; left: 0; z-index: 1;
   background: #f6f8fa; border: none; border-bottom: 1px solid var(--line); border-right: 1px solid var(--line);
@@ -513,6 +528,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .wg-cell-info { opacity: 0.85; line-height: 1.25; }
 .wg-cell-info.trunc { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wg-cell-info.pause { color: #8a6414; font-weight: 700; }
+.wg-cell.cross-month { background: #f4f6f8; opacity: 0.7; cursor: default; }
+.wg-cell.cross-month.empty { opacity: 0.4; }
 .kh-badge.sm { font-size: 9px; padding: 0 4px; }
 .wg-cell.ov-kh, .wg-cell.ov-kh.sunday { background: #dc2626; color: #fff; }
 .wg-cell.ov-schluss, .wg-cell.ov-schluss.sunday { background: #4f46e5; color: #fff; }
@@ -13382,6 +13399,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     { value: "AktivierendePflege", label: "Aktivierende Pflege", bg: "#fdba74", border: "#ea580c", text: "#431407" },
     { value: "Entlassung", label: "Entlassung", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
     { value: "Arztvisite", label: "Arztvisite", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
+    { value: "Neurologie", label: "Neurologie", bg: "#7dd3fc", border: "#0284c7", text: "#082f49" },
+    { value: "Sporttherapie", label: "Sporttherapie", bg: "#86efac", border: "#16a34a", text: "#052e16" },
+    { value: "PhysikalischeTherapie", label: "Physikalische Therapie", bg: "#fbcfe8", border: "#ec4899", text: "#831843" },
     { value: "Sonstiges", label: "Lymphdrainage", bg: "#d9f99d", border: "#65a30d", text: "#365314" }
   ];
   var DIRECTIONS = ["", "N", "NO", "O", "SO", "S", "SW", "W", "NW"];
@@ -13546,7 +13566,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     return days;
   }
   function emptyCell() {
-    return { type: "", behandlung: "", einheiten: "", time: "", therapeut: "", note: "", kh: false, schluss: false, pause: false, dialyse: false, hinweis: "", mittagspause: "", icons: [] };
+    return { type: "", behandlung: "", einheiten: "", time: "", therapeut: "", note: "", kh: false, schluss: false, pause: false, dialyse: false, hinweis: "", mittagspause: "", icons: [], slots: [], eAuto: void 0 };
   }
   function cellHasContent(c) {
     return !!(c && (c.type || c.behandlung || c.einheiten || c.time || c.therapeut || c.note || c.kh || c.mittagspause || c.schluss || c.pause || c.dialyse || c.hinweis || (Array.isArray(c.slots) && c.slots.length > 0)));
@@ -13897,6 +13917,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const [dayNoteOpen, setDayNoteOpen] = (0, import_react.useState)(false);
     const [cellClipboard, setCellClipboard] = (0, import_react.useState)(null);
     const [confirmDeleteArchiveId, setConfirmDeleteArchiveId] = (0, import_react.useState)(null);
+    const [archiveDetailId, setArchiveDetailId] = (0, import_react.useState)(null);
     const [toast, setToast] = (0, import_react.useState)(null);
     const toastTimer = (0, import_react.useRef)(null);
     const dateStripRef = (0, import_react.useRef)(null);
@@ -14232,12 +14253,101 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       }
       applyMonthYear(m, y);
     }
+    function parseTNumber(behandlung) {
+      const m = (behandlung || "").trim().toUpperCase().match(/^T(\d+)$/);
+      return m ? parseInt(m[1], 10) : null;
+    }
+    function recomputeSequentialTE(cells, seed) {
+      const typedIdx = [];
+      for (let i = 0; i < cells.length; i++) {
+        if (cells[i] && cells[i].type) typedIdx.push(i);
+      }
+      if (typedIdx.length === 0) return cells;
+      const newCells = cells.slice();
+      const anchorIdx = typedIdx[0];
+      const anchor = cells[anchorIdx];
+      const anchorT = parseTNumber(anchor.behandlung);
+      const anchorERaw = anchor.einheiten;
+      const anchorE = anchorERaw !== "" && anchorERaw != null && !isNaN(Number(anchorERaw)) ? Number(anchorERaw) : NaN;
+      let prevT, prevE, eStep, startK;
+      if (anchorT != null && anchorT > 0 && !isNaN(anchorE)) {
+        prevT = anchorT;
+        prevE = anchorE;
+        eStep = anchorE / anchorT;
+        startK = 1;
+      } else if (seed && seed.t != null && seed.eStep != null) {
+        prevT = seed.t;
+        prevE = seed.e;
+        eStep = seed.eStep;
+        startK = 0;
+      } else {
+        return cells;
+      }
+      for (let k = startK; k < typedIdx.length; k++) {
+        const idx = typedIdx[k];
+        const newT = prevT + 1;
+        const projectedE = Math.round((prevE + eStep) * 2) / 2;
+        const existingRaw = cells[idx].einheiten;
+        const existingE = existingRaw !== "" && existingRaw != null && !isNaN(Number(existingRaw)) ? Number(existingRaw) : NaN;
+        const isManualOverride = cells[idx].eAuto === false && !isNaN(existingE);
+        const newE = isManualOverride ? existingE : projectedE;
+        newCells[idx] = { ...newCells[idx], behandlung: `T${newT}`, einheiten: String(newE), eAuto: isManualOverride ? false : true };
+        prevT = newT;
+        prevE = newE;
+      }
+      return newCells;
+    }
+    function getCrossMonthTESeed(rowId, rowName, m, y) {
+      try {
+        let pm = m;
+        let py = y;
+        for (let back = 0; back < 24; back++) {
+          pm = pm === 1 ? 12 : pm - 1;
+          py = pm === 12 ? py - 1 : py;
+          const raw = lsGet(`${STORAGE_PREFIX}:${py}-${pad2(pm)}`);
+          if (!raw) continue;
+          let data;
+          try {
+            data = JSON.parse(raw);
+          } catch (e2) {
+            continue;
+          }
+          const pr = (data.rows || []).find((x) => x.id === rowId) || (data.rows || []).find((x) => x.name === rowName);
+          if (!pr || !pr.cells) continue;
+          const typedIdx = [];
+          for (let i = 0; i < pr.cells.length; i++) {
+            if (pr.cells[i] && pr.cells[i].type) typedIdx.push(i);
+          }
+          if (typedIdx.length === 0) continue;
+          const anchor2 = pr.cells[typedIdx[0]];
+          const anchorT = parseTNumber(anchor2.behandlung);
+          const anchorE = anchor2.einheiten !== "" && anchor2.einheiten != null && !isNaN(Number(anchor2.einheiten)) ? Number(anchor2.einheiten) : NaN;
+          if (anchorT == null || anchorT <= 0 || isNaN(anchorE)) continue;
+          const eStep = anchorE / anchorT;
+          const last = pr.cells[typedIdx[typedIdx.length - 1]];
+          const lastT = parseTNumber(last.behandlung);
+          const lastE = last.einheiten !== "" && last.einheiten != null && !isNaN(Number(last.einheiten)) ? Number(last.einheiten) : NaN;
+          if (lastT == null || isNaN(lastE)) continue;
+          return { t: lastT, e: lastE, eStep };
+        }
+        return null;
+      } catch (e) {
+        return null;
+      }
+    }
     function updateCell(rowId, dayIdx, patch, list) {
       const thisYM = `${year}-${pad2(month)}`;
+      const isFullCellPatch = Object.prototype.hasOwnProperty.call(patch, "kh");
+      const shouldAutoFillTE = !isFullCellPatch && (patch.type != null && patch.type !== "" || patch.behandlung != null || patch.einheiten != null);
       const updater = (prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
-        cells[dayIdx] = { ...cells[dayIdx] || emptyCell(), ...patch };
+        cells[dayIdx] = { ...cells[dayIdx] || emptyCell(), ...patch, ...patch.einheiten != null ? { eAuto: false } : {} };
+        let newCells = cells;
+        if (shouldAutoFillTE) {
+          const seed = getCrossMonthTESeed(r.id, r.name, month, year);
+          newCells = recomputeSequentialTE(cells, seed);
+        }
         let firstAufnahmeMonth = r.firstAufnahmeMonth || null;
         if (patch.type === "Aufnahme" && (!firstAufnahmeMonth || thisYM < firstAufnahmeMonth)) {
           firstAufnahmeMonth = thisYM;
@@ -14247,7 +14357,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         if (shouldTrackEntry && (!firstEntryMonth || thisYM < firstEntryMonth)) {
           firstEntryMonth = thisYM;
         }
-        return { ...r, cells, firstAufnahmeMonth, firstEntryMonth };
+        return { ...r, cells: newCells, firstAufnahmeMonth, firstEntryMonth };
       });
       if (list === "auto") setAutoRows(updater); else setRows(updater);
     }
@@ -14272,6 +14382,47 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const p = newPatientRow(daysList.length);
       setRows((prev) => [...prev, p]);
       setDetailId(p.id);
+    }
+    function removePatient(rowId) {
+      const targetRow = rows.find((r) => r.id === rowId);
+      if (targetRow && rowHasAnyEntryCell(targetRow.cells)) {
+        alert('Dieser Patient hat im aktuell ge\xF6ffneten Monat bereits eingetragene Behandlungen und kann daher nicht gel\xF6scht werden. Nur ein leerer Monat (ohne Eintr\xE4ge) kann gel\xF6scht werden — nutze stattdessen "Archivieren", falls der Patient nicht mehr aktiv behandelt wird.');
+        return;
+      }
+      const newRows = rows.filter((r) => r.id !== rowId);
+      setRows(newRows);
+      skipNextAutosave.current = true;
+      lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
+      markPatientDeleted(rowId, targetRow ? targetRow.name : "");
+      removePatientFromMaster(rowId);
+      try {
+        const ids = getArchivedIds();
+        if (ids.has(rowId)) {
+          ids.delete(rowId);
+          saveArchivedIds(ids);
+        }
+      } catch (e) {
+      }
+      try {
+        const localKeys = Object.keys(localStorage).filter((k) => /^behandlungsplan:\d{4}-\d{2}$/.test(k));
+        for (const k of localKeys) {
+          if (k === storageKey) continue;
+          try {
+            const raw = lsGet(k);
+            if (!raw) continue;
+            const data = JSON.parse(raw);
+            if (!Array.isArray(data.rows)) continue;
+            const target = data.rows.find((r) => r.id === rowId);
+            if (!target || rowHasAnyEntryCell(target.cells)) continue;
+            const filtered = data.rows.filter((r) => r.id !== rowId);
+            data.rows = filtered;
+            lsSet(k, JSON.stringify(data));
+          } catch (e) {
+          }
+        }
+      } catch (e) {
+      }
+      setDetailId(null);
     }
     function archivePatient(rowId) {
       const row = rows.find((r) => r.id === rowId);
@@ -14334,6 +14485,28 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       upsertPatientsIntoMaster(newRows.map(({ cells, ...rest }) => rest));
       showToast("Patient wiederhergestellt");
     }
+    function getTreatmentLog(item) {
+      const m = item.archivedInMonth || month;
+      const y = item.archivedInYear || year;
+      const nd = getDaysInMonth(y, m);
+      const entries = [];
+      (item.cells || []).forEach((c, i) => {
+        if (c && (c.type || c.behandlung || c.einheiten || c.time || c.therapeut || c.note)) {
+          const dayInfo = nd[i];
+          entries.push({
+            day: dayInfo ? dayInfo.day : null,
+            weekday: dayInfo ? dayInfo.weekday : null,
+            behandlung: c.behandlung,
+            einheiten: c.einheiten,
+            type: c.type,
+            time: c.time,
+            therapeut: c.therapeut,
+            note: c.note
+          });
+        }
+      });
+      return { entries, m, y };
+    }
     function deleteFromArchive(rowId) {
       const target = rows.find((r) => r.id === rowId);
       if (target && rowHasAnyEntryCell(target.cells)) {
@@ -14375,18 +14548,60 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         try {
           const parsed = JSON.parse(reader.result);
           let monthsWritten = 0;
+          if (Array.isArray(parsed.deletedPatients)) mergeDeletedPatients(parsed.deletedPatients);
           if (parsed.allMonths && typeof parsed.allMonths === "object") {
             try {
-              Object.keys(parsed.allMonths).forEach((k) => {
-                if (/^behandlungsplan:\d{4}-\d{2}$/.test(k)) {
-                  lsSet(k, JSON.stringify(parsed.allMonths[k]));
-                  monthsWritten++;
-                }
+              const monthKeys = Object.keys(parsed.allMonths).filter((k) => /^behandlungsplan:\d{4}-\d{2}$/.test(k));
+              monthKeys.forEach((k) => {
+                lsSet(k, JSON.stringify(parsed.allMonths[k]));
+                monthsWritten++;
               });
+              const sortedKeys = [...monthKeys].sort();
+              const firstAufnahmeById = /* @__PURE__ */ new Map();
+              const firstEntryById = /* @__PURE__ */ new Map();
+              const latestRowById = /* @__PURE__ */ new Map();
+              for (const k of sortedKeys) {
+                const monthData = parsed.allMonths[k];
+                const ym = k.replace("behandlungsplan:", "");
+                for (const r of monthData.rows || []) {
+                  if (!r.id) continue;
+                  latestRowById.set(r.id, r);
+                  if (rowHasAufnahmeCell(r.cells)) {
+                    const existing = firstAufnahmeById.get(r.id);
+                    if (!existing || ym < existing) firstAufnahmeById.set(r.id, ym);
+                  }
+                  if (rowHasAnyEntryCell(r.cells)) {
+                    const existingEntry = firstEntryById.get(r.id);
+                    if (!existingEntry || ym < existingEntry) firstEntryById.set(r.id, ym);
+                  }
+                }
+              }
+              let existingPatients = [];
+              try {
+                const rawP = lsGet(PATIENTS_KEY);
+                existingPatients = rawP ? JSON.parse(rawP) : [];
+              } catch (e3) {
+              }
+              const patientMap = new Map(existingPatients.map((p) => [p.id, p]));
+              const deletedPatientsForImport = getDeletedPatients();
+              for (const [id, row] of latestRowById) {
+                if (isDeletedPatient(deletedPatientsForImport, id, row.name)) {
+                  patientMap.delete(id);
+                  continue;
+                }
+                const { cells, ...rest } = row;
+                const prior = patientMap.get(id) || {};
+                const fam = firstAufnahmeById.get(id) || prior.firstAufnahmeMonth || null;
+                const fem = firstEntryById.get(id) || prior.firstEntryMonth || null;
+                patientMap.set(id, { ...prior, ...rest, firstAufnahmeMonth: fam, firstEntryMonth: fem });
+              }
+              for (const [id, p] of [...patientMap]) {
+                if (isDeletedPatient(deletedPatientsForImport, id, p.name)) patientMap.delete(id);
+              }
+              lsSet(PATIENTS_KEY, JSON.stringify([...patientMap.values()]));
             } catch (e2) {
             }
           }
-          if (Array.isArray(parsed.deletedPatients)) mergeDeletedPatients(parsed.deletedPatients);
           applyLoadedState(parsed, false);
           setEditUnlocked(false);
           showToast(monthsWritten > 1 ? `Import erfolgreich \u2014 ${monthsWritten} Monate \xFCbernommen` : "Import erfolgreich");
@@ -14655,6 +14870,46 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           const w = weeks[effWeekIdx] || [];
           const first = daysList[w[0]];
           const last = daysList[w[w.length - 1]];
+          const firstDow = (daysList[0].weekday + 6) % 7;
+          const lastDow = (daysList[daysList.length - 1].weekday + 6) % 7;
+          const showPrevCross = effWeekIdx === 0 && firstDow > 0;
+          const showNextCross = effWeekIdx === weeks.length - 1 && lastDow < 6;
+          let prevM = month - 1, prevY = year;
+          if (prevM < 1) {
+            prevM = 12;
+            prevY--;
+          }
+          let nextM = month + 1, nextY = year;
+          if (nextM > 12) {
+            nextM = 1;
+            nextY++;
+          }
+          const crossBeforeDays = showPrevCross ? getDaysInMonth(prevY, prevM).slice(-firstDow) : [];
+          const crossAfterDays = showNextCross ? getDaysInMonth(nextY, nextM).slice(0, 6 - lastDow) : [];
+          let prevMonthRows = [];
+          if (showPrevCross) {
+            try {
+              const raw = lsGet(`${STORAGE_PREFIX}:${prevY}-${pad2(prevM)}`);
+              if (raw) prevMonthRows = JSON.parse(raw).rows || [];
+            } catch (e) {
+            }
+          }
+          let nextMonthRows = [];
+          if (showNextCross) {
+            try {
+              const raw = lsGet(`${STORAGE_PREFIX}:${nextY}-${pad2(nextM)}`);
+              if (raw) nextMonthRows = JSON.parse(raw).rows || [];
+            } catch (e) {
+            }
+          }
+          function findCrossRow(list, r) {
+            return list.find((x) => x.id === r.id) || list.find((x) => x.name === r.name) || null;
+          }
+          const titleFirst = crossBeforeDays[0] || first;
+          const titleFirstM = crossBeforeDays.length ? prevM : month;
+          const titleLast = crossAfterDays.length ? crossAfterDays[crossAfterDays.length - 1] : last;
+          const titleLastM = crossAfterDays.length ? nextM : month;
+          const totalCols = crossBeforeDays.length + w.length + crossAfterDays.length;
           return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-wrap", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-toolbar", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: effWeekIdx === 0, onClick: () => setSelectedWeekIdx(Math.max(0, effWeekIdx - 1)), children: [
@@ -14662,13 +14917,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 " Woche"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-title", children: [
-                pad2(first.day),
+                pad2(titleFirst.day),
                 ".",
-                pad2(month),
+                pad2(titleFirstM),
                 ". \u2013 ",
-                pad2(last.day),
+                pad2(titleLast.day),
                 ".",
-                pad2(month),
+                pad2(titleLastM),
                 ".",
                 year
               ] }),
@@ -14677,8 +14932,17 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, { width: 15, height: 15 })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "week-grid-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-grid", style: { gridTemplateColumns: `minmax(130px, 180px) repeat(${w.length}, minmax(96px, 1fr))` }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "week-grid-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-grid", style: { gridTemplateColumns: `minmax(130px, 180px) repeat(${totalCols}, minmax(88px, 1fr))` }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-corner", children: "Patient" }),
+              crossBeforeDays.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-head cross-month", title: "Vormonat \u2014 nur Ansicht", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
+                  pad2(d.day),
+                  ".",
+                  pad2(prevM),
+                  "."
+                ] })
+              ] }, "pre-" + d.day)),
               w.map((di) => {
                 const d = daysList[di];
                 const cls = ["wg-head", d.isSunday ? "sunday" : "", d.isSaturday ? "saturday" : "", holidays.has(d.day) ? "holiday" : "", isCurrentMonthToday(di) ? "today" : ""].join(" ");
@@ -14692,8 +14956,29 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   ] })
                 ] }, di);
               }),
-              activeRows.map((r) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react.default.Fragment, { children: [
+              crossAfterDays.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-head cross-month", title: "Folgemonat \u2014 nur Ansicht", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
+                  pad2(d.day),
+                  ".",
+                  pad2(nextM),
+                  "."
+                ] })
+              ] }, "post-" + d.day)),
+              activeRows.map((r) => {
+                const crossPrevRow = showPrevCross ? findCrossRow(prevMonthRows, r) : null;
+                const crossNextRow = showNextCross ? findCrossRow(nextMonthRows, r) : null;
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react.default.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "wg-name", onClick: () => setDetailId(r.id), title: r.name, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }) }),
+                crossBeforeDays.map((d) => {
+                  const cc = crossPrevRow && crossPrevRow.cells ? crossPrevRow.cells[d.day - 1] : null;
+                  const has = cc && cellHasContent(cc);
+                  const t = has ? typeInfo(cc.type) : null;
+                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-cell cross-month" + (has ? "" : " empty"), style: has && t ? { background: t.bg, borderColor: t.border, color: t.text } : void 0, title: "Vormonat \u2014 zum Bearbeiten in den Vormonat wechseln", children: has && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                    cc.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: cc.behandlung }),
+                    cc.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: cc.therapeut })
+                  ] }) }, "pre-" + d.day);
+                }),
                 w.map((di) => {
                   const d = daysList[di];
                   const c = r.cells[di] || emptyCell();
@@ -14741,8 +15026,18 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                     },
                     di
                   );
+                }),
+                crossAfterDays.map((d) => {
+                  const cc = crossNextRow && crossNextRow.cells ? crossNextRow.cells[d.day - 1] : null;
+                  const has = cc && cellHasContent(cc);
+                  const t = has ? typeInfo(cc.type) : null;
+                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-cell cross-month" + (has ? "" : " empty"), style: has && t ? { background: t.bg, borderColor: t.border, color: t.text } : void 0, title: "Folgemonat — zum Bearbeiten in den Folgemonat wechseln", children: has && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+                    cc.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: cc.behandlung }),
+                    cc.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: cc.therapeut })
+                  ] }) }, "post-" + d.day);
                 })
-              ] }, r.id))
+              ] }, r.id);
+              })
             ] }) }),
             activeRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Keine aktiven Patienten." })
           ] });
@@ -14871,7 +15166,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       }, title: `Archiv (${archiveRows.length})`, children: [
         archiveRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine archivierten Patienten." }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "archive-list", children: archiveRows.map((a) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "archive-item", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ai-info", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ai-info", onClick: () => setArchiveDetailId(a.id), role: "button", tabIndex: 0, children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ai-name", children: a.name || "Ohne Name" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ai-meta", children: [
               a.archivedInMonth ? `${MONTH_NAMES_DE[(a.archivedInMonth || 1) - 1]} ${a.archivedInYear || ""}` : "",
@@ -14885,6 +15180,37 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           ] })
         ] }, a.id)) })
       ] }),
+      archiveDetailId && (() => {
+        const item = archiveRows.find((a) => a.id === archiveDetailId);
+        if (!item) return null;
+        const logResult = getTreatmentLog(item);
+        const log = logResult.entries;
+        const WD_SHORT = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { onClose: () => setArchiveDetailId(null), title: item.name || "Ohne Name", children: [
+          (item.address || item.contact) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-info", children: [
+            item.address && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: item.address }),
+            item.contact && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: item.contact })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-label", children: "Behandlungsverlauf" }),
+          log.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Keine Eintr\xE4ge in diesem Monat erfasst." }),
+          log.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "log-list", children: log.map((e, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-entry" + (e.type === "Entlassung" ? " last" : ""), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-date", children: [
+              e.day != null ? `${pad2(e.day)}.${pad2(logResult.m)}.${logResult.y} ${WD_SHORT[e.weekday]}` : "–",
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "log-t", children: e.behandlung || "–" }),
+              e.einheiten != null && e.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "log-e", children: [
+                "E ",
+                e.einheiten
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-meta", children: [
+              e.type,
+              e.time ? ` \xB7 ${e.time}` : "",
+              e.therapeut ? ` \xB7 ${e.therapeut}` : ""
+            ] }),
+            e.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "log-note", children: e.note })
+          ] }, i)) })
+        ] });
+      })(),
       staffOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
         StaffSheet,
         {
@@ -14918,6 +15244,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             setEditor({ rowId: detailRow.id, dayIdx: di });
           },
           onArchive: () => archivePatient(detailRow.id),
+          onRemove: () => removePatient(detailRow.id),
           onClose: () => setDetailId(null),
           editUnlocked
         }
@@ -15006,7 +15333,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] }, a.id)) })
     ] });
   }
-  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onClose, editUnlocked }) {
+  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onRemove, onClose, editUnlocked }) {
     const usedT = maxTNumber(row);
     const effMaxT = effMaxTOf(row);
     const pdWarn = tWarnLevel(usedT, effMaxT);
@@ -15179,7 +15506,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Versicherung" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.versicherung, disabled: !editUnlocked, onChange: (e) => onField("versicherung", e.target.value) })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: row.versicherung || "", disabled: !editUnlocked, title: "Versicherungsart: GKV = gesetzlich, P = privat, S = Selbstzahler", onChange: (e) => onField("versicherung", e.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "–" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "GKV", children: "GKV — gesetzlich" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "P", children: "P — privat" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "S", children: "S — Selbstzahler" })
+            ] })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Anordnungen" }),
@@ -15191,6 +15523,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IArchive, { width: 16, height: 16 }),
           " Patient archivieren"
+        ] }),
+        editUnlocked && !rowHasAnyEntryCell(row.cells) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn danger", onClick: () => {
+          if (window.confirm(`\u201E${row.name || "Patient"}" (leerer Monat) endg\xFCltig l\xF6schen? Dieser Patient hat noch keine Behandlung eingetragen \u2014 zum L\xF6schen von Patienten mit Verlauf zuerst archivieren.`)) onRemove();
+        }, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 16, height: 16 }),
+          " Patient l\xF6schen (leerer Monat)"
         ] })
       ] })
     ] }) });
