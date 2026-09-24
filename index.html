@@ -13399,6 +13399,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     { value: "AktivierendePflege", label: "Aktivierende Pflege", bg: "#fdba74", border: "#ea580c", text: "#431407" },
     { value: "Entlassung", label: "Entlassung", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
     { value: "Arztvisite", label: "Arztvisite", bg: "#93c5fd", border: "#2563eb", text: "#172554" },
+    { value: "AktivierendeTherapie", label: "Aktivierende Therapie", bg: "#6d28d9", border: "#4c1d95", text: "#ffffff" },
     { value: "Neurologie", label: "Neurologie", bg: "#7dd3fc", border: "#0284c7", text: "#082f49" },
     { value: "Sporttherapie", label: "Sporttherapie", bg: "#86efac", border: "#16a34a", text: "#052e16" },
     { value: "PhysikalischeTherapie", label: "Physikalische Therapie", bg: "#fbcfe8", border: "#ec4899", text: "#831843" },
@@ -13425,22 +13426,56 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   }
   var RED_DAY_OPTIONS = [0, ...Array.from({ length: 40 }, (_, i) => i + 1)];
   var POPUP_NOTE_BUTTONS = [
+    { abbrev: "\xC4A", phrase: "Visite", trackUsage: true },
     { abbrev: "PhA", phrase: "Physioaufnahme", trackUsage: true },
     { abbrev: "AbP", phrase: "Abschluss Physio", trackUsage: true },
     { abbrev: "ErA", phrase: "Ergoaufnahme", trackUsage: true },
     { abbrev: "AbE", phrase: "Abschluss Ergo", trackUsage: true },
-    { abbrev: "SozA", phrase: "Sozialaufnahme", trackUsage: true },
-    { abbrev: "Vis", phrase: "Visite", trackUsage: false }
+    { abbrev: "SozA", phrase: "Sozialaufnahme", trackUsage: true }
   ];
   function noteMarkerAbbrev(cell) {
     if (!cell) return null;
     if (cell.type === "Aufnahme") return "\xC4A";
     if (cell.type === "Entlassung") return "Ent";
     const noteLower = (cell.note || "").trim().toLowerCase();
-    for (var i = 0; i < POPUP_NOTE_BUTTONS.length; i++) {
-      if (noteLower === POPUP_NOTE_BUTTONS[i].phrase.toLowerCase()) return POPUP_NOTE_BUTTONS[i].abbrev;
-    }
+    if (!noteLower) return null;
+    if (noteLower.includes("physioaufnahme")) return "PhA";
+    if (noteLower.includes("ergoaufnahme")) return "ErA";
+    if (noteLower.includes("sozialaufnahme")) return "SozA";
+    if (noteLower.includes("abschluss physio")) return "AbP";
+    if (noteLower.includes("abschluss ergo")) return "AbE";
+    if (noteLower.includes("visite")) return "\xC4A";
     return null;
+  }
+  function getCrossMonthNoteMarkers(rowId, rowName, m, y) {
+    const found = /* @__PURE__ */ new Set();
+    try {
+      let pm = m;
+      let py = y;
+      for (let back = 0; back < 36; back++) {
+        pm = pm === 1 ? 12 : pm - 1;
+        py = pm === 12 ? py - 1 : py;
+        const raw = lsGet(`${STORAGE_PREFIX}:${py}-${pad2(pm)}`);
+        if (!raw) continue;
+        let data;
+        try {
+          data = JSON.parse(raw);
+        } catch (e2) {
+          continue;
+        }
+        const pr = (data.rows || []).find((x) => x.id === rowId) || (data.rows || []).find((x) => x.name === rowName);
+        if (!pr || !pr.cells) continue;
+        for (const c of pr.cells) {
+          if (!c || !c.note) continue;
+          const noteLower = c.note.toLowerCase();
+          for (const nb of POPUP_NOTE_BUTTONS) {
+            if (nb.trackUsage && noteLower.includes(nb.phrase.toLowerCase())) found.add(nb.abbrev);
+          }
+        }
+      }
+    } catch (e) {
+    }
+    return found;
   }
   var SONSTIGES_COLOR_HEX = {
     "bg-yellow-200": "#fef08a",
@@ -14269,8 +14304,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const anchorT = parseTNumber(anchor.behandlung);
       const anchorERaw = anchor.einheiten;
       const anchorE = anchorERaw !== "" && anchorERaw != null && !isNaN(Number(anchorERaw)) ? Number(anchorERaw) : NaN;
+      const anchorIsValid = anchorT != null && anchorT > 0 && !isNaN(anchorE);
+      const anchorIsManualOverride = anchorIsValid && anchor.eAuto === false;
       let prevT, prevE, eStep, startK;
-      if (anchorT != null && anchorT > 0 && !isNaN(anchorE)) {
+      if (anchorIsManualOverride) {
         prevT = anchorT;
         prevE = anchorE;
         eStep = anchorE / anchorT;
@@ -14279,6 +14316,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         prevT = seed.t;
         prevE = seed.e;
         eStep = seed.eStep;
+        startK = 0;
+      } else if (anchorIsValid) {
+        prevT = 0;
+        prevE = 0;
+        eStep = anchorE / anchorT;
         startK = 0;
       } else {
         return cells;
@@ -15554,6 +15596,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const icons = Array.isArray(cell.icons) ? cell.icons : [];
     const hasAuto = icons.includes("auto");
     const hasHaus = icons.includes("haus");
+    const crossMonthNoteMarkers = (0, import_react.useMemo)(
+      () => getCrossMonthNoteMarkers(row.id, row.name, month, year),
+      [row.id, row.name, month, year]
+    );
     function toggleIcon(name) {
       const next = icons.includes(name) ? icons.filter((i) => i !== name) : [...icons, name];
       onChange({ icons: next });
@@ -15751,12 +15797,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-note-grid", children: POPUP_NOTE_BUTTONS.map((nb) => {
             const noteVal = (cell.note || "").trim().toLowerCase();
             const active = noteVal === nb.phrase.toLowerCase();
-            const usedBefore = !active && nb.trackUsage && (row.cells || []).some((c) => c && (c.note || "").toLowerCase().trim() === nb.phrase.toLowerCase());
+            const usedBefore = !active && nb.trackUsage && ((row.cells || []).some((c) => c && (c.note || "").toLowerCase().includes(nb.phrase.toLowerCase())) || crossMonthNoteMarkers.has(nb.abbrev));
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
               "button",
               {
                 key: nb.abbrev,
-                title: usedBefore ? `${nb.abbrev} bei diesem Patienten in diesem Monat bereits verwendet` : void 0,
+                title: usedBefore ? `${nb.abbrev} bei diesem Patienten bereits verwendet` : void 0,
                 className: "note-btn" + (active ? " active" : usedBefore ? " used-before" : ""),
                 disabled: !editUnlocked,
                 onClick: () => onChange({ note: active ? "" : nb.phrase }),
