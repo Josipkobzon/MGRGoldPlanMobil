@@ -216,7 +216,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 /* KH-Übersteuerung */
 /* Zell-Übersteuerungen: KH (rot), SCHLUSS (indigo), PAUSE (warmgrau), DIALYSE (cyan) */
 .day-card.ov-kh { background: #dc2626; border-color: #991b1b; border-left-color: #7f1d1d; color: #fff; }
-.day-card.ov-schluss { background: #4f46e5; border-color: #3730a3; border-left-color: #312e81; color: #fff; }
+.day-card.ov-schluss { background: #5b0a1f; border-color: #3f0715; border-left-color: #2a040e; color: #fff; }
 .day-card.ov-pause { background: #78716c; border-color: #57534e; border-left-color: #44403c; color: #fff; }
 .day-card.ov-dialyse { background: #0e7490; border-color: #155e75; border-left-color: #164e63; color: #fff; }
 .day-card[class*="ov-"] .dc-name em { color: rgba(255,255,255,0.75); }
@@ -377,7 +377,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .pd-cell.sunday { background: #edeff2; color: #9aa4af; }
 .pd-cell.holiday { border-color: #ef4444; }
 .pd-cell.ov-kh, .pd-cell.ov-kh.sunday { background: #dc2626; border-color: #991b1b; color: #fff; }
-.pd-cell.ov-schluss, .pd-cell.ov-schluss.sunday { background: #4f46e5; border-color: #3730a3; color: #fff; }
+.pd-cell.ov-schluss, .pd-cell.ov-schluss.sunday { background: #5b0a1f; border-color: #3f0715; color: #fff; }
 .pd-cell.ov-pause, .pd-cell.ov-pause.sunday { background: #78716c; border-color: #57534e; color: #fff; }
 .pd-cell.ov-dialyse, .pd-cell.ov-dialyse.sunday { background: #0e7490; border-color: #155e75; color: #fff; }
 .pd-cell[class*="ov-"] .pd-cell-day { color: rgba(255,255,255,0.75); }
@@ -413,11 +413,12 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .ce-label { display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--dim); margin: 12px 0 5px; }
 .ce-label.teal { color: var(--teal); }
 .ce-hint { font-size: 11px; color: var(--dim); margin-top: 5px; line-height: 1.4; }
-.type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.type-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 6px; }
+.type-grid .type-btn { overflow-wrap: break-word; hyphens: manual; }
 .type-btn {
   border: 1.5px solid var(--line); background: #fff; color: var(--ink);
-  border-radius: 9px; font-size: 12.5px; font-weight: 600; text-align: left;
-  padding: 9px 10px; min-height: 40px;
+  border-radius: 9px; font-size: 12px; font-weight: 600; text-align: center; line-height: 1.2;
+  padding: 8px 4px; min-height: 40px;
 }
 .type-btn.sel { font-weight: 800; }
 .ce-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2px; }
@@ -438,7 +439,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .ce-full { width: 100%; }
 /* Sonderstatus-Umschalter (KH / SCHLUSS / PAUSE / DIALYSE) */
 .ce-status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.ce-note-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.ce-note-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; margin-bottom: 6px; }
 .note-btn {
   border: 1.5px solid var(--line); background: #fff; color: var(--dim);
   border-radius: 8px; font-size: 11px; font-weight: 800;
@@ -458,7 +459,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   padding: 10px 4px; min-height: 42px;
 }
 .status-toggle.kh.on { background: #dc2626; border-color: #991b1b; color: #fff; }
-.status-toggle.schluss.on { background: #4f46e5; border-color: #3730a3; color: #fff; }
+.status-toggle.schluss { color: #5b0a1f; border-color: #d9a3b1; }
+.status-toggle.schluss.on { background: #5b0a1f; border-color: #5b0a1f; color: #fff; }
+.status-toggle.kh { color: #dc2626; border-color: #fca5a5; }
+.status-toggle.dialyse { color: #0e7490; border-color: #67e8f9; }
+.status-toggle.pause { color: #57534e; border-color: #d6d3d1; }
 .status-toggle.pause.on { background: #78716c; border-color: #57534e; color: #fff; }
 .status-toggle.dialyse.on { background: #0e7490; border-color: #155e75; color: #fff; }
 
@@ -528,11 +533,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .wg-cell-info { opacity: 0.85; line-height: 1.25; }
 .wg-cell-info.trunc { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wg-cell-info.pause { color: #8a6414; font-weight: 700; }
-.wg-cell.cross-month { background: #f4f6f8; opacity: 0.7; cursor: default; }
-.wg-cell.cross-month.empty { opacity: 0.4; }
+.wg-cell.cross-month { box-shadow: inset 0 0 0 1px #cbd5e1; }
+.wg-cell.cross-month.empty { background: #f4f6f8; }
 .kh-badge.sm { font-size: 9px; padding: 0 4px; }
 .wg-cell.ov-kh, .wg-cell.ov-kh.sunday { background: #dc2626; color: #fff; }
-.wg-cell.ov-schluss, .wg-cell.ov-schluss.sunday { background: #4f46e5; color: #fff; }
+.wg-cell.ov-schluss, .wg-cell.ov-schluss.sunday { background: #5b0a1f; color: #fff; }
 .wg-cell.ov-pause, .wg-cell.ov-pause.sunday { background: #78716c; color: #fff; }
 .wg-cell.ov-dialyse, .wg-cell.ov-dialyse.sunday { background: #0e7490; color: #fff; }
 .wg-ov { margin: 0 auto; display: inline-flex; align-items: center; gap: 2px; color: #fff; font-size: 11.5px; font-weight: 900; letter-spacing: 0.03em; }
@@ -622,6 +627,60 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
 .pd-cell-t.warn-final { color: #dc2626; font-weight: 900; }
 .pc-stat.warn-pre { background: #fef9c3; color: #854d0e; border-color: #fde047; }
 .pc-stat.warn-final { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; font-weight: 900; }
+
+/* ---- Angleichung an Desktop v57.60 (Mobil v23) ---- */
+.th-badge { display: inline-block; max-width: 100%; font-size: 11.5px; font-weight: 700; border: 1px solid; border-radius: 5px; padding: 0 5px; line-height: 1.45; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.th-badge.small { font-size: 10px; padding: 0 3px; border-radius: 4px; }
+.dc-chip { display: inline-block; font-size: 11.5px; font-weight: 600; color: #374151; background: #fff; border: 1px solid #d1d5db; border-radius: 5px; padding: 0 5px; line-height: 1.45; }
+.dc-chip.e { color: #115e59; font-weight: 800; }
+.dc-chip.note { font-style: italic; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dc-chip.warn-pre { background: #fed7aa; border-color: #fb923c; color: #9a3412; }
+.dc-chip.warn-final { color: #dc2626; font-weight: 900; border-color: #dc2626; }
+.wg-chip { display: inline-block; max-width: 100%; font-size: 10px; font-weight: 600; color: #374151; background: #fff; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 3px; line-height: 1.35; }
+.wg-chip.e { color: #115e59; font-weight: 800; }
+.wg-chip.mp { color: #000; font-weight: 800; border-color: #9ca3af; }
+.wg-chip.warn-pre { background: #fed7aa; border-color: #fb923c; color: #9a3412; }
+.wg-chip.warn-final { color: #dc2626; font-weight: 900; border-color: #dc2626; }
+.trunc { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wg-cell .trunc { max-width: 100%; }
+.day-chip .tc, .wg-tc { font-size: 9.5px; font-weight: 800; line-height: 1; color: #0f172a; background: #fff; border-radius: 3px; padding: 1px 3px; margin-top: 1px; }
+.day-chip .tc.zero, .wg-tc.zero { color: #9ca3af; }
+.day-chip.sel .tc { color: var(--navy); }
+.wg-head .wg-tc { align-self: center; }
+.note-box-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.day-note-box + .day-note-box { margin-top: 8px; }
+.search-box { position: relative; grid-column: 1 / -1; }
+.search-box input { width: 100%; font-size: 15px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 10px; background: #fff; }
+.search-results { margin-top: 6px; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; box-shadow: 0 6px 18px rgba(16,26,38,0.12); }
+.search-empty { padding: 10px 12px; color: var(--dim); font-size: 13px; }
+.search-hit { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; border: none; border-bottom: 1px solid #eef1f4; background: #fff; padding: 9px 12px; }
+.search-hit:last-child { border-bottom: none; }
+.sh-name { font-weight: 700; font-size: 14px; color: var(--ink); }
+.sh-period { grid-column: 1; font-size: 12px; color: var(--dim); }
+.sh-status { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; }
+.sh-status.aktiv { background: #dcfce7; color: #166534; }
+.sh-status.abg { background: #e5e7eb; color: #374151; }
+.sh-status.other { background: #fef3c7; color: #92400e; }
+.abg-section .auto-section-head span { color: #475569; }
+.day-card.abg { opacity: 0.92; }
+.wg-section { background: #e5e7eb; color: #334155; font-size: 12px; font-weight: 800; padding: 5px 12px; position: sticky; left: 0; }
+.wg-name.abg { color: #475569; background: #eef0f3; }
+.wg-name.phantom { background: #fef3c7; flex-direction: column; align-items: flex-start; justify-content: center; cursor: default; }
+.phantom-tag { font-size: 9.5px; font-weight: 800; color: #92400e; }
+.wg-cell.phantom-local { background: #f8fafc; opacity: 0.5; }
+.ce-cross-banner { background: #fef3c7; border: 1px solid #f59e0b; color: #78350f; border-radius: 9px; padding: 8px 10px; font-size: 12.5px; font-weight: 700; margin-bottom: 10px; }
+.ce-counts { font-size: 11.5px; color: var(--dim); margin-top: 6px; }
+.icon-btn-spacer { width: 40px; height: 40px; flex-shrink: 0; }
+.ce-mp-input { border-color: #fdba74 !important; background: #fff7ed !important; }
+.icon-toggle.haus.on { background: #dcfce7; border-color: #4ade80; color: #166534; }
+.pc-stat.vers-GKV { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+.pc-stat.vers-P { background: #f3e8ff; color: #7e22ce; border-color: #d8b4fe; }
+.pc-stat.vers-S { background: #e5e7eb; color: #374151; border-color: #d1d5db; }
+a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
+/* T-/Kuerzel-Badges immer dunkel auf hellem Grund (lesbar auch auf dunklem Akt.-Therapie-Lila) */
+.t-badge, .marker-badge { color: #1f2937; border-color: rgba(0,0,0,0.25); background: rgba(255,255,255,0.85); }
+.wg-cell-top b { background: rgba(255,255,255,0.85); color: #1f2937; border-radius: 4px; padding: 0 3px; }
+.wg-marker { color: #1d4ed8; background: rgba(255,255,255,0.85); }
 
   </style>
 </head>
@@ -13425,6 +13484,109 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     return g1 ? { bg: "#d1fae5", text: "#065f46", border: "#34d399" } : { bg: "#dbeafe", text: "#1e3a8a", border: "#93c5fd" };
   }
   var RED_DAY_OPTIONS = [0, ...Array.from({ length: 40 }, (_, i) => i + 1)];
+  /* Desktop v57.27: Reihenfolge der Behandlungstyp-Knoepfe im Zell-Popup ("Aerztliche Aufnahme"
+     ist seit v57.22 kein eigener Knopf mehr, bleibt aber fuer alte Zellen in TREATMENT_TYPES). */
+  var POPUP_TYPE_ORDER = ["Arztvisite", "Entlassung", "AktivierendeTherapie", "Physiotherapie", "Sporttherapie", "PhysikalischeTherapie", "AktivierendePflege", "Ergotherapie", "Sozialdienst", "Sonstiges", "Psychologie", "Neurologie", "Ernaehrungsberatung", "Logopaedie", ""];
+  var POPUP_LABEL_OVERRIDES = { AktivierendePflege: "A.Pflege", PhysikalischeTherapie: "Physik. Therapie", AktivierendeTherapie: "Akt. Therapie", Ernaehrungsberatung: "Ern\xE4hrungs\xADberatung" };
+  /* Desktop THERAPEUT_COLORS (Tailwind-Klassen als Hex) — Badge-Farben der Mitarbeiter in den Tageszellen */
+  var THERAPEUT_NO_COLOR = /* @__PURE__ */ new Set(["A.Miranda", "T.Arany", "S.Jaballah"]);
+  var THERAPEUT_COLORS = {
+    "C.Wei\xDFert": { bg: "#2563eb", text: "#fff" },
+    "K.Radi": { bg: "#db2777", text: "#fff" },
+    "A.Schubert": { bg: "#ea580c", text: "#fff" },
+    "D.Gallon": { bg: "#059669", text: "#fff" },
+    "S.Dachs": { bg: "#e11d48", text: "#fff" },
+    "A.Nagy": { bg: "#9333ea", text: "#fff" },
+    "Praxis Krause": { bg: "#57534e", text: "#fff" },
+    "J.Abraham": { bg: "#0891b2", text: "#fff" },
+    "J.Maiostre": { bg: "#eab308", text: "#000" },
+    "C.Steiner": { bg: "#c026d3", text: "#fff" },
+    "A.Bartelt": { bg: "#0369a1", text: "#fff" },
+    "P.Haydn": { bg: "#4f46e5", text: "#fff" },
+    "M.Garofano": { bg: "#7f1d1d", text: "#fff" },
+    "J.S.Ruiz": { bg: "#475569", text: "#fff" },
+    "V.Ricardo": { bg: "#dc2626", text: "#fff" },
+    "C.Riedel": { bg: "#67e8f9", text: "#000" }
+  };
+  var THERAPEUT_FALLBACK_PALETTE = ["#2563eb", "#ea580c", "#059669", "#e11d48", "#9333ea", "#57534e", "#0891b2", "#db2777", "#c026d3", "#0369a1", "#4f46e5", "#7c3aed", "#4d7c0f", "#475569"];
+  function therapeutBadgeStyle(therapeutStr) {
+    const plain = { background: "#fff", color: "#111827", borderColor: "#d1d5db" };
+    if (!therapeutStr) return plain;
+    const primary = therapeutStr.split(" + ")[0].trim();
+    if (!primary || THERAPEUT_NO_COLOR.has(primary)) return plain;
+    let c = THERAPEUT_COLORS[primary];
+    if (!c) {
+      let hash = 0;
+      for (let i = 0; i < primary.length; i++) hash = hash * 31 + primary.charCodeAt(i) >>> 0;
+      c = { bg: THERAPEUT_FALLBACK_PALETTE[hash % THERAPEUT_FALLBACK_PALETTE.length], text: "#fff" };
+    }
+    return { background: c.bg, color: c.text, borderColor: "rgba(0,0,0,0.1)" };
+  }
+  /* Desktop v57.50: Aerztliche Aufnahme = alter Typ "Aufnahme" ODER "Arztvisite" + AeA-Kurzknopf ("Visite") */
+  function isAerztlicheAufnahmeCell(c) {
+    if (!c) return false;
+    if (c.type === "Aufnahme") return true;
+    return c.type === "Arztvisite" && (c.note || "").toLowerCase().includes("visite");
+  }
+  /* Desktop v57: archivierter Patient erscheint in "Abgeschlossen", solange er in diesem Monat Behandlungen hat */
+  function rowHasTreatmentThisMonth(cells) {
+    return Array.isArray(cells) && cells.some((c) => c && (c.type || c.behandlung || c.time || c.therapeut));
+  }
+  /* Desktop v57.60: Archiv-Liste dynamisch pro Monat */
+  function archiveRowsForMonth(rowsList, m, y, keepId) {
+    const relevant = (r) => r.archived && (rowHasTreatmentThisMonth(r.cells) || Number(r.archivedInMonth) === m && Number(r.archivedInYear) === y || keepId && r.id === keepId);
+    const score = (r) => (keepId && r.id === keepId ? 4 : 0) + (rowHasTreatmentThisMonth(r.cells) ? 2 : 0) + (Number(r.archivedInMonth) === m && Number(r.archivedInYear) === y ? 1 : 0);
+    const out = [];
+    const idxByName = /* @__PURE__ */ new Map();
+    (rowsList || []).forEach((r) => {
+      if (!relevant(r)) return;
+      const key = (r.name || "").trim().toLowerCase() || r.id;
+      if (!idxByName.has(key)) {
+        idxByName.set(key, out.length);
+        out.push(r);
+      } else {
+        const i = idxByName.get(key);
+        if (score(r) > score(out[i])) out[i] = r;
+      }
+    });
+    return out;
+  }
+  function normalizeSearchText(s) {
+    return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\xDF/g, "ss");
+  }
+  /* Desktop v57.37: zuletzt tatsaechlich gespeicherter Vormonat (Reihenfolge + Stammdaten fuer einen nie gespeicherten Monat) */
+  function findMostRecentPriorMonthRows(m, y) {
+    try {
+      let pm = m;
+      let py = y;
+      for (let back = 0; back < 36; back++) {
+        pm = pm === 1 ? 12 : pm - 1;
+        py = pm === 12 ? py - 1 : py;
+        const raw = lsGet(`${STORAGE_PREFIX}:${py}-${pad2(pm)}`);
+        if (!raw) continue;
+        let data;
+        try {
+          data = JSON.parse(raw);
+        } catch (e2) {
+          continue;
+        }
+        if (data && Array.isArray(data.rows) && data.rows.length > 0) return { rows: data.rows, month: pm, year: py };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+  /* Desktop v57.59: abrechenbare Therapie = Zelle mit T-Wert, ohne KH/SCHLUSS/PAUSE/DIALYSE */
+  function isBillableTherapyCell(c) {
+    return !!c && !c.kh && !c.schluss && !c.pause && !c.dialyse && /^\s*T\s*\d+/i.test(c.behandlung || "");
+  }
+  /* Nur die Monatsfelder in einen Monats-Schluessel schreiben (nie den kompletten Import mit allMonths) */
+  function monthOnlyPayload(p) {
+    if (!p || typeof p !== "object") return p;
+    const { allMonths, archive, deletedPatients, savedAt, ...rest } = p;
+    return rest;
+  }
   var POPUP_NOTE_BUTTONS = [
     { abbrev: "\xC4A", phrase: "Visite", trackUsage: true },
     { abbrev: "PhA", phrase: "Physioaufnahme", trackUsage: true },
@@ -13530,13 +13692,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   function cellOverride(c) {
     if (!c) return null;
     if (c.kh) return { key: "kh", label: "KH", sub: "Patient im Krankenhaus \u2014 keine Behandlung" };
-    if (c.schluss) return { key: "schluss", label: "SCHLUSS", sub: "Behandlung abgeschlossen" };
+    if (c.schluss) return { key: "schluss", label: "Schluss", sub: "Behandlung abgeschlossen" };
     if (c.pause) return { key: "pause", label: "PAUSE", sub: "Pausentag \u2014 keine Behandlung" };
     if (c.dialyse) return { key: "dialyse", label: "DIALYSE", sub: "Dialyse-Termin" };
     return null;
   }
   function rowHasAufnahmeCell(cells) {
-    return Array.isArray(cells) && cells.some((c) => c && c.type === "Aufnahme");
+    return Array.isArray(cells) && cells.some((c) => isAerztlicheAufnahmeCell(c));
   }
   function rowHasAnyEntryCell(cells) {
     return Array.isArray(cells) && cells.some((c) => c && c.type);
@@ -13579,7 +13741,9 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   var STAFF_LIST_KEY = "behandlungsplan:staff-list";
   var AUTO_MASTER_KEY = "behandlungsplan:autos";
   var MAX_AUTO_ROWS = 20;
-  var DEFAULT_STAFF = ["K.Radi", "T.Arany", "J.Abraham", "S.Jaballah", "C.Wei\xDFert", "A.Nagy", "A.Miranda", "C.Steiner", "A.Bartelt", "P.Haydn", "Praxis Krause", "D.Gallen", "A.Schubert", "Zs.Kaposi", "M.Garofano", "J.S.Ruiz"];
+  /* Desktop v57.55: verbindliche Reihenfolge der Mitarbeiterliste */
+  var DEFAULT_STAFF = ["K.Radi", "T.Arany", "A.Miranda", "A.Schubert", "J.Abraham", "C.Riedel", "S.Jaballah", "C.Wei\xDFert", "S.Dachs", "Praxis Krause", "A.Nagy", "V.Ricardo", "M.Garofano", "D.Gallon", "Zs.Kaposi", "C.Steiner", "A.Bartelt", "J.Maiostre", "P.Haydn"];
+  var THERAPEUT_LIST_ORDER_VERSION = "v57.55";
   function typeInfo(value) {
     return TREATMENT_TYPES.find((t) => t.value === value) || TREATMENT_TYPES[0];
   }
@@ -13602,6 +13766,10 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
   }
   function emptyCell() {
     return { type: "", behandlung: "", einheiten: "", time: "", therapeut: "", note: "", kh: false, schluss: false, pause: false, dialyse: false, hinweis: "", mittagspause: "", icons: [], slots: [], eAuto: void 0 };
+  }
+  function fullCellObject(cell) {
+    const c = cell || {};
+    return { type: c.type || "", behandlung: c.behandlung || "", einheiten: c.einheiten != null ? c.einheiten : "", time: c.time || "", therapeut: c.therapeut || "", note: c.note || "", kh: c.kh || false, schluss: c.schluss || false, pause: c.pause || false, dialyse: c.dialyse || false, hinweis: c.hinweis || "", mittagspause: c.mittagspause || "", icons: Array.isArray(c.icons) ? c.icons.slice() : [], slots: Array.isArray(c.slots) ? c.slots.map((s) => ({ ...s })) : [], eAuto: c.eAuto };
   }
   function cellHasContent(c) {
     return !!(c && (c.type || c.behandlung || c.einheiten || c.time || c.therapeut || c.note || c.kh || c.mittagspause || c.schluss || c.pause || c.dialyse || c.hinweis || (Array.isArray(c.slots) && c.slots.length > 0)));
@@ -13679,7 +13847,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       versicherung: "",
       anordnungen: "",
       anordnung: makeEmptyAnordnungGrid(),
-      patientNummer: "",
+      email: "",
       archived: false,
       archivedInMonth: null,
       archivedInYear: null,
@@ -13909,6 +14077,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const [holidays, setHolidays] = (0, import_react.useState)(/* @__PURE__ */ new Set());
     const [dayNotes, setDayNotes] = (0, import_react.useState)({});
     const [dayNoteColors, setDayNoteColors] = (0, import_react.useState)({});
+    const [planInfo, setPlanInfo] = (0, import_react.useState)({});
+    const [planInfoColors, setPlanInfoColors] = (0, import_react.useState)({});
+    const [planInfoOpen, setPlanInfoOpen] = (0, import_react.useState)(false);
+    const [notePaletteFor, setNotePaletteFor] = (0, import_react.useState)(null);
+    const [crossRefresh, setCrossRefresh] = (0, import_react.useState)(0);
+    const [searchQuery, setSearchQuery] = (0, import_react.useState)("");
+    const pendingDetailIdRef = (0, import_react.useRef)(null);
     const [colWidths, setColWidths] = (0, import_react.useState)(defaultColWidths(daysList.length));
     const [therapeutList, setTherapeutList] = (0, import_react.useState)(DEFAULT_STAFF);
     const [loaded, setLoaded] = (0, import_react.useState)(false);
@@ -13973,11 +14148,18 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     }
     (0, import_react.useEffect)(() => {
       try {
+        /* Desktop v57.55: gespeicherte Liste einmalig durch die neue, verbindliche Reihenfolge ersetzen */
+        if (lsGet(`${STORAGE_PREFIX}:staff-list-order`) !== THERAPEUT_LIST_ORDER_VERSION) {
+          setTherapeutList(DEFAULT_STAFF);
+          lsSet(STAFF_LIST_KEY, JSON.stringify(DEFAULT_STAFF));
+          lsSet(`${STORAGE_PREFIX}:staff-list-order`, THERAPEUT_LIST_ORDER_VERSION);
+          return;
+        }
         const raw = lsGet(STAFF_LIST_KEY);
         if (raw) {
           const arr = JSON.parse(raw);
           if (Array.isArray(arr) && arr.length) {
-            const toAdd = ["Praxis Krause", "D.Gallen", "A.Schubert", "Zs.Kaposi", "M.Garofano", "J.S.Ruiz"].filter((n) => !arr.includes(n));
+            const toAdd = ["S.Dachs", "D.Gallon", "A.Schubert", "J.Maiostre", "V.Ricardo", "C.Riedel"].filter((n) => !arr.includes(n));
             const merged = toAdd.length ? [...arr, ...toAdd] : arr;
             setTherapeutList(merged);
             if (toAdd.length) lsSet(STAFF_LIST_KEY, JSON.stringify(merged));
@@ -14029,118 +14211,124 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           const parsed = JSON.parse(raw);
           applyLoadedState(parsed, false);
         } else {
-          const nd = getDaysInMonth(year, month);
-          const pRaw = lsGet(PATIENTS_KEY);
-          const patients = pRaw ? JSON.parse(pRaw) : [];
-          const archivedIds = getArchivedIds();
-          const currentYM = `${year}-${pad2(month)}`;
-          const deletedPatients = getDeletedPatients();
-          const eligible = patients.filter((p) => !isDeletedPatient(deletedPatients, p.id, p.name) && isEligibleForMonth(p, currentYM));
-          if (eligible.length > 0) {
-            setRows(eligible.map((p) => ({ ...p, id: p.id || makeId(), archived: archivedIds.has(p.id) || p.archived || false, cells: expandCellsForSundays(p.cells, nd) })));
-          } else {
-            setRows([newPatientRow(nd.length)]);
-          }
-          const roster = getAutoRoster();
-          setAutoRows(roster.map((plate) => newAutoRow(nd.length, plate)));
-          setHolidays(/* @__PURE__ */ new Set());
-          setDayNotes({});
-          setDayNoteColors({});
-          setColWidths(defaultColWidths(nd.length));
+          /* Desktop v57.37/v57.40: ein noch nie gespeicherter Monat uebernimmt EINMALIG Reihenfolge und
+             Stammdaten (ohne Zellen) aus dem zuletzt gespeicherten Vormonat — ueber denselben Pfad
+             (applyLoadedState) wie ein gespeicherter Monat. */
+          const prior = findMostRecentPriorMonthRows(month, year);
+          applyLoadedState({
+            month,
+            year,
+            rows: prior ? prior.rows.map((r) => {
+              const { cells, ...rest } = r;
+              return rest;
+            }) : []
+          }, false, true);
         }
       } catch (e) {
-        setRows([newPatientRow(daysList.length)]);
+        setRows([newPatientRow(daysList.length, `${year}-${pad2(month)}`)]);
         setAutoRows([]);
         setHolidays(/* @__PURE__ */ new Set());
         setDayNotes({});
         setDayNoteColors({});
+        setPlanInfo({});
+        setPlanInfoColors({});
       } finally {
         skipNextAutosave.current = true;
         setLoaded(true);
       }
     }, [storageKey]);
-    function applyLoadedState(parsed, keepMonthYear) {
+    /* Nach einem Sprung aus der Patientensuche: Patient im Zielmonat oeffnen */
+    (0, import_react.useEffect)(() => {
+      const id = pendingDetailIdRef.current;
+      if (!id || !rows.some((r) => r.id === id)) return;
+      pendingDetailIdRef.current = null;
+      setDetailId(id);
+    }, [rows]);
+    function applyLoadedState(parsedIn, keepMonthYear, isSynthetic) {
       skipNextAutosave.current = true;
+      const parsed = parsedIn || {};
       if (!keepMonthYear && parsed.month && parsed.year) {
         setMonth(parsed.month);
         setYear(parsed.year);
       }
-      const saveM = parsed.month || month;
-      const saveY = parsed.year || year;
-      const saveKey = `${STORAGE_PREFIX}:${saveY}-${pad2(saveM)}`;
-      lsSet(saveKey, JSON.stringify(parsed));
-      const nd = getDaysInMonth(parsed.year || year, parsed.month || month);
+      const effM = parsed.month || month;
+      const effY = parsed.year || year;
+      const saveKey = `${STORAGE_PREFIX}:${effY}-${pad2(effM)}`;
+      if (!isSynthetic) lsSet(saveKey, JSON.stringify(monthOnlyPayload(parsed)));
+      const nd = getDaysInMonth(effY, effM);
+      const thisYM = `${effY}-${pad2(effM)}`;
       const archivedIds = getArchivedIds();
-      const pRaw = lsGet(PATIENTS_KEY);
-      const pAll = pRaw ? JSON.parse(pRaw) : [];
+      let pAll = [];
+      try {
+        const pRaw = lsGet(PATIENTS_KEY);
+        pAll = pRaw ? JSON.parse(pRaw) : [];
+      } catch (e) {
+        pAll = [];
+      }
       const pMap = new Map(pAll.map((p) => [p.id, p]));
+      const deletedList = getDeletedPatients();
       const fixedRows = (parsed.rows || []).map((r) => {
         const cur = pMap.get(r.id);
-        const isArchived = archivedIds.has(r.id) || r.archived || false;
+        /* Desktop: explizites archived-Feld der Monatszeile hat Vorrang */
+        const isArchived = r.archived != null ? !!r.archived : archivedIds.has(r.id) || (cur != null ? cur.archived || false : false);
+        const storedFirstAufnahme = cur?.firstAufnahmeMonth || r.firstAufnahmeMonth || null;
+        const firstAufnahmeMonth = rowHasAufnahmeCell(r.cells) && (!storedFirstAufnahme || thisYM < storedFirstAufnahme) ? thisYM : storedFirstAufnahme;
+        const storedFirstEntry = cur?.firstEntryMonth || r.firstEntryMonth || null;
+        const firstEntryMonth = rowHasAnyEntryCell(r.cells) && (!storedFirstEntry || thisYM < storedFirstEntry) ? thisYM : storedFirstEntry;
+        /* Desktop v57.37/v57.38: Name, T/E/Verlaengerung fallen wie km/Adresse auf die Stammdaten zurueck */
         return {
           id: r.id || makeId(),
-          name: r.name || "",
-          redDay: r.redDay != null ? r.redDay : [0, 5, 10, 15].includes(r.ext) ? 20 + r.ext : r.ext || 20,
-          genemhmigteTage: r.genemhmigteTage != null ? r.genemhmigteTage : "",
-          genehmigteEinheiten: r.genehmigteEinheiten != null ? r.genehmigteEinheiten : "",
-          verlaengerung: r.verlaengerung != null ? r.verlaengerung : 0,
-          verlaengerungFlag: r.verlaengerungFlag || false,
+          name: r.name || cur?.name || "",
+          redDay: r.redDay != null ? r.redDay : cur?.redDay != null ? cur.redDay : [0, 5, 10, 15].includes(r.ext) ? 20 + r.ext : r.ext || 20,
+          genemhmigteTage: r.genemhmigteTage != null ? r.genemhmigteTage : cur?.genemhmigteTage != null ? cur.genemhmigteTage : "",
+          genehmigteEinheiten: r.genehmigteEinheiten != null ? r.genehmigteEinheiten : cur?.genehmigteEinheiten != null ? cur.genehmigteEinheiten : "",
+          verlaengerung: r.verlaengerung != null ? r.verlaengerung : cur?.verlaengerung != null ? cur.verlaengerung : 0,
+          verlaengerungFlag: r.verlaengerungFlag != null ? r.verlaengerungFlag : cur?.verlaengerungFlag || false,
           km: r.km || cur?.km || "",
           minutes: r.minutes || cur?.minutes || "",
           direction: r.direction || cur?.direction || "",
           m: r.m || cur?.m || "",
           address: r.address || cur?.address || "",
           contact: r.contact || cur?.contact || "",
-          patientNummer: r.patientNummer || cur?.patientNummer || "",
+          email: r.email || cur?.email || "",
           archived: isArchived,
-          archivedInMonth: r.archivedInMonth || cur?.archivedInMonth || null,
-          archivedInYear: r.archivedInYear || cur?.archivedInYear || null,
-          archivedAt: r.archivedAt || cur?.archivedAt || null,
-          aufnahmedatum: r.aufnahmedatum || cur?.aufnahmedatum || null,
-          entlassungsdatum: r.entlassungsdatum || cur?.entlassungsdatum || null,
+          archivedInMonth: cur?.archivedInMonth || r.archivedInMonth || null,
+          archivedInYear: cur?.archivedInYear || r.archivedInYear || null,
+          archivedAt: cur?.archivedAt || r.archivedAt || null,
+          aufnahmedatum: cur?.aufnahmedatum || r.aufnahmedatum || null,
+          entlassungsdatum: cur?.entlassungsdatum || r.entlassungsdatum || null,
           anordnungen: r.anordnungen || cur?.anordnungen || "",
           anordnung: r.anordnung || cur?.anordnung || makeEmptyAnordnungGrid(),
           versicherung: r.versicherung || cur?.versicherung || "",
-          startMonth: r.startMonth || "",
-          firstAufnahmeMonth: (() => {
-            const thisYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
-            const stored = cur?.firstAufnahmeMonth || r.firstAufnahmeMonth || null;
-            return rowHasAufnahmeCell(r.cells) && (!stored || thisYM < stored) ? thisYM : stored;
-          })(),
-          firstEntryMonth: (() => {
-            const thisYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
-            const stored = cur?.firstEntryMonth || r.firstEntryMonth || null;
-            return rowHasAnyEntryCell(r.cells) && (!stored || thisYM < stored) ? thisYM : stored;
-          })(),
+          startMonth: r.startMonth || cur?.startMonth || "",
+          firstAufnahmeMonth,
+          firstEntryMonth,
           cells: expandCellsForSundays(r.cells, nd)
         };
       }).filter((r) => {
-        /* Parität zur Desktop-Regel (v35): Patienten ohne echten Eintrag in diesem
-           Monat, deren firstEntryMonth erst später beginnt, hier ausblenden. */
-        const thisYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
-        if (isDeletedPatient(getDeletedPatients(), r.id, r.name)) return false;
+        /* wie Desktop: Monatszeilen werden NICHT wegen der Loesch-Liste verworfen (sie koennen echte
+           Behandlungsdaten enthalten) — die Loesch-Liste gilt nur fuer den Stammdaten-Nachschub unten */
         if (r.archived) return true;
         if (rowHasAnyEntryCell(r.cells)) return true;
         if (r.firstEntryMonth && thisYM < r.firstEntryMonth) return false;
         return true;
       });
-      const patientList = fixedRows.map(({ cells, ...rest }) => rest);
-      upsertPatientsIntoMaster(patientList);
+      upsertPatientsIntoMaster(fixedRows.map(({ cells, ...rest }) => rest));
       const savedIds = new Set(fixedRows.map((r) => r.id));
       const savedNames = new Set(fixedRows.map((r) => r.name).filter(Boolean));
-      const mergedYM = `${parsed.year || year}-${pad2(parsed.month || month)}`;
-      const deletedPatients = getDeletedPatients();
       for (const p of pAll) {
         if (savedIds.has(p.id)) continue;
         if (p.name && savedNames.has(p.name)) continue;
-        if (isDeletedPatient(deletedPatients, p.id, p.name)) continue;
-        if (!isEligibleForMonth(p, mergedYM)) continue;
+        if (isDeletedPatient(deletedList, p.id, p.name)) continue;
+        if (!isEligibleForMonth(p, thisYM)) continue;
         const newId = p.id || makeId();
-        fixedRows.push({ ...p, id: newId, archived: archivedIds.has(p.id) || p.archived || false, cells: Array.from({ length: nd.length }, () => emptyCell()) });
+        fixedRows.push({ ...p, id: newId, archived: p.archived || false, cells: Array.from({ length: nd.length }, () => emptyCell()) });
         savedIds.add(newId);
         if (p.name) savedNames.add(p.name);
       }
-      setRows(fixedRows.length ? fixedRows : [newPatientRow(nd.length)]);
+      setRows(fixedRows.length ? fixedRows : [newPatientRow(nd.length, thisYM)]);
+      /* Desktop v57.12: die gespeicherte autoRows-Liste bestimmt die AUTO-Zeilen exakt — kein
+         automatisches Auffuellen aus dem lokalen Roster (sonst vermehren sich leere Zeilen). */
       const savedAuto = Array.isArray(parsed.autoRows) ? parsed.autoRows.map((a) => ({
         id: a.id || makeId(),
         plate: a.plate || "",
@@ -14149,24 +14337,14 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         verlaengerungFlag: a.verlaengerungFlag || false,
         cells: expandCellsForSundays(a.cells, nd)
       })) : [];
-      const roster = getAutoRoster();
-      const savedPlates = new Set(savedAuto.map((a) => a.plate));
-      const mergedAuto = savedAuto.concat(roster.filter((p) => !savedPlates.has(p)).map((p) => newAutoRow(nd.length, p)));
-      setAutoRows(mergedAuto);
-      saveAutoRoster(mergedAuto.map((a) => a.plate));
+      setAutoRows(savedAuto);
+      saveAutoRoster(savedAuto.map((a) => a.plate));
       setHolidays(new Set(parsed.holidays || []));
       setDayNotes(parsed.dayNotes || {});
       setDayNoteColors(parsed.dayNoteColors || {});
-      setColWidths(parsed.colWidths ? {
-        patient: parsed.colWidths.patient || 160,
-        km: parsed.colWidths.km || 70,
-        minutes: parsed.colWidths.minutes || 55,
-        direction: parsed.colWidths.direction || 50,
-        m: parsed.colWidths.m || 140,
-        address: parsed.colWidths.address || 200,
-        anordnungen: parsed.colWidths.anordnungen || 135,
-        days: Array.from({ length: nd.length }, (_, i) => parsed.colWidths.days && parsed.colWidths.days[i] || 64)
-      } : defaultColWidths(nd.length));
+      setPlanInfo(parsed.planInfo || {});
+      setPlanInfoColors(parsed.planInfoColors || {});
+      setColWidths(parsed.colWidths ? { ...defaultColWidths(nd.length), ...parsed.colWidths, days: Array.from({ length: nd.length }, (_, i) => parsed.colWidths.days && parsed.colWidths.days[i] || 64) } : defaultColWidths(nd.length));
     }
     (0, import_react.useEffect)(() => {
       if (!loaded) return;
@@ -14179,12 +14357,22 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       return () => {
         if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
       };
-    }, [rows, autoRows, colWidths, holidays, dayNotes, loaded]);
+    }, [rows, autoRows, colWidths, holidays, dayNotes, dayNoteColors, planInfo, planInfoColors, loaded]);
     function buildExportObject(overrideRows) {
       return {
         month,
         year,
+        autoRows: (autoRows || []).map((a) => ({
+          id: a.id,
+          plate: a.plate || "",
+          redDay: a.redDay,
+          verlaengerung: a.verlaengerung,
+          verlaengerungFlag: a.verlaengerungFlag,
+          cells: a.cells
+        })),
         rows: (overrideRows || rows).map((r) => ({
+          /* unbekannte (kuenftige) Felder der Desktop-Version bleiben erhalten */
+          ...r,
           id: r.id,
           name: r.name,
           redDay: r.redDay,
@@ -14198,6 +14386,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           m: r.m,
           address: r.address,
           contact: r.contact,
+          email: r.email || "",
           archived: r.archived || false,
           archivedInMonth: r.archivedInMonth || null,
           archivedInYear: r.archivedInYear || null,
@@ -14207,29 +14396,33 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           startMonth: r.startMonth || "",
           firstAufnahmeMonth: r.firstAufnahmeMonth || null,
           firstEntryMonth: r.firstEntryMonth || null,
-          patientNummer: r.patientNummer || "",
           anordnungen: r.anordnungen || "",
           anordnung: r.anordnung || makeEmptyAnordnungGrid(),
           versicherung: r.versicherung || "",
           cells: r.cells
         })),
-        autoRows: (autoRows || []).map((a) => ({
-          id: a.id,
-          plate: a.plate || "",
-          redDay: a.redDay,
-          verlaengerung: a.verlaengerung,
-          verlaengerungFlag: a.verlaengerungFlag,
-          cells: a.cells
-        })),
         colWidths,
         holidays: Array.from(holidays),
         dayNotes,
         dayNoteColors,
-        deletedPatients: getDeletedPatients()
+        planInfo,
+        planInfoColors
       };
     }
+    /* Monat speichern: unbekannte Felder des bereits gespeicherten Monats (z. B. kuenftige
+       Desktop-Erweiterungen) bleiben erhalten, die bekannten werden ueberschrieben. */
+    function writeMonth(key, obj) {
+      let existing = {};
+      try {
+        const raw = lsGet(key);
+        existing = raw ? monthOnlyPayload(JSON.parse(raw)) || {} : {};
+      } catch (e) {
+        existing = {};
+      }
+      lsSet(key, JSON.stringify({ ...existing, ...obj }));
+    }
     function buildFullBackupObject() {
-      return { ...buildExportObject(), archive: [] };
+      return { ...buildExportObject(), archive: [], deletedPatients: getDeletedPatients() };
     }
     function collectAllMonths() {
       const allMonths = {};
@@ -14238,20 +14431,19 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           const k = localStorage.key(i);
           if (k && /^behandlungsplan:\d{4}-\d{2}$/.test(k)) {
             try {
-              allMonths[k] = JSON.parse(localStorage.getItem(k));
+              allMonths[k] = monthOnlyPayload(JSON.parse(localStorage.getItem(k)));
             } catch (e) {
             }
           }
         }
       } catch (e) {
       }
-      allMonths[storageKey] = buildExportObject();
+      allMonths[storageKey] = { ...allMonths[storageKey] || {}, ...buildExportObject() };
       return allMonths;
     }
     function saveToStorage() {
       try {
-        const payload = buildExportObject();
-        lsSet(storageKey, JSON.stringify(payload));
+        writeMonth(storageKey, buildExportObject());
         const patientList = rows.map(({ cells, ...rest }) => rest);
         upsertPatientsIntoMaster(patientList);
       } catch (e) {
@@ -14259,7 +14451,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     }
     function applyMonthYear(m, y) {
       try {
-        lsSet(storageKey, JSON.stringify(buildExportObject()));
+        if (loaded) writeMonth(storageKey, buildExportObject());
       } catch (e) {
       }
       skipNextAutosave.current = true;
@@ -14272,6 +14464,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setHolidays(/* @__PURE__ */ new Set());
       setDayNotes({});
       setDayNoteColors({});
+      setPlanInfo({});
+      setPlanInfoColors({});
       setSelectedDayIdx(0);
       setSelectedWeekIdx(null);
       setEditor(null);
@@ -14379,38 +14573,104 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     }
     function updateCell(rowId, dayIdx, patch, list) {
       const thisYM = `${year}-${pad2(month)}`;
+      /* Desktop v57.28/v57.29: die T/E-Sequenz wird nach JEDER Zellaenderung neu durchnummeriert
+         (auch Leeren, Einfuegen, KH/SCHLUSS/PAUSE/DIALYSE) — die Funktion ist idempotent. */
       const isFullCellPatch = Object.prototype.hasOwnProperty.call(patch, "kh");
       const shouldAutoFillTE = !isFullCellPatch && (patch.type != null && patch.type !== "" || patch.behandlung != null || patch.einheiten != null);
       const updater = (prev) => prev.map((r) => {
         if (r.id !== rowId) return r;
         const cells = r.cells.slice();
         cells[dayIdx] = { ...cells[dayIdx] || emptyCell(), ...patch, ...patch.einheiten != null ? { eAuto: false } : {} };
-        let newCells = cells;
-        if (shouldAutoFillTE) {
-          const seed = getCrossMonthTESeed(r.id, r.name, month, year);
-          newCells = recomputeSequentialTE(cells, seed);
-        }
+        const seed = getCrossMonthTESeed(r.id, r.name, month, year);
+        const newCells = recomputeSequentialTE(cells, seed);
         let firstAufnahmeMonth = r.firstAufnahmeMonth || null;
-        if (patch.type === "Aufnahme" && (!firstAufnahmeMonth || thisYM < firstAufnahmeMonth)) {
+        if (rowHasAufnahmeCell(newCells) && (!firstAufnahmeMonth || thisYM < firstAufnahmeMonth)) {
           firstAufnahmeMonth = thisYM;
         }
         let firstEntryMonth = r.firstEntryMonth || null;
-        const shouldTrackEntry = patch.type != null && patch.type !== "";
-        if (shouldTrackEntry && (!firstEntryMonth || thisYM < firstEntryMonth)) {
+        if (shouldAutoFillTE && (!firstEntryMonth || thisYM < firstEntryMonth)) {
           firstEntryMonth = thisYM;
         }
         return { ...r, cells: newCells, firstAufnahmeMonth, firstEntryMonth };
       });
       if (list === "auto") setAutoRows(updater); else setRows(updater);
     }
+    /* Ganze Zelle ersetzen (Leeren / Einfuegen) — wie Desktop ueber updateCell mit vollstaendigem
+       Zellobjekt (enthaelt immer "kh"), damit die T/E-Sequenz nachgezogen wird. */
     function setCellFull(rowId, dayIdx, cell, list) {
-      const updater = (prev) => prev.map((r) => {
-        if (r.id !== rowId) return r;
-        const cells = r.cells.slice();
-        cells[dayIdx] = { type: cell.type || "", behandlung: cell.behandlung || "", einheiten: cell.einheiten != null ? cell.einheiten : "", time: cell.time || "", therapeut: cell.therapeut || "", note: cell.note || "", kh: cell.kh || false, schluss: cell.schluss || false, pause: cell.pause || false, dialyse: cell.dialyse || false, hinweis: cell.hinweis || "", mittagspause: cell.mittagspause || "", icons: Array.isArray(cell.icons) ? cell.icons.slice() : [], slots: Array.isArray(cell.slots) ? cell.slots.map((s) => ({ ...s })) : [] };
-        return { ...r, cells };
-      });
-      if (list === "auto") setAutoRows(updater); else setRows(updater);
+      updateCell(rowId, dayIdx, fullCellObject(cell), list);
+    }
+    /* ---- Wochenuebergreifend (Desktop v57.32/v57.38/v57.42): Zellen des Nachbarmonats direkt bearbeiten ---- */
+    function readMonthData(m, y) {
+      try {
+        const raw = lsGet(`${STORAGE_PREFIX}:${y}-${pad2(m)}`);
+        return raw ? monthOnlyPayload(JSON.parse(raw)) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    function findCrossMonthCell(localRow, cm, list) {
+      const data = readMonthData(cm.adjMonth, cm.adjYear);
+      if (!data) return emptyCell();
+      const adjDays = getDaysInMonth(cm.adjYear, cm.adjMonth);
+      const di = adjDays.findIndex((d) => d.day === cm.day);
+      let adjRow;
+      if (list === "auto") {
+        const arr = Array.isArray(data.autoRows) ? data.autoRows : [];
+        adjRow = arr.find((a) => a.id === localRow.id) || (localRow.plate ? arr.find((a) => a.plate === localRow.plate) : null);
+      } else {
+        const arr = Array.isArray(data.rows) ? data.rows : [];
+        adjRow = arr.find((r) => r.id === localRow.id) || (localRow.name ? arr.find((r) => r.name === localRow.name) : null);
+      }
+      if (!adjRow || di < 0) return emptyCell();
+      const cells = expandCellsForSundays(adjRow.cells || [], adjDays);
+      return cells[di] ? { ...emptyCell(), ...cells[di] } : emptyCell();
+    }
+    function updateCrossMonthCell(localRow, cm, patch, list) {
+      if (!editUnlocked) return;
+      const { adjMonth, adjYear, day } = cm;
+      const key = `${STORAGE_PREFIX}:${adjYear}-${pad2(adjMonth)}`;
+      let data = readMonthData(adjMonth, adjYear);
+      if (!data) data = { month: adjMonth, year: adjYear };
+      const adjDays = getDaysInMonth(adjYear, adjMonth);
+      data.rows = Array.isArray(data.rows) ? data.rows : [];
+      data.autoRows = Array.isArray(data.autoRows) ? data.autoRows : [];
+      data.holidays = Array.isArray(data.holidays) ? data.holidays : [];
+      data.dayNotes = data.dayNotes || {};
+      data.dayNoteColors = data.dayNoteColors || {};
+      const isAuto = list === "auto";
+      const arr = isAuto ? data.autoRows : data.rows;
+      let idx = arr.findIndex((r) => r.id === localRow.id);
+      if (idx < 0) {
+        if (isAuto && localRow.plate) idx = arr.findIndex((r) => r.plate === localRow.plate);
+        if (!isAuto && localRow.name) idx = arr.findIndex((r) => r.name === localRow.name);
+      }
+      if (idx < 0) {
+        const { cells: _c, __crossMonthOnly, __cmSide, ...restOfLocal } = localRow;
+        arr.push({ ...restOfLocal, id: localRow.id, cells: Array.from({ length: adjDays.length }, () => emptyCell()) });
+        idx = arr.length - 1;
+      }
+      const adjRow = { ...arr[idx] };
+      adjRow.cells = expandCellsForSundays(adjRow.cells || [], adjDays);
+      const di = adjDays.findIndex((d) => d.day === day);
+      if (di < 0) return;
+      const isFullCellPatch = Object.prototype.hasOwnProperty.call(patch, "kh");
+      let newCells = adjRow.cells.map((c, ci) => ci !== di ? c : { ...c, ...patch, ...patch.einheiten != null ? { eAuto: false } : {} });
+      newCells = recomputeSequentialTE(newCells, getCrossMonthTESeed(adjRow.id, adjRow.name, adjMonth, adjYear));
+      adjRow.cells = newCells;
+      if (!isAuto) {
+        const ym = `${adjYear}-${pad2(adjMonth)}`;
+        const shouldAutoFillTE = !isFullCellPatch && (patch.type != null && patch.type !== "" || patch.behandlung != null || patch.einheiten != null);
+        if (rowHasAufnahmeCell(newCells) && (!adjRow.firstAufnahmeMonth || ym < adjRow.firstAufnahmeMonth)) adjRow.firstAufnahmeMonth = ym;
+        if (shouldAutoFillTE && (!adjRow.firstEntryMonth || ym < adjRow.firstEntryMonth)) adjRow.firstEntryMonth = ym;
+      }
+      arr[idx] = adjRow;
+      lsSet(key, JSON.stringify(data));
+      /* Aenderung im VORmonat kann den T/E-Startwert dieses Monats verschieben */
+      if (!isAuto && `${adjYear}-${pad2(adjMonth)}` < `${year}-${pad2(month)}`) {
+        setRows((prev) => prev.map((r) => ({ ...r, cells: recomputeSequentialTE(r.cells, getCrossMonthTESeed(r.id, r.name, month, year)) })));
+      }
+      setCrossRefresh((k) => k + 1);
     }
     function updatePatientField(rowId, field, value) {
       setRows((prev) => prev.map((r) => r.id === rowId ? { ...r, [field]: value } : r));
@@ -14421,7 +14681,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         showToast(`Maximal ${MAX_PATIENTS} Patienten`);
         return;
       }
-      const p = newPatientRow(daysList.length);
+      const p = newPatientRow(daysList.length, `${year}-${pad2(month)}`);
       setRows((prev) => [...prev, p]);
       setDetailId(p.id);
     }
@@ -14434,7 +14694,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const newRows = rows.filter((r) => r.id !== rowId);
       setRows(newRows);
       skipNextAutosave.current = true;
-      lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
+      writeMonth(storageKey, buildExportObject(newRows));
       markPatientDeleted(rowId, targetRow ? targetRow.name : "");
       removePatientFromMaster(rowId);
       try {
@@ -14498,7 +14758,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       saveArchivedIds(ids);
       setRows(newRows);
       skipNextAutosave.current = true;
-      lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
+      writeMonth(storageKey, buildExportObject(newRows));
       upsertPatientsIntoMaster(newRows.map(({ cells, ...rest }) => rest));
       setDetailId(null);
       showToast("Patient archiviert");
@@ -14523,13 +14783,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       saveArchivedIds(ids);
       setRows(newRows);
       skipNextAutosave.current = true;
-      lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
+      writeMonth(storageKey, buildExportObject(newRows));
       upsertPatientsIntoMaster(newRows.map(({ cells, ...rest }) => rest));
       showToast("Patient wiederhergestellt");
     }
     function getTreatmentLog(item) {
-      const m = item.archivedInMonth || month;
-      const y = item.archivedInYear || year;
+      /* Die Zellen einer Zeile gehoeren immer zum aktuell geoeffneten Monat — Datum deshalb mit
+         month/year beschriften (nicht mit dem Archivierungsmonat, sonst falsche Tagesdaten). */
+      const m = month;
+      const y = year;
       const nd = getDaysInMonth(y, m);
       const entries = [];
       (item.cells || []).forEach((c, i) => {
@@ -14563,7 +14825,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const newRows = rows.filter((r) => r.id !== rowId);
       setRows(newRows);
       skipNextAutosave.current = true;
-      lsSet(storageKey, JSON.stringify(buildExportObject(newRows)));
+      writeMonth(storageKey, buildExportObject(newRows));
       removePatientFromMaster(rowId);
       setConfirmDeleteArchiveId(null);
       showToast("Endg\xFCltig gel\xF6scht");
@@ -14645,6 +14907,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             }
           }
           applyLoadedState(parsed, false);
+          setCrossRefresh((k) => k + 1);
           setEditUnlocked(false);
           showToast(monthsWritten > 1 ? `Import erfolgreich \u2014 ${monthsWritten} Monate \xFCbernommen` : "Import erfolgreich");
         } catch (err) {
@@ -14664,6 +14927,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       setHolidays(/* @__PURE__ */ new Set());
       setDayNotes({});
       setDayNoteColors({});
+      setPlanInfo({});
+      setPlanInfoColors({});
       setMenuOpen(false);
     }
     function toggleHoliday(day) {
@@ -14675,21 +14940,123 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       });
     }
     const activeRows = rows.filter((r) => !r.archived);
-    const archiveRows = rows.filter((r) => r.archived);
+    /* Desktop v57: archivierte Patienten mit Behandlungen in diesem Monat ("Abgeschlossen"-Tabelle) */
+    const abgeschlossenRows = rows.filter((r) => r.archived && rowHasTreatmentThisMonth(r.cells));
+    /* Desktop v57.60: Archiv-Liste dynamisch pro Monat */
+    const archiveRows = archiveRowsForMonth(rows, month, year, archiveDetailId);
     const selDay = daysList[selectedDayIdx] || daysList[0];
-    const editorRow = editor ? (editor.list === "auto" ? autoRows : rows).find((r) => r.id === editor.rowId) : null;
-    const editorCell = editor && editorRow ? editorRow.cells[editor.dayIdx] || emptyCell() : null;
+    const editorRow = editor ? editor.phantomRow || (editor.list === "auto" ? autoRows : rows).find((r) => r.id === editor.rowId) : null;
+    const editorCell = editor && editorRow ? editor.crossMonth ? findCrossMonthCell(editorRow, editor.crossMonth, editor.list) : editorRow.cells[editor.dayIdx] || emptyCell() : null;
     const detailRow = detailId ? rows.find((r) => r.id === detailId) : null;
-    function dayCounts(dayIdx) {
-      let physio = 0, aufnahme = 0, total = 0;
-      activeRows.forEach((r) => {
-        const c = r.cells[dayIdx];
+    /* Desktop getDayCountsFromRows: "Heute bereits: CW x/5 · AN x/5 · Aufnahmen x/4" */
+    function countsFromRows(list, dayIdx) {
+      let cw = 0, an = 0, aufnahme = 0, total = 0;
+      (list || []).forEach((r) => {
+        const c = r && r.cells ? r.cells[dayIdx] : null;
         if (!c) return;
-        if (cellHasContent(c)) total++;
-        if (c.type === "Physiotherapie") physio++;
-        if (c.type === "Aufnahme") aufnahme++;
+        if (!r.archived && cellHasContent(c)) total++;
+        const t = (c.therapeut || "").toUpperCase();
+        if (t.includes("CW") || t.includes("WEISSERT") || t.includes("WEI\xDFERT")) cw++;
+        if (t.includes("NAGY") || t.includes("AN") && !t.includes("NAGY")) an++;
+        if (isAerztlicheAufnahmeCell(c)) aufnahme++;
       });
-      return { physio, aufnahme, total };
+      return { cw, an, aufnahme, total };
+    }
+    function dayCounts(dayIdx) {
+      return countsFromRows(rows, dayIdx);
+    }
+    /* Desktop v57.59: abrechenbare Therapien pro Tag (alle Zeilen inkl. abgeschlossener) */
+    const dailyTherapyCounts = daysList.map((_, di) => rows.reduce((n, r) => n + (r.cells && isBillableTherapyCell(r.cells[di]) ? 1 : 0), 0));
+    function therapyCountOfMonth(m, y, day) {
+      const data = readMonthData(m, y);
+      if (!data || !Array.isArray(data.rows)) return 0;
+      const adjDays = getDaysInMonth(y, m);
+      const di = adjDays.findIndex((d) => d.day === day);
+      if (di < 0) return 0;
+      return data.rows.reduce((n, r) => {
+        const cells = r && Array.isArray(r.cells) ? expandCellsForSundays(r.cells, adjDays) : [];
+        return n + (isBillableTherapyCell(cells[di]) ? 1 : 0);
+      }, 0);
+    }
+    /* Desktop v57.60: Patientensuche ueber alle gespeicherten Monate */
+    function buildPatientSearchIndex() {
+      const byId = /* @__PURE__ */ new Map();
+      const keys = [];
+      try {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && /^behandlungsplan:\d{4}-\d{2}$/.test(k)) keys.push(k);
+        }
+      } catch (e) {
+      }
+      if (!keys.includes(storageKey)) keys.push(storageKey);
+      keys.sort();
+      for (const k of keys) {
+        const ym = k.slice(-7);
+        let list = null;
+        if (k === storageKey) list = rows;
+        else {
+          try {
+            const d = JSON.parse(localStorage.getItem(k) || "null");
+            list = d && Array.isArray(d.rows) ? d.rows : null;
+          } catch (e) {
+            list = null;
+          }
+        }
+        if (!list) continue;
+        for (const r of list) {
+          if (!r || !r.id) continue;
+          let e = byId.get(r.id);
+          if (!e) {
+            e = { id: r.id, name: "", months: [], archived: false, archivedInMonth: null, archivedInYear: null };
+            byId.set(r.id, e);
+          }
+          if (r.name) e.name = r.name;
+          if (rowHasTreatmentThisMonth(r.cells)) e.months.push(ym);
+          e.archived = !!r.archived;
+          if (r.archivedInMonth) {
+            e.archivedInMonth = Number(r.archivedInMonth);
+            e.archivedInYear = Number(r.archivedInYear);
+          }
+        }
+      }
+      const cur = new Map(rows.map((r) => [r.id, r]));
+      return [...byId.values()].map((e) => {
+        const c = cur.get(e.id);
+        return { ...e, archived: c ? !!c.archived : e.archived, inCurrent: !!c };
+      }).filter((e) => e.name && !(e.archived && !e.months.length));
+    }
+    const searchResults = (() => {
+      if (view !== "patients") return [];
+      const q = normalizeSearchText(searchQuery.trim());
+      if (q.length < 2) return [];
+      const res = buildPatientSearchIndex().filter((e) => normalizeSearchText(e.name).includes(q));
+      const rank = (e) => e.inCurrent && !e.archived ? 0 : e.archived ? 2 : 1;
+      res.sort((a, b) => rank(a) - rank(b) || (b.months[b.months.length - 1] || "").localeCompare(a.months[a.months.length - 1] || "") || a.name.localeCompare(b.name));
+      return res.slice(0, 15);
+    })();
+    function fmtYM(ym) {
+      return ym ? `${ym.slice(5, 7)}/${ym.slice(0, 4)}` : "";
+    }
+    function goToSearchResult(e) {
+      setSearchQuery("");
+      const cur = rows.find((r) => r.id === e.id);
+      if (cur && (!cur.archived || rowHasTreatmentThisMonth(cur.cells))) {
+        setDetailId(e.id);
+        return;
+      }
+      const target = e.months.length ? e.months[e.months.length - 1] : null;
+      const curYM = `${year}-${pad2(month)}`;
+      if (target && target !== curYM) {
+        pendingDetailIdRef.current = e.id;
+        const [ty, tm] = target.split("-").map(Number);
+        applyMonthYear(tm, ty);
+        return;
+      }
+      if (cur && cur.archived) {
+        setArchiveDetailId(e.id);
+        setArchiveOpen(true);
+      }
     }
     const selCounts = dayCounts(selectedDayIdx);
     (0, import_react.useEffect)(() => {
@@ -14698,6 +15065,170 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       const chip = el.querySelector(`[data-day-idx="${selectedDayIdx}"]`);
       if (chip) chip.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
     }, [selectedDayIdx, view]);
+    /* Sonstiges (dayNotes) und Plan Info (planInfo, Desktop v57.52): Text + Farbe je Tag */
+    function renderPatientDayCard(r) {
+      const c = r.cells[selectedDayIdx] || emptyCell();
+      const t = typeInfo(c.type);
+      const has = cellHasContent(c);
+      const ov = cellOverride(c);
+      const openEd = () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx });
+      if (ov) {
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card ov-" + ov.key + (r.archived ? " abg" : ""), onClick: openEd, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
+              ov.label,
+              ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
+        ] }, r.id);
+      }
+      const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
+      const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
+      const effMaxT = effMaxTOf(r);
+      const tNum = tNumOf(c.behandlung);
+      const warn = tWarnLevel(tNum, effMaxT);
+      const markerAbbrev = noteMarkerAbbrev(c);
+      const noteConsumed = !!markerAbbrev && c.type !== "Aufnahme" && c.type !== "Entlassung";
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "button",
+        {
+          className: "day-card" + (has ? "" : " empty") + (warn === "final" ? " ring-final" : "") + (r.archived ? " abg" : ""),
+          style: has ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+          onClick: openEd,
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-badges", children: [
+                markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "marker-badge", children: markerAbbrev }),
+                c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge" + (warn ? " warn-" + warn : ""), children: c.behandlung })
+              ] })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\u2013 leer \u2013" ? t.label : "" }),
+              c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-chip", children: c.time }),
+              c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "th-badge", style: therapeutBadgeStyle(c.therapeut), children: c.therapeut }),
+              c.einheiten !== "" && c.einheiten != null && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-chip e" + (warn ? " warn-" + warn : ""), children: [
+                "E",
+                c.einheiten
+              ] }),
+              c.note && !noteConsumed && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-chip note", children: c.note }),
+              hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 13, height: 13 }) }),
+              hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 13, height: 13 }) })
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\u2013 leer \u2013 tippen zum Eintragen" }) }),
+            c.mittagspause && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-pause", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 12, height: 12 }),
+              " Mittagspause ",
+              c.mittagspause
+            ] }),
+            c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-hinweis", children: [
+              "\u26A0 ",
+              c.hinweis
+            ] })
+          ]
+        },
+        r.id
+      );
+    }
+    function renderAutoDayCard(a) {
+      const c = a.cells[selectedDayIdx] || emptyCell();
+      const has = cellHasContent(c) || Array.isArray(c.icons) && c.icons.length > 0;
+      const ov = cellOverride(c);
+      const openEd = () => setEditor({ rowId: a.id, dayIdx: selectedDayIdx, list: "auto" });
+      if (ov) {
+        return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card auto-card ov-" + ov.key, onClick: openEd, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
+              ov.label,
+              ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
+        ] }, a.id);
+      }
+      const slots = getAutoSlots(c);
+      const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
+      const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "button",
+        {
+          className: "day-card auto-card" + (has ? "" : " empty"),
+          onClick: openEd,
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-top", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-name", children: [
+              "\u{1F697} ",
+              a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" })
+            ] }) }),
+            slots.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "einsatz-stack", children: slots.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "einsatz-chip", style: s.color && SONSTIGES_COLOR_HEX[s.color] ? { background: SONSTIGES_COLOR_HEX[s.color] } : void 0, children: [
+              s.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "einsatz-chip-time", children: s.time }),
+              s.mitarbeiter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "th-badge", style: therapeutBadgeStyle(s.mitarbeiter), children: s.mitarbeiter }),
+              !s.time && !s.mitarbeiter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "einsatz-chip-name dim", children: "Einsatz ohne Angaben" })
+            ] }, i)) }),
+            (c.note || hasAuto || hasHaus) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-bottom", children: [
+              hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 13, height: 13 }) }),
+              hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 13, height: 13 }) }),
+              c.note && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-chip note", children: c.note })
+            ] }),
+            !has && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\u2013 leer \u2013 tippen zum Eintragen" }) }),
+            c.mittagspause && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-pause", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 12, height: 12 }),
+              " Mittagspause ",
+              c.mittagspause
+            ] }),
+            c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-hinweis", children: [
+              "\u26A0 ",
+              c.hinweis
+            ] })
+          ]
+        },
+        a.id
+      );
+    }
+    function renderNoteBox(kind) {
+      const isPI = kind === "planinfo";
+      const texts = isPI ? planInfo : dayNotes;
+      const colors = isPI ? planInfoColors : dayNoteColors;
+      const setTexts = isPI ? setPlanInfo : setDayNotes;
+      const setColors = isPI ? setPlanInfoColors : setDayNoteColors;
+      const day = selDay.day;
+      const hex = SONSTIGES_COLOR_HEX[colors[day]];
+      const paletteOpen = notePaletteFor === kind;
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "day-note-box", style: hex ? { background: hex + "33", borderColor: hex } : void 0, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "note-box-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: isPI ? "Plan Info" : "Sonstiges" }),
+          editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", onClick: () => setNotePaletteFor(paletteOpen ? null : kind), children: [
+            hex ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-color-dot", style: { background: hex } }) : "\u{1F3A8}",
+            " Farbe"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "textarea",
+          {
+            rows: 2,
+            placeholder: `${isPI ? "Plan Info" : "Sonstiges"} f\xFCr ${pad2(day)}.${pad2(month)}.`,
+            value: texts[day] || "",
+            disabled: !editUnlocked,
+            onChange: (e) => setTexts((prev) => ({ ...prev, [day]: e.target.value }))
+          }
+        ),
+        paletteOpen && editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "einsatz-palette", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "palette-x", onClick: () => {
+            setColors((prev) => {
+              const n = { ...prev };
+              delete n[day];
+              return n;
+            });
+            setNotePaletteFor(null);
+          }, children: "\xD7 Keine Farbe" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "palette-swatches", children: Object.keys(SONSTIGES_COLOR_HEX).map((key) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "palette-swatch", style: { background: SONSTIGES_COLOR_HEX[key] }, onClick: () => {
+            setColors((prev) => ({ ...prev, [day]: key }));
+            setNotePaletteFor(null);
+          } }, key)) })
+        ] })
+      ] });
+    }
     const isCurrentMonthToday = (di) => {
       const n = /* @__PURE__ */ new Date();
       return n.getFullYear() === year && n.getMonth() + 1 === month && n.getDate() === daysList[di].day;
@@ -14741,7 +15272,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { "data-day-idx": di, className: cls, onClick: () => setSelectedDayIdx(di), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wd", children: WEEKDAY_SHORT[d.weekday] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dn", children: d.day }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dot" + (cnt > 0 ? " on" : "") })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dot" + (cnt > 0 ? " on" : "") }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tc" + (dailyTherapyCounts[di] ? "" : " zero"), title: "Abrechenbare Therapien an diesem Tag (Eintr\xE4ge mit T-Wert; ohne KH / SCHLUSS / PAUSE / DIALYSE)", children: dailyTherapyCounts[di] })
             ] }, d.day);
           }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "day-toolbar", children: [
@@ -14756,9 +15288,19 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               holidays.has(selDay.day) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "holiday-tag", children: "Feiertag" })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "day-tools", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "count-chip" + (selCounts.physio > MAX_PHYSIO_PER_DAY ? " over" : ""), children: [
-                "Physio ",
-                selCounts.physio,
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "count-chip", title: "Abrechenbare Therapien an diesem Tag", children: [
+                "Ther. ",
+                dailyTherapyCounts[selectedDayIdx] || 0
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "count-chip" + (selCounts.cw > MAX_PHYSIO_PER_DAY ? " over" : ""), children: [
+                "CW ",
+                selCounts.cw,
+                "/",
+                MAX_PHYSIO_PER_DAY
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "count-chip" + (selCounts.an > MAX_PHYSIO_PER_DAY ? " over" : ""), children: [
+                "AN ",
+                selCounts.an,
                 "/",
                 MAX_PHYSIO_PER_DAY
               ] }),
@@ -14769,9 +15311,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 MAX_AUFNAHME_PER_DAY
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (holidays.has(selDay.day) ? " active" : ""), disabled: !editUnlocked, onClick: () => toggleHoliday(selDay.day), children: "Feiertag" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn" + (dayNotes[selDay.day] ? " has-note" : ""), onClick: () => setDayNoteOpen((o) => !o), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn" + (dayNotes[selDay.day] ? " has-note" : "") + (dayNoteOpen ? " active" : ""), title: "Sonstiges (Tagesnotiz)", onClick: () => setDayNoteOpen((o) => !o), children: [
                 SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-color-dot", style: { background: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 14, height: 14 }),
-                " Notiz"
+                " Sonstiges"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn" + (planInfo[selDay.day] ? " has-note" : "") + (planInfoOpen ? " active" : ""), title: "Plan Info (Desktop v57.52)", onClick: () => setPlanInfoOpen((o) => !o), children: [
+                SONSTIGES_COLOR_HEX[planInfoColors[selDay.day]] ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-color-dot", style: { background: SONSTIGES_COLOR_HEX[planInfoColors[selDay.day]] } }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 14, height: 14 }),
+                " Plan Info"
               ] })
             ] })
           ] })
@@ -14779,88 +15325,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { className: "content", children: [
         view === "day" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-          dayNoteOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "day-note-box", style: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] ? { background: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] + "33", borderColor: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] } : void 0, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-              "textarea",
-              {
-                rows: 2,
-                placeholder: `Notiz f\xFCr ${pad2(selDay.day)}.${pad2(month)}.`,
-                value: dayNotes[selDay.day] || "",
-                disabled: !editUnlocked,
-                onChange: (e) => setDayNotes((prev) => ({ ...prev, [selDay.day]: e.target.value }))
-              }
-            ),
-            SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "note-color-row", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-color-dot", style: { background: SONSTIGES_COLOR_HEX[dayNoteColors[selDay.day]] } }),
-              " Farbe vom Desktop \xFCbernommen"
-            ] })
-          ] }),
+          dayNoteOpen && renderNoteBox("sonstiges"),
+          planInfoOpen && renderNoteBox("planinfo"),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "day-list", children: [
             activeRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: 'Noch keine Patienten. \xDCber \u201EPatienten" unten kannst du welche anlegen.' }),
-            activeRows.map((r) => {
-              const c = r.cells[selectedDayIdx] || emptyCell();
-              const t = typeInfo(c.type);
-              const has = cellHasContent(c);
-              const ov = cellOverride(c);
-              if (ov) {
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card ov-" + ov.key, onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
-                      ov.label,
-                      ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
-                    ] })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
-                ] }, r.id);
-              }
-              const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
-              const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
-              const effMaxT = effMaxTOf(r);
-              const tNum = tNumOf(c.behandlung);
-              const warn = tWarnLevel(tNum, effMaxT);
-              const markerAbbrev = noteMarkerAbbrev(c);
-              const noteConsumed = !!markerAbbrev && c.type !== "Aufnahme" && c.type !== "Entlassung";
-              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                "button",
-                {
-                  className: "day-card" + (has ? "" : " empty") + (warn === "final" ? " ring-final" : ""),
-                  style: has ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
-                  onClick: () => setEditor({ rowId: r.id, dayIdx: selectedDayIdx }),
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-badges", children: [
-                        markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "marker-badge", children: markerAbbrev }),
-                        c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "t-badge" + (warn ? " warn-" + warn : ""), children: c.behandlung })
-                      ] })
-                    ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: t.label !== "\u2013 leer \u2013" ? t.label : "" }),
-                      c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.time }),
-                      c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-info", children: c.therapeut }),
-                      c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-info" + (warn ? " warn-" + warn : ""), children: [
-                        c.einheiten,
-                        " E"
-                      ] }),
-                      c.note && !noteConsumed && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-note-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(INote, { width: 12, height: 12 }) }),
-                      hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 13, height: 13 }) }),
-                      hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-icon-ind", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 13, height: 13 }) })
-                    ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\u2013 leer \u2013 tippen zum Eintragen" }) }),
-                    c.mittagspause && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-pause", children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 12, height: 12 }),
-                      " Mittagspause ",
-                      c.mittagspause
-                    ] }),
-                    c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-hinweis", children: [
-                      "\u26A0 ",
-                      c.hinweis
-                    ] })
-                  ]
-                },
-                r.id
-              );
-            })
+            activeRows.map((r) => renderPatientDayCard(r))
           ] }),
           (autoRows.length > 0 || editUnlocked) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "auto-section", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "auto-section-head", children: [
@@ -14868,47 +15337,15 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", onClick: () => setAutoManageOpen(true), children: "Verwalten" })
             ] }),
             autoRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine Autos angelegt." }),
-            autoRows.map((a) => {
-              const c = a.cells[selectedDayIdx] || emptyCell();
-              const t = typeInfo(c.type);
-              const has = cellHasContent(c);
-              const ov = cellOverride(c);
-              if (ov) {
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "day-card auto-card ov-" + ov.key, onClick: () => setEditor({ rowId: a.id, dayIdx: selectedDayIdx, list: "auto" }), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "dc-top", children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-name", children: a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" }) }),
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-ov-big", children: [
-                      ov.label,
-                      ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-ov-plus", children: "+" })
-                    ] })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-type", children: ov.sub }) })
-                ] }, a.id);
-              }
-              const slots = getAutoSlots(c);
-              return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-                "button",
-                {
-                  className: "day-card auto-card" + (has ? "" : " empty"),
-                  onClick: () => setEditor({ rowId: a.id, dayIdx: selectedDayIdx, list: "auto" }),
-                  children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-top", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "dc-name", children: [
-                      "\u{1F697} ",
-                      a.plate || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Kennzeichen" })
-                    ] }) }),
-                    slots.length > 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "einsatz-stack", children: slots.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "einsatz-chip", style: s.color && SONSTIGES_COLOR_HEX[s.color] ? { background: SONSTIGES_COLOR_HEX[s.color] } : void 0, children: [
-                      s.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "einsatz-chip-time", children: s.time }),
-                      s.mitarbeiter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "einsatz-chip-name", children: s.mitarbeiter }),
-                      !s.time && !s.mitarbeiter && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "einsatz-chip-name dim", children: "Einsatz ohne Angaben" })
-                    ] }, i)) }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "dc-bottom", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dc-empty-label", children: "\u2013 leer \u2013 tippen zum Eintragen" }) })
-                  ]
-                },
-                a.id
-              );
-            })
+            autoRows.map((a) => renderAutoDayCard(a))
+          ] }),
+          abgeschlossenRows.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "auto-section abg-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "auto-section-head", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: ["Abgeschlossen (", abgeschlossenRows.length, ")"] }) }),
+            abgeschlossenRows.map((r) => renderPatientDayCard(r))
           ] })
         ] }),
         view === "week" && (() => {
+          void crossRefresh;
           const w = weeks[effWeekIdx] || [];
           const first = daysList[w[0]];
           const last = daysList[w[w.length - 1]];
@@ -14926,32 +15363,132 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             nextM = 1;
             nextY++;
           }
-          const crossBeforeDays = showPrevCross ? getDaysInMonth(prevY, prevM).slice(-firstDow) : [];
-          const crossAfterDays = showNextCross ? getDaysInMonth(nextY, nextM).slice(0, 6 - lastDow) : [];
-          let prevMonthRows = [];
-          if (showPrevCross) {
-            try {
-              const raw = lsGet(`${STORAGE_PREFIX}:${prevY}-${pad2(prevM)}`);
-              if (raw) prevMonthRows = JSON.parse(raw).rows || [];
-            } catch (e) {
-            }
-          }
-          let nextMonthRows = [];
-          if (showNextCross) {
-            try {
-              const raw = lsGet(`${STORAGE_PREFIX}:${nextY}-${pad2(nextM)}`);
-              if (raw) nextMonthRows = JSON.parse(raw).rows || [];
-            } catch (e) {
-            }
-          }
+          const prevDaysAll = getDaysInMonth(prevY, prevM);
+          const nextDaysAll = getDaysInMonth(nextY, nextM);
+          const crossBeforeDays = showPrevCross ? prevDaysAll.slice(-firstDow) : [];
+          const crossAfterDays = showNextCross ? nextDaysAll.slice(0, 6 - lastDow) : [];
+          const prevData = showPrevCross ? readMonthData(prevM, prevY) : null;
+          const nextData = showNextCross ? readMonthData(nextM, nextY) : null;
+          const prevMonthRows = prevData && Array.isArray(prevData.rows) ? prevData.rows : [];
+          const nextMonthRows = nextData && Array.isArray(nextData.rows) ? nextData.rows : [];
+          const prevHolidays = new Set(prevData && prevData.holidays || []);
+          const nextHolidays = new Set(nextData && nextData.holidays || []);
           function findCrossRow(list, r) {
-            return list.find((x) => x.id === r.id) || list.find((x) => x.name === r.name) || null;
+            return list.find((x) => x.id === r.id) || (r.name ? list.find((x) => x.name === r.name) : null) || null;
           }
+          function crossCellOf(list, allDays, r, day) {
+            const cr = findCrossRow(list, r);
+            if (!cr || !cr.cells) return null;
+            const cells = expandCellsForSundays(cr.cells, allDays);
+            const di = allDays.findIndex((d) => d.day === day);
+            return di >= 0 ? cells[di] : null;
+          }
+          /* Desktop v57.43/v57.45/v57.50: "Nachbarmonat"-Zeilen fuer Patienten, die in diesem Monat
+             keine Zeile haben, aber an den sichtbaren Tagen des Nachbarmonats eine AeA haben. */
+          const knownIds = new Set(rows.map((r) => r.id));
+          const knownNames = new Set(rows.map((r) => r.name).filter(Boolean));
+          const phantomRows = [];
+          [["prev", prevMonthRows, prevDaysAll, crossBeforeDays], ["next", nextMonthRows, nextDaysAll, crossAfterDays]].forEach(([side, list, allDays, visDays]) => {
+            if (!visDays.length) return;
+            list.forEach((ar) => {
+              if (!ar || knownIds.has(ar.id) || ar.name && knownNames.has(ar.name) || phantomRows.some((p) => p.id === ar.id)) return;
+              const cells = expandCellsForSundays(ar.cells || [], allDays);
+              const hit = visDays.some((d) => {
+                const di = allDays.findIndex((dd) => dd.day === d.day);
+                return di >= 0 && isAerztlicheAufnahmeCell(cells[di]);
+              });
+              if (!hit) return;
+              const { cells: _c, ...rest } = ar;
+              phantomRows.push({ ...rest, cells: Array.from({ length: daysList.length }, () => emptyCell()), __crossMonthOnly: true, __cmSide: side });
+            });
+          });
           const titleFirst = crossBeforeDays[0] || first;
           const titleFirstM = crossBeforeDays.length ? prevM : month;
           const titleLast = crossAfterDays.length ? crossAfterDays[crossAfterDays.length - 1] : last;
           const titleLastM = crossAfterDays.length ? nextM : month;
           const totalCols = crossBeforeDays.length + w.length + crossAfterDays.length;
+          function weekCellChildren(c, r) {
+            const ov = cellOverride(c);
+            if (ov) return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-ov", children: [
+              ov.label,
+              ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-ov-plus", children: "+" })
+            ] });
+            if (!cellHasContent(c)) return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-plus", children: "+" });
+            const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
+            const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
+            const warn = tWarnLevel(tNumOf(c.behandlung), effMaxTOf(r));
+            const markerAbbrev = noteMarkerAbbrev(c);
+            const noteConsumed = !!markerAbbrev && c.type !== "Aufnahme" && c.type !== "Entlassung";
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-top", children: [
+                c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-hinweis-dot", title: c.hinweis, children: "!" }),
+                hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 11, height: 11 }),
+                hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 11, height: 11 }),
+                c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { className: warn ? "warn-" + warn : "", children: c.behandlung }),
+                markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-marker", children: markerAbbrev })
+              ] }),
+              c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-chip", children: c.time }),
+              c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "th-badge small trunc", style: therapeutBadgeStyle(c.therapeut), children: c.therapeut }),
+              c.einheiten !== "" && c.einheiten != null && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-chip e" + (warn ? " warn-" + warn : ""), children: ["E", c.einheiten] }),
+              c.note && !noteConsumed && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-chip note trunc", children: c.note }),
+              c.mittagspause && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-chip mp", children: ["MP ", c.mittagspause] })
+            ] });
+          }
+          function weekCellStyle(c, extraCls) {
+            const ov = cellOverride(c);
+            const has = cellHasContent(c);
+            const t = typeInfo(c.type);
+            return {
+              className: "wg-cell" + extraCls + (has ? "" : " empty") + (ov ? " ov-" + ov.key : ""),
+              style: has && !ov && c.type ? { background: t.bg, borderColor: t.border, color: t.text } : void 0
+            };
+          }
+          function renderCrossCell(r, side, d) {
+            const isPrev = side === "prev";
+            const list = isPrev ? prevMonthRows : nextMonthRows;
+            const allDays = isPrev ? prevDaysAll : nextDaysAll;
+            const cc = crossCellOf(list, allDays, r, d.day) || emptyCell();
+            const cm = { side, adjMonth: isPrev ? prevM : nextM, adjYear: isPrev ? prevY : nextY, day: d.day };
+            const isEditing = editor && editor.crossMonth && editor.rowId === r.id && editor.crossMonth.day === d.day && editor.crossMonth.adjMonth === cm.adjMonth;
+            const st = weekCellStyle(cc, " cross-month" + (d.isSunday ? " sunday" : "") + (isEditing ? " editing" : "") + (warnFinal(cc, r) ? " ring-final" : ""));
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: st.className, style: st.style, title: (isPrev ? "Vormonat" : "Folgemonat") + " — wird direkt im " + (isPrev ? "Vormonat" : "Folgemonat") + " gespeichert", onClick: () => setEditor({ rowId: r.id, dayIdx: -1, crossMonth: cm, phantomRow: r.__crossMonthOnly ? r : null }), children: weekCellChildren(cc, r) }, (isPrev ? "pre-" : "post-") + d.day);
+          }
+          function warnFinal(c, r) {
+            return tWarnLevel(tNumOf(c && c.behandlung), effMaxTOf(r)) === "final";
+          }
+          function renderWeekRow(r, opts) {
+            const isPhantom = !!r.__crossMonthOnly;
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react.default.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "wg-name" + (isPhantom ? " phantom" : "") + (r.archived ? " abg" : ""), onClick: () => {
+                if (!isPhantom) setDetailId(r.id);
+              }, title: isPhantom ? "Nachbarmonat — Patient hat in diesem Monat noch keine Zeile" : r.name, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }),
+                isPhantom && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("small", { className: "phantom-tag", children: "Nachbarmonat" })
+              ] }),
+              crossBeforeDays.map((d) => renderCrossCell(r, "prev", d)),
+              w.map((di) => {
+                const d = daysList[di];
+                const c = r.cells[di] || emptyCell();
+                const isEditing = editor && !editor.crossMonth && editor.rowId === r.id && editor.dayIdx === di;
+                const st = weekCellStyle(c, (d.isSunday ? " sunday" : "") + (isEditing ? " editing" : "") + (warnFinal(c, r) ? " ring-final" : "") + (isPhantom ? " phantom-local" : ""));
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: st.className, style: st.style, disabled: isPhantom, onClick: () => {
+                  if (isPhantom) return;
+                  setSelectedDayIdx(di);
+                  setEditor({ rowId: r.id, dayIdx: di });
+                }, children: isPhantom ? null : weekCellChildren(c, r) }, di);
+              }),
+              crossAfterDays.map((d) => renderCrossCell(r, "next", d))
+            ] }, (opts || "") + r.id);
+          }
+          function crossHead(d, m, isPrev) {
+            const hol = (isPrev ? prevHolidays : nextHolidays).has(d.day);
+            const n = therapyCountOfMonth(m, isPrev ? prevY : nextY, d.day);
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-head cross-month" + (d.isSunday ? " sunday" : "") + (hol ? " holiday" : ""), title: (isPrev ? "Vormonat" : "Folgemonat") + " — bearbeitbar", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [pad2(d.day), ".", pad2(m), "."] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-tc" + (n ? "" : " zero"), children: n })
+            ] }, (isPrev ? "pre-" : "post-") + d.day);
+          }
           return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-wrap", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-toolbar", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: effWeekIdx === 0, onClick: () => setSelectedWeekIdx(Math.max(0, effWeekIdx - 1)), children: [
@@ -14962,124 +15499,35 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 pad2(titleFirst.day),
                 ".",
                 pad2(titleFirstM),
-                ". \u2013 ",
+                ". – ",
                 pad2(titleLast.day),
                 ".",
                 pad2(titleLastM),
                 ".",
-                year
+                titleLastM === 1 && titleFirstM === 12 ? nextY : year
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", disabled: effWeekIdx >= weeks.length - 1, onClick: () => setSelectedWeekIdx(Math.min(weeks.length - 1, effWeekIdx + 1)), children: [
                 "Woche ",
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, { width: 15, height: 15 })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "week-grid-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-grid", style: { gridTemplateColumns: `minmax(130px, 180px) repeat(${totalCols}, minmax(88px, 1fr))` }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "week-grid-scroll", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "week-grid", style: { gridTemplateColumns: `minmax(130px, 180px) repeat(${totalCols}, minmax(92px, 1fr))` }, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-corner", children: "Patient" }),
-              crossBeforeDays.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-head cross-month", title: "Vormonat \u2014 nur Ansicht", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
-                  pad2(d.day),
-                  ".",
-                  pad2(prevM),
-                  "."
-                ] })
-              ] }, "pre-" + d.day)),
+              crossBeforeDays.map((d) => crossHead(d, prevM, true)),
               w.map((di) => {
                 const d = daysList[di];
                 const cls = ["wg-head", d.isSunday ? "sunday" : "", d.isSaturday ? "saturday" : "", holidays.has(d.day) ? "holiday" : "", isCurrentMonthToday(di) ? "today" : ""].join(" ");
                 return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: cls, children: [
                   /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
-                    pad2(d.day),
-                    ".",
-                    pad2(month),
-                    "."
-                  ] })
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [pad2(d.day), ".", pad2(month), "."] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-tc" + (dailyTherapyCounts[di] ? "" : " zero"), title: "Abrechenbare Therapien", children: dailyTherapyCounts[di] })
                 ] }, di);
               }),
-              crossAfterDays.map((d) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-head cross-month", title: "Folgemonat \u2014 nur Ansicht", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-wd", children: WEEKDAY_SHORT[d.weekday] }),
-                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-dn", children: [
-                  pad2(d.day),
-                  ".",
-                  pad2(nextM),
-                  "."
-                ] })
-              ] }, "post-" + d.day)),
-              activeRows.map((r) => {
-                const crossPrevRow = showPrevCross ? findCrossRow(prevMonthRows, r) : null;
-                const crossNextRow = showNextCross ? findCrossRow(nextMonthRows, r) : null;
-                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_react.default.Fragment, { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "wg-name", onClick: () => setDetailId(r.id), title: r.name, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }) }) }),
-                crossBeforeDays.map((d) => {
-                  const cc = crossPrevRow && crossPrevRow.cells ? crossPrevRow.cells[d.day - 1] : null;
-                  const has = cc && cellHasContent(cc);
-                  const t = has ? typeInfo(cc.type) : null;
-                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-cell cross-month" + (has ? "" : " empty"), style: has && t ? { background: t.bg, borderColor: t.border, color: t.text } : void 0, title: "Vormonat \u2014 zum Bearbeiten in den Vormonat wechseln", children: has && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-                    cc.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: cc.behandlung }),
-                    cc.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: cc.therapeut })
-                  ] }) }, "pre-" + d.day);
-                }),
-                w.map((di) => {
-                  const d = daysList[di];
-                  const c = r.cells[di] || emptyCell();
-                  const t = typeInfo(c.type);
-                  const has = cellHasContent(c);
-                  const isEditing = editor && editor.rowId === r.id && editor.dayIdx === di;
-                  const hasAuto = Array.isArray(c.icons) && c.icons.includes("auto");
-                  const hasHaus = Array.isArray(c.icons) && c.icons.includes("haus");
-                  const ov = cellOverride(c);
-                  const effMaxT = effMaxTOf(r);
-                  const tNum = tNumOf(c.behandlung);
-                  const warn = tWarnLevel(tNum, effMaxT);
-                  const markerAbbrev = noteMarkerAbbrev(c);
-                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-                    "button",
-                    {
-                      className: "wg-cell" + (d.isSunday ? " sunday" : "") + (has ? "" : " empty") + (isEditing ? " editing" : "") + (ov ? " ov-" + ov.key : "") + (warn === "final" ? " ring-final" : ""),
-                      style: has && !ov ? { background: t.bg, borderColor: isEditing ? void 0 : t.border, color: t.text } : void 0,
-                      onClick: () => {
-                        setSelectedDayIdx(di);
-                        setEditor({ rowId: r.id, dayIdx: di });
-                      },
-                      children: ov ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-ov", children: [
-                        ov.label,
-                        ov.key === "dialyse" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-ov-plus", children: "+" })
-                      ] }) : has ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-                        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-top", children: [
-                          markerAbbrev && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-marker", children: markerAbbrev }),
-                          c.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { className: warn ? "warn-" + warn : "", children: c.behandlung }),
-                          c.hinweis && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-hinweis-dot", title: c.hinweis, children: "\u26A0" }),
-                          hasAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 11, height: 11 }),
-                          hasHaus && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 11, height: 11 })
-                        ] }),
-                        c.time && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info", children: c.time }),
-                        c.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: c.therapeut }),
-                        c.einheiten !== "" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-info" + (warn ? " warn-" + warn : ""), children: [
-                          c.einheiten,
-                          " E"
-                        ] }),
-                        c.mittagspause && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "wg-cell-info pause", children: [
-                          "MP ",
-                          c.mittagspause
-                        ] })
-                      ] }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-plus", children: "+" })
-                    },
-                    di
-                  );
-                }),
-                crossAfterDays.map((d) => {
-                  const cc = crossNextRow && crossNextRow.cells ? crossNextRow.cells[d.day - 1] : null;
-                  const has = cc && cellHasContent(cc);
-                  const t = has ? typeInfo(cc.type) : null;
-                  return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "wg-cell cross-month" + (has ? "" : " empty"), style: has && t ? { background: t.bg, borderColor: t.border, color: t.text } : void 0, title: "Folgemonat — zum Bearbeiten in den Folgemonat wechseln", children: has && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-                    cc.behandlung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("b", { children: cc.behandlung }),
-                    cc.therapeut && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "wg-cell-info trunc", children: cc.therapeut })
-                  ] }) }, "post-" + d.day);
-                })
-              ] }, r.id);
-              })
+              crossAfterDays.map((d) => crossHead(d, nextM, false)),
+              activeRows.map((r) => renderWeekRow(r)),
+              phantomRows.map((r) => renderWeekRow(r, "ph-")),
+              abgeschlossenRows.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "wg-section", style: { gridColumn: `1 / span ${totalCols + 1}` }, children: ["Abgeschlossen (", abgeschlossenRows.length, ")"] }),
+              abgeschlossenRows.map((r) => renderWeekRow(r, "abg-"))
             ] }) }),
             activeRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Keine aktiven Patienten." })
           ] });
@@ -15097,6 +15545,25 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               " Patient"
             ] })
           ] }),
+          /* Desktop v57.60: Patientensuche (alle gespeicherten Monate) */
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-box", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "search", value: searchQuery, placeholder: "\u{1F50D} Patient suchen\u2026 (alle Monate)", onChange: (e) => setSearchQuery(e.target.value), onKeyDown: (e) => {
+              if (e.key === "Enter" && searchResults[0]) goToSearchResult(searchResults[0]);
+            } }),
+            searchQuery.trim().length >= 2 && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "search-results", children: [
+              searchResults.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "search-empty", children: "Kein Treffer" }),
+              searchResults.map((e) => {
+                const cur = rows.find((r) => r.id === e.id);
+                const first = e.months[0], lastM = e.months[e.months.length - 1];
+                const status = cur && !cur.archived ? "aktiv" : e.archived ? "abg" : "other";
+                return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "search-hit", onClick: () => goToSearchResult(e), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sh-name", children: e.name }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sh-period", children: first ? first === lastM ? `Behandlung ${fmtYM(first)}` : `${fmtYM(first)} \u2013 ${fmtYM(lastM)}` : "keine Behandlung" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "sh-status " + status, children: status === "aktiv" ? "Aktiv" : status === "abg" ? `Abgeschlossen ${e.archivedInMonth ? pad2(e.archivedInMonth) + "/" + e.archivedInYear : ""}` : "Nicht in diesem Monat" })
+                ] }, e.id);
+              })
+            ] })
+          ] }),
           activeRows.map((r) => {
             const usedT = maxTNumber(r);
             const effMaxT = effMaxTOf(r);
@@ -15107,11 +15574,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "patient-card", onClick: () => setDetailId(r.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pc-top", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-name", children: [
-                  r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }),
-                  r.patientNummer ? /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-nr", children: [
-                    " \xB7 Nr. ",
-                    r.patientNummer
-                  ] }) : null
+                  r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" })
                 ] }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-badges", children: [
                   r.direction && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "dir-badge", style: { background: dirC.bg, color: dirC.text, borderColor: dirC.border }, children: r.direction }),
@@ -15124,6 +15587,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                   "E ",
                   usedE % 1 === 0 ? usedE : usedE.toFixed(1)
                 ] }),
+                r.versicherung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-stat vers-" + r.versicherung, children: r.versicherung }),
                 r.verlaengerungFlag && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat vl", children: [
                   "Verl. +",
                   r.verlaengerung
@@ -15193,7 +15657,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             " Monat leeren"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt jetzt alle gespeicherten Monate (allMonths) \u2014 identisch zum Desktop-Format v7." })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt alle gespeicherten Monate (allMonths) inkl. Plan Info, E-Mail und AUTO-Tabelle \u2014 identisch zum Desktop-Format (v57.60)." })
       ] }),
       monthPickerOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { onClose: () => setMonthPickerOpen(false), title: "Monat w\xE4hlen", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mp-grid", children: [
@@ -15206,7 +15670,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         setArchiveOpen(false);
         setConfirmDeleteArchiveId(null);
       }, title: `Archiv (${archiveRows.length})`, children: [
-        archiveRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine archivierten Patienten." }),
+        archiveRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "In diesem Monat wurde kein Patient abgeschlossen. \xC4ltere abgeschlossene Patienten findest du \xFCber die Suche unter \u201EPatienten\u201C." }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "archive-list", children: archiveRows.map((a) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "archive-item", children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ai-info", onClick: () => setArchiveDetailId(a.id), role: "button", tabIndex: 0, children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ai-name", children: a.name || "Ohne Name" }),
@@ -15233,7 +15697,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             item.address && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: item.address }),
             item.contact && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: item.contact })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-label", children: "Behandlungsverlauf" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "log-info", children: `Archiviert aus: ${item.archivedInMonth ? MONTH_NAMES_DE[item.archivedInMonth - 1] + " " + (item.archivedInYear || "") : "\u2013"}` }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pd-cal-label", children: `Behandlungsverlauf ${MONTH_NAMES_DE[month - 1]} ${year}` }),
           log.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Keine Eintr\xE4ge in diesem Monat erfasst." }),
           log.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "log-list", children: log.map((e, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-entry" + (e.type === "Entlassung" ? " last" : ""), children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "log-date", children: [
@@ -15297,10 +15762,18 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           row: editor.list === "auto" ? { ...editorRow, name: editorRow.plate || "Auto" } : editorRow,
           isAuto: editor.list === "auto",
           cell: editorCell,
-          dayIdx: editor.dayIdx,
-          daysList,
-          month,
-          year,
+          dayIdx: editor.crossMonth ? getDaysInMonth(editor.crossMonth.adjYear, editor.crossMonth.adjMonth).findIndex((d) => d.day === editor.crossMonth.day) : editor.dayIdx,
+          daysList: editor.crossMonth ? getDaysInMonth(editor.crossMonth.adjYear, editor.crossMonth.adjMonth) : daysList,
+          month: editor.crossMonth ? editor.crossMonth.adjMonth : month,
+          year: editor.crossMonth ? editor.crossMonth.adjYear : year,
+          crossMonth: editor.crossMonth || null,
+          counts: editor.crossMonth ? (() => {
+            const data = readMonthData(editor.crossMonth.adjMonth, editor.crossMonth.adjYear);
+            const adjDays = getDaysInMonth(editor.crossMonth.adjYear, editor.crossMonth.adjMonth);
+            const di = adjDays.findIndex((d) => d.day === editor.crossMonth.day);
+            const list = (data && Array.isArray(data.rows) ? data.rows : []).map((r) => ({ ...r, cells: expandCellsForSundays(r.cells || [], adjDays) }));
+            return countsFromRows(list, di);
+          })() : dayCounts(editor.dayIdx),
           therapeutList,
           onAddTherapeut: addTherapeut,
           clipboard: cellClipboard,
@@ -15309,12 +15782,20 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             showToast("Zelle kopiert");
           },
           onPaste: () => {
-            if (cellClipboard) setCellFull(editor.rowId, editor.dayIdx, cellClipboard, editor.list);
+            if (!cellClipboard) return;
+            if (editor.crossMonth) updateCrossMonthCell(editorRow, editor.crossMonth, fullCellObject(cellClipboard), editor.list);
+            else setCellFull(editor.rowId, editor.dayIdx, cellClipboard, editor.list);
           },
-          onClear: () => setCellFull(editor.rowId, editor.dayIdx, emptyCell(), editor.list),
-          onChange: (patch) => updateCell(editor.rowId, editor.dayIdx, patch, editor.list),
+          onClear: () => {
+            if (editor.crossMonth) updateCrossMonthCell(editorRow, editor.crossMonth, fullCellObject(emptyCell()), editor.list);
+            else setCellFull(editor.rowId, editor.dayIdx, emptyCell(), editor.list);
+          },
+          onChange: (patch) => {
+            if (editor.crossMonth) updateCrossMonthCell(editorRow, editor.crossMonth, patch, editor.list);
+            else updateCell(editor.rowId, editor.dayIdx, patch, editor.list);
+          },
           onFieldChange: (f, v) => updatePatientField(editor.rowId, f, v),
-          onMoveDay: (delta) => {
+          onMoveDay: editor.crossMonth ? null : (delta) => {
             let di = editor.dayIdx + delta;
             if (di < 0) di = 0;
             if (di > daysList.length - 1) di = daysList.length - 1;
@@ -15364,13 +15845,13 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn small", onClick: () => {
           onAdd(plate);
           setPlate("");
-        }, children: "Hinzuf\\xFCgen" })
+        }, children: "Hinzuf\xFCgen" })
       ] }),
       list.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch keine Autos angelegt." }),
       /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "staff-list", children: list.map((a) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "staff-item", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: a.plate || "\\u2013 ohne Kennzeichen \\u2013" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: a.plate || "\u2013 ohne Kennzeichen \u2013" }),
         editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", onClick: () => {
-          if (window.confirm(`\\u201E${a.plate || "dieses Auto"}\\u201C entfernen?`)) onRemove(a.id);
+          if (window.confirm(`\u201E${a.plate || "dieses Auto"}\u201C entfernen?`)) onRemove(a.id);
         }, "aria-label": `${a.plate} entfernen`, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ITrash, { width: 14, height: 14 }) })
       ] }, a.id)) })
     ] });
@@ -15434,22 +15915,28 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
           }) })
         ] }),
         anordnungEdit !== null && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { title: `Anordnung ${anordnungEdit + 1}`, onClose: () => setAnordnungEdit(null), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-          !editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Nur-Lese-Modus \\u2014 zum Bearbeiten zuerst \\xFCber \\u201EMoGeRe Gold\\u201C entsperren." }),
+          !editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Nur-Lese-Modus \u2014 zum Bearbeiten zuerst \xFCber \u201EMoGeRe Gold\u201C entsperren." }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Zeichen (1 Buchstabe/Zahl/Symbol)" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", maxLength: 1, disabled: !editUnlocked, value: anordnungCells[anordnungEdit].char || "", onChange: (e) => setAnordnungCell(anordnungEdit, { char: e.target.value.slice(-1) }) }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", style: { marginTop: "14px" }, children: "Farbe" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: TREATMENT_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
-            {
-              className: "type-btn" + (anordnungCells[anordnungEdit].color === t.value ? " sel" : ""),
-              style: anordnungCells[anordnungEdit].color === t.value ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
-              disabled: !editUnlocked,
-              onClick: () => setAnordnungCell(anordnungEdit, { color: t.value }),
-              children: t.label
-            },
-            t.value || "leer"
-          )) }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn done", onClick: () => setAnordnungEdit(null), children: "Fertig" })
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: POPUP_TYPE_ORDER.map((v) => {
+            const t = typeInfo(v);
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+              "button",
+              {
+                className: "type-btn" + (anordnungCells[anordnungEdit].color === v ? " sel" : ""),
+                style: anordnungCells[anordnungEdit].color === v ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+                disabled: !editUnlocked,
+                onClick: () => setAnordnungCell(anordnungEdit, { color: v }),
+                children: POPUP_LABEL_OVERRIDES[v] || t.label
+              },
+              v || "leer"
+            );
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline mt4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", disabled: !editUnlocked, onClick: () => setAnordnungCell(anordnungEdit, { color: "", char: "" }), children: "Zur\xFCcksetzen" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn done", onClick: () => setAnordnungEdit(null), children: "Fertig" })
+          ] })
         ] }) }),
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pd-cal-label", children: [
           "Behandlungen im ",
@@ -15490,11 +15977,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.name, disabled: !editUnlocked, onChange: (e) => onField("name", e.target.value), placeholder: "Name, Vorname" })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Pat.Nr." }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: row.patientNummer || "", disabled: !editUnlocked, onChange: (e) => onField("patientNummer", e.target.value), placeholder: "z.B. 2026-042" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Roter Tag" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "T (Behandlungstage)" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { value: row.redDay, disabled: !editUnlocked, onChange: (e) => onField("redDay", Number(e.target.value)), children: RED_DAY_OPTIONS.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: o, children: tOptionLabel(o) }, o)) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { children: [
@@ -15546,6 +16029,21 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Kontakt" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, disabled: !editUnlocked, onChange: (e) => onField("contact", e.target.value) })
           ] }),
+          /* Desktop v57.58: E-Mail-Feld mit Kopierknopf */
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "E-Mail" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "vl-row", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "email", value: row.email || "", disabled: !editUnlocked, placeholder: "E-Mail", onChange: (e) => onField("email", e.target.value) }),
+              row.email && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { type: "button", className: "mini-btn", title: "E-Mail kopieren", onClick: (e) => {
+                e.preventDefault();
+                try {
+                  navigator.clipboard.writeText(row.email);
+                } catch (err) {
+                }
+              }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 14, height: 14 }) }),
+              row.email && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", { className: "mini-btn", href: "mailto:" + row.email, title: "E-Mail schreiben", children: "\u2709" })
+            ] })
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Versicherung" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: row.versicherung || "", disabled: !editUnlocked, title: "Versicherungsart: GKV = gesetzlich, P = privat, S = Selbstzahler", onChange: (e) => onField("versicherung", e.target.value), children: [
@@ -15560,7 +16058,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.anordnungen, disabled: !editUnlocked, onChange: (e) => onField("anordnungen", e.target.value) })
           ] })
         ] }),
-        editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
+        editUnlocked && !row.archived && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "archive-btn", onClick: () => {
           if (window.confirm(`\u201E${row.name || "Patient"}" wirklich archivieren?`)) onArchive();
         }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IArchive, { width: 16, height: 16 }),
@@ -15575,8 +16073,8 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
       ] })
     ] }) });
   }
-  function CellEditor({ row, cell, dayIdx, daysList, month, year, therapeutList, onAddTherapeut, clipboard, onCopy, onPaste, onClear, onChange, onFieldChange, onMoveDay, onClose, editUnlocked, isAuto }) {
-    const d = daysList[dayIdx];
+  function CellEditor({ row, cell, dayIdx, daysList, month, year, therapeutList, onAddTherapeut, clipboard, onCopy, onPaste, onClear, onChange, onFieldChange, onMoveDay, onClose, editUnlocked, isAuto, crossMonth, counts }) {
+    const d = daysList[dayIdx] || daysList[0];
     const parts = (cell.therapeut || "").split(" + ").map((s) => s.trim()).filter(Boolean);
     const primary = parts[0] || "";
     const second = parts[1] || "";
@@ -15585,7 +16083,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     const [newName, setNewName] = (0, import_react.useState)("");
     (0, import_react.useEffect)(() => {
       setShowSecond(!!second);
-    }, [row.id, dayIdx]);
+    }, [row.id, dayIdx, month]);
     function setPrimary(v) {
       onChange({ therapeut: second ? v ? v + " + " + second : second : v });
     }
@@ -15606,18 +16104,51 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
     }
     const [colorPickerIdx, setColorPickerIdx] = (0, import_react.useState)(null);
     const autoSlots = getAutoSlots(cell);
+    /* Desktop: beim Speichern der Einsaetze werden die alten Einzelfelder time/therapeut geleert */
+    function commitSlots(next) {
+      onChange({ slots: next, time: "", therapeut: "" });
+    }
     function updateAutoSlot(idx, patch) {
-      const next = autoSlots.map((s, i) => i === idx ? { ...s, ...patch } : s);
-      onChange({ slots: next });
+      commitSlots(autoSlots.map((s, i) => i === idx ? { ...s, ...patch } : s));
     }
     function addAutoSlot() {
       if (autoSlots.length >= MAX_AUTO_SLOTS) return;
-      onChange({ slots: [...autoSlots, { time: "", mitarbeiter: "", color: "" }] });
+      commitSlots([...autoSlots, { time: "", mitarbeiter: "", color: "" }]);
     }
     function removeAutoSlot(idx) {
-      onChange({ slots: autoSlots.filter((_, i) => i !== idx) });
+      commitSlots(autoSlots.filter((_, i) => i !== idx));
       if (colorPickerIdx === idx) setColorPickerIdx(null);
     }
+    function typeButton(v) {
+      const t = typeInfo(v);
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+        "button",
+        {
+          className: "type-btn" + (cell.type === v ? " sel" : ""),
+          style: cell.type === v ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
+          disabled: !editUnlocked,
+          onClick: () => onChange({ type: v }),
+          children: POPUP_LABEL_OVERRIDES[v] || t.label
+        },
+        v || "leer"
+      );
+    }
+    const noteButtons = /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-note-grid", children: POPUP_NOTE_BUTTONS.map((nb) => {
+      const noteVal = (cell.note || "").trim().toLowerCase();
+      const active = noteVal === nb.phrase.toLowerCase();
+      const usedBefore = !active && nb.trackUsage && ((row.cells || []).some((c) => c && (c.note || "").toLowerCase().includes(nb.phrase.toLowerCase())) || crossMonthNoteMarkers.has(nb.abbrev));
+      return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+        "button",
+        {
+          title: usedBefore ? `${nb.abbrev} bei diesem Patienten bereits verwendet` : void 0,
+          className: "note-btn" + (active ? " active" : usedBefore ? " used-before" : ""),
+          disabled: !editUnlocked,
+          onClick: () => onChange({ note: active ? "" : nb.phrase }),
+          children: [nb.abbrev, usedBefore && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-btn-check", children: "✓" })]
+        },
+        nb.abbrev
+      );
+    }) });
     return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
       Sheet,
       {
@@ -15625,7 +16156,7 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
         variant: "side",
         onClose,
         title: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-title", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", onClick: () => onMoveDay(-1), "aria-label": "Voriger Tag", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, { width: 18, height: 18 }) }),
+          onMoveDay ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", onClick: () => onMoveDay(-1), "aria-label": "Voriger Tag", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevL, { width: 18, height: 18 }) }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "icon-btn-spacer" }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-title-text", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-name", children: row.name || "Ohne Name" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-date", children: [
@@ -15638,9 +16169,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               year
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", onClick: () => onMoveDay(1), "aria-label": "N\xE4chster Tag", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, { width: 18, height: 18 }) })
+          onMoveDay ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "icon-btn", onClick: () => onMoveDay(1), "aria-label": "N\xE4chster Tag", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IChevR, { width: 18, height: 18 }) }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "icon-btn-spacer" })
         ] }),
         children: [
+          crossMonth && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-cross-banner", children: `Wochen\xFCbergreifend: Eintrag wird direkt im ${MONTH_NAMES_DE[month - 1]} ${year} gespeichert.` }),
+          !editUnlocked && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Nur-Lese-Modus — zum Bearbeiten zuerst \xFCber „MoGeRe Gold“ entsperren." }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-clip", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn", onClick: onCopy, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 14, height: 14 }),
@@ -15652,25 +16185,31 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "mini-btn danger", disabled: !editUnlocked, onClick: onClear, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IEraser, { width: 14, height: 14 }),
-              " Leeren"
+              " Zelle leeren"
             ] })
           ] }),
           clipboard && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-clip-info", children: [
             "In Zwischenablage: ",
             [clipboard.type, clipboard.behandlung].filter(Boolean).join(" \xB7 ") || (Array.isArray(clipboard.slots) && clipboard.slots.length ? `${clipboard.slots.length} Einsatz(e)` : "leere Zelle")
           ] }),
+          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-two", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Uhrzeit" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.time, placeholder: "10:00-11:10", disabled: !editUnlocked, onChange: (e) => onChange({ time: e.target.value }) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-label", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 13, height: 13 }),
+                " Mittagspause"
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-mp-input", value: cell.mittagspause || "", placeholder: "z.B. 12:00–13:00", disabled: !editUnlocked, onChange: (e) => onChange({ mittagspause: e.target.value }) })
+            ] })
+          ] }),
           !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Behandlungstyp" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: TREATMENT_TYPES.map((t) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
-            "button",
-            {
-              className: "type-btn" + (cell.type === t.value ? " sel" : ""),
-              style: cell.type === t.value ? { background: t.bg, borderColor: t.border, color: t.text } : void 0,
-              disabled: !editUnlocked,
-              onClick: () => onChange({ type: t.value }),
-              children: t.label
-            },
-            t.value
-          )) }),
+          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: POPUP_TYPE_ORDER.slice(0, 6).map(typeButton) }),
+          !isAuto && noteButtons,
+          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "type-grid", children: POPUP_TYPE_ORDER.slice(6).map(typeButton) }),
+          !isAuto && cell.type === "Aufnahme" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-hint", children: "Alter Eintrag „\xC4rztliche Aufnahme“ — neu: Arztvisite + \xC4A." }),
           !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-two", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Behandlungstag" }),
@@ -15680,11 +16219,11 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label teal", children: "Einheiten" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label teal", children: "Behandlungseinheiten" }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "step-btn", disabled: !editUnlocked, onClick: () => {
                   if (einheitenNum > 0) onChange({ einheiten: String(Math.round((einheitenNum - 0.5) * 2) / 2) });
-                }, children: "\u2212" }),
+                }, children: "−" }),
                 /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
                   "input",
                   {
@@ -15705,33 +16244,29 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               ] })
             ] })
           ] }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Uhrzeit" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.time, placeholder: "z.B. 09:30-10:40", disabled: !editUnlocked, onChange: (e) => onChange({ time: e.target.value }) }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IPause, { width: 13, height: 13 }),
-            " Mittagspause"
-          ] }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full", value: cell.mittagspause || "", placeholder: "z.B. 11:55-12:25 (leer = keine)", disabled: !editUnlocked, onChange: (e) => onChange({ mittagspause: e.target.value }) }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Therapeut" }),
+          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Therapeut / Zust\xE4ndig" }),
           !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: primary, disabled: !editUnlocked, onChange: (e) => setPrimary(e.target.value), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u2013" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "– ausw\xE4hlen –" }),
               therapeutList.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
               primary && !therapeutList.includes(primary) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: primary, children: primary })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (showSecond || second ? " active" : ""), disabled: !editUnlocked, onClick: () => {
-              if (showSecond && second) setSecond("");
-              setShowSecond((s) => !s);
-            }, children: "+2." }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", disabled: !editUnlocked, onClick: () => setAddingName((a) => !a), children: "Neu" })
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn" + (showSecond || second ? " active" : ""), disabled: !editUnlocked, title: "Zweiten Therapeuten hinzuf\xFCgen", onClick: () => setShowSecond((s) => !s), children: "+ Name" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn", disabled: !editUnlocked, title: "Neuen Namen zur Liste hinzuf\xFCgen", onClick: () => setAddingName((a) => !a), children: "+ Liste" })
           ] }),
-          !isAuto && showSecond && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-inline mt4", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { value: second, disabled: !editUnlocked, onChange: (e) => setSecond(e.target.value), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u2013 zweiter Therapeut \u2013" }),
-            therapeutList.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
-            second && !therapeutList.includes(second) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: second, children: second })
-          ] }) }),
+          !isAuto && (showSecond || second) && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline mt4", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { className: "second-sel", value: second, disabled: !editUnlocked, onChange: (e) => setSecond(e.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "– zweiter Therapeut –" }),
+              therapeutList.filter((n) => n !== primary).map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
+              second && !therapeutList.includes(second) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: second, children: second })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger", disabled: !editUnlocked, title: "Zweiten Therapeuten entfernen", onClick: () => {
+              onChange({ therapeut: primary });
+              setShowSecond(false);
+            }, children: "−" })
+          ] }),
           !isAuto && addingName && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline mt4", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: newName, placeholder: "Neuer Mitarbeitername", onChange: (e) => setNewName(e.target.value) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { value: newName, placeholder: "Neuer Name, z.B. M.Muster", onChange: (e) => setNewName(e.target.value) }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn small", onClick: () => {
               if (newName.trim()) {
                 onAddTherapeut(newName);
@@ -15739,19 +16274,33 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
                 setNewName("");
                 setAddingName(false);
               }
-            }, children: "OK" })
+            }, children: "Hinzuf\xFCgen" })
+          ] }),
+          !isAuto && counts && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-counts", children: [
+            "Heute bereits: CW ",
+            counts.cw,
+            "/",
+            MAX_PHYSIO_PER_DAY,
+            " \xB7 AN ",
+            counts.an,
+            "/",
+            MAX_PHYSIO_PER_DAY,
+            " \xB7 Aufnahmen ",
+            counts.aufnahme,
+            "/",
+            MAX_AUFNAHME_PER_DAY
           ] }),
           isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Eins\xE4tze (max. 3, je mit eigener Uhrzeit, Mitarbeiter und Farbe)" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Eins\xE4tze (max. 3 Mitarbeiter/Tag, mit eigener Uhrzeit und Farbe)" }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "einsatz-list", children: autoSlots.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: "Noch kein Einsatz f\xFCr diesen Tag." }) : autoSlots.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "einsatz-row", style: s.color && SONSTIGES_COLOR_HEX[s.color] ? { background: SONSTIGES_COLOR_HEX[s.color] + "33", borderColor: SONSTIGES_COLOR_HEX[s.color] } : void 0, children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "einsatz-color-dot", style: s.color && SONSTIGES_COLOR_HEX[s.color] ? { background: SONSTIGES_COLOR_HEX[s.color] } : void 0, disabled: !editUnlocked, onClick: () => setColorPickerIdx(colorPickerIdx === i ? null : i), "aria-label": "Farbe w\xE4hlen" }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "einsatz-time", placeholder: "09:00-12:00", value: s.time || "", disabled: !editUnlocked, onChange: (e) => updateAutoSlot(i, { time: e.target.value }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "einsatz-time", placeholder: "08:00-12:00", value: s.time || "", disabled: !editUnlocked, onChange: (e) => updateAutoSlot(i, { time: e.target.value }) }),
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("select", { className: "einsatz-mitarbeiter", value: s.mitarbeiter || "", disabled: !editUnlocked, onChange: (e) => updateAutoSlot(i, { mitarbeiter: e.target.value }), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "\u2013" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: "", children: "– Mitarbeiter –" }),
                 therapeutList.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: n, children: n }, n)),
                 s.mitarbeiter && !therapeutList.includes(s.mitarbeiter) && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: s.mitarbeiter, children: s.mitarbeiter })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger einsatz-remove", disabled: !editUnlocked, onClick: () => removeAutoSlot(i), "aria-label": "Einsatz entfernen", children: "\u2212" })
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "mini-btn danger einsatz-remove", disabled: !editUnlocked, onClick: () => removeAutoSlot(i), "aria-label": "Einsatz entfernen", children: "−" })
             ] }, i)) }),
             colorPickerIdx !== null && autoSlots[colorPickerIdx] && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "einsatz-palette", children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "palette-x", onClick: () => {
@@ -15774,46 +16323,28 @@ em { color: var(--dim); font-style: italic; font-weight: 400; }
               }, children: "+ Neuer Mitarbeiter" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Sonderstatus (\xFCberschreibt die Zellenfarbe)" }),
-          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-status-grid", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle kh" + (cell.kh ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.kh ? emptyStatusPatch() : statusOnlyPatch("kh")), children: "KH" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle schluss" + (cell.schluss ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.schluss ? emptyStatusPatch() : statusOnlyPatch("schluss")), children: "SCHLUSS" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle pause" + (cell.pause ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.pause ? emptyStatusPatch() : statusOnlyPatch("pause")), children: "PAUSE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle dialyse" + (cell.dialyse ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.dialyse ? emptyStatusPatch() : statusOnlyPatch("dialyse")), children: "DIALYSE" })
-          ] }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Dienstauto am Ende des Tages" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label hinweis", children: "⚠ Wichtiger Hinweis" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-hinweis-input", value: cell.hinweis || "", placeholder: "z.B. Sturzgefahr, Isolation, Angeh\xF6rige informieren…", disabled: !editUnlocked, onChange: (e) => onChange({ hinweis: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Notiz" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { className: "ce-full", rows: 2, value: cell.note, disabled: !editUnlocked, onChange: (e) => onChange({ note: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-inline mt4", children: [
             /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasAuto ? " on" : ""), disabled: !editUnlocked, onClick: () => toggleIcon("auto"), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICar, { width: 15, height: 15 }),
               " Auto"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle" + (hasHaus ? " on" : ""), disabled: !editUnlocked, onClick: () => toggleIcon("haus"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "icon-toggle haus" + (hasHaus ? " on" : ""), disabled: !editUnlocked, onClick: () => toggleIcon("haus"), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsx)(IHouse, { width: 15, height: 15 }),
               " Haus"
             ] })
           ] }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-hint", children: "Auto + Haus zusammen = Dienstauto darf mit nach Hause. Nur Auto oder keins = zur\xFCck zum Standort." }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Schnellmarkierung" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-note-grid", children: POPUP_NOTE_BUTTONS.map((nb) => {
-            const noteVal = (cell.note || "").trim().toLowerCase();
-            const active = noteVal === nb.phrase.toLowerCase();
-            const usedBefore = !active && nb.trackUsage && ((row.cells || []).some((c) => c && (c.note || "").toLowerCase().includes(nb.phrase.toLowerCase())) || crossMonthNoteMarkers.has(nb.abbrev));
-            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
-              "button",
-              {
-                key: nb.abbrev,
-                title: usedBefore ? `${nb.abbrev} bei diesem Patienten bereits verwendet` : void 0,
-                className: "note-btn" + (active ? " active" : usedBefore ? " used-before" : ""),
-                disabled: !editUnlocked,
-                onClick: () => onChange({ note: active ? "" : nb.phrase }),
-                children: [nb.abbrev, usedBefore && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "note-btn-check", children: "\u2713" })]
-              }
-            );
-          }) }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label hinweis", children: "\u26A0 Wichtiger Hinweis" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "ce-full ce-hinweis-input", value: cell.hinweis || "", placeholder: "z.B. Sturzgefahr, nur mit Begleitung", disabled: !editUnlocked, onChange: (e) => onChange({ hinweis: e.target.value }) }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Notiz" }),
-          !isAuto && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { className: "ce-full", rows: 2, value: cell.note, disabled: !editUnlocked, onChange: (e) => onChange({ note: e.target.value }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-hint", children: "Auto + Haus zusammen = Dienstauto darf mit nach Hause. Nur Auto oder keins = zur\xFCck zum Standort." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "ce-label", children: "Sonderstatus (l\xF6scht den Zellinhalt)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "ce-status-grid", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle kh" + (cell.kh ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.kh ? emptyStatusPatch() : statusOnlyPatch("kh")), children: "KH" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle schluss" + (cell.schluss ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.schluss ? emptyStatusPatch() : statusOnlyPatch("schluss")), children: "SCHLUSS" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle dialyse" + (cell.dialyse ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.dialyse ? emptyStatusPatch() : statusOnlyPatch("dialyse")), children: "DIALYSE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "status-toggle pause" + (cell.pause ? " on" : ""), disabled: !editUnlocked, onClick: () => onChange(cell.pause ? emptyStatusPatch() : statusOnlyPatch("pause")), children: "PAUSE" })
+          ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "primary-btn done", onClick: onClose, children: "Fertig" })
         ]
       }
