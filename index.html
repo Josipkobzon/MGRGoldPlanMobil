@@ -716,6 +716,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
 .copy-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; font-size: 13px; font-weight: 700; color: var(--navy); background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 9px; }
 .copy-btn:active { background: var(--gold-soft); border-color: var(--gold); }
 .copy-btn:disabled { opacity: 0.35; }
+.pc-name .seq-badge { margin-right: 6px; }
 .copy-btn.small { flex: 0 0 auto; min-height: 28px; padding: 0 10px; font-size: 12px; }
 .fg-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
@@ -14191,8 +14192,9 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
         if (c) c.scrollTop = 0;
         /* bei aktiver Hervorhebung zum ersten hervorgehobenen Patienten springen */
         setTimeout(() => {
-          const el = document.querySelector(".patient-card.hl");
-          if (el) el.scrollIntoView({ block: "center" });
+          window.scrollTo(0, 0);
+          const c2 = document.querySelector(".content");
+          if (c2) c2.scrollTop = 0;
         }, 60);
       } catch (e) {
       }
@@ -15783,7 +15785,18 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
           ] }),
           /* Kiemelés (Terapeuta-Fokus / Sorszám-Markierung) bleibt beim Wechsel in die Patientenliste
              erhalten: gleiche Reihenfolge wie bisher, nicht betroffene Patienten werden ausgegraut */
-          [...activeRows, ...(therapistFocus || highlightedRowId ? abgeschlossenRows.filter((r) => !isRowDimmed(r)) : [])].map((r) => {
+          /* Patienten-Fuel: bei aktiver Hervorhebung stehen die betroffenen Patienten oben —
+             beim Terapeuta-Fokus sortiert nach Nr. (dann Uhrzeit), danach die uebrigen (ausgegraut)
+             in der normalen Reihenfolge. Der Tag-Fuel bleibt unveraendert. */
+          ((therapistFocus || highlightedRowId) ? [
+            ...[...activeRows, ...abgeschlossenRows].filter((r) => !isRowDimmed(r)).map((r, i) => {
+              const c = therapistFocus ? cellForFocusKey(r, therapistFocus.key) : null;
+              /* Tagesreihenfolge des Therapeuten: Zusatznummer, dann Beginn der Uhrzeit */
+              const tm = String(c && c.time || "").match(/(\d{1,2})[:.](\d{2})/);
+              return { r, i, seq: c && c.seq ? Number(c.seq) : 99, start: tm ? Number(tm[1]) * 60 + Number(tm[2]) : 9999 };
+            }).sort((a, b) => a.seq - b.seq || a.start - b.start || a.i - b.i).map((x) => x.r),
+            ...activeRows.filter((r) => isRowDimmed(r))
+          ] : activeRows).map((r) => {
             const focused = (therapistFocus || highlightedRowId) && !isRowDimmed(r);
             const dimmed = (therapistFocus || highlightedRowId) && !focused;
             const fc = therapistFocus && focused ? cellForFocusKey(r, therapistFocus.key) : null;
@@ -15796,7 +15809,8 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "patient-card" + (focused ? " hl" : "") + (dimmed ? " dimmed" : ""), role: "button", tabIndex: 0, onClick: () => setDetailId(r.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pc-top", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-name", children: [
-                  renderRowNum(r),
+                  /* beim Terapeuta-Fokus statt der Zeilennummer die Zusatznummer zeigen */
+                  fc && fc.seq ? renderSeqBadge(fc, therapistFocus.key) : therapistFocus ? null : renderRowNum(r),
                   r.name || /* @__PURE__ */ (0, import_jsx_runtime.jsx)("em", { children: "Ohne Name" }),
                   r.archived && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-abg", children: " \xB7 Abgeschlossen" })
                 ] }),
@@ -15900,7 +15914,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             " Monat leeren"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt alle gespeicherten Monate (allMonths) inkl. Plan Info, E-Mail und AUTO-Tabelle \u2014 identisch zum Desktop-Format (v57.68)." })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt alle gespeicherten Monate (allMonths) inkl. Plan Info, E-Mail und AUTO-Tabelle \u2014 identisch zum Desktop-Format (v57.68). \u2014 App-Version: Mobil v28 (Fokus-Sortierung nach Zusatznummer/Uhrzeit)." })
       ] }),
       monthPickerOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { onClose: () => setMonthPickerOpen(false), title: "Monat w\xE4hlen", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mp-grid", children: [
