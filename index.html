@@ -710,6 +710,15 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
 .pc-contact { margin-top: 3px; font-size: 13px; color: var(--ink); white-space: pre-line; }
 .pc-termin { margin-top: 6px; font-size: 12.5px; font-weight: 800; color: #92400e; }
 
+/* Mobil v26: Kopierknoepfe in der Patientenliste */
+.patient-card { cursor: pointer; text-align: left; }
+.pc-copy { display: flex; gap: 8px; margin-top: 8px; }
+.copy-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; font-size: 13px; font-weight: 700; color: var(--navy); background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 9px; }
+.copy-btn:active { background: var(--gold-soft); border-color: var(--gold); }
+.copy-btn:disabled { opacity: 0.35; }
+.copy-btn.small { flex: 0 0 auto; min-height: 28px; padding: 0 10px; font-size: 12px; }
+.fg-label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
   </style>
 </head>
 <body>
@@ -14180,6 +14189,11 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
         window.scrollTo(0, 0);
         const c = document.querySelector(".content");
         if (c) c.scrollTop = 0;
+        /* bei aktiver Hervorhebung zum ersten hervorgehobenen Patienten springen */
+        setTimeout(() => {
+          const el = document.querySelector(".patient-card.hl");
+          if (el) el.scrollIntoView({ block: "center" });
+        }, 60);
       } catch (e) {
       }
     }, [view]);
@@ -14232,6 +14246,35 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
         showToast(next ? "Bearbeitung aktiviert" : "Nur-Lese-Modus aktiv");
         return next;
       });
+    }
+    function copyToClipboard(text, okMsg) {
+      const t = String(text || "");
+      if (!t) return;
+      const fallback = () => {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = t;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed";
+          ta.style.top = "-1000px";
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, t.length);
+          const ok = document.execCommand("copy");
+          document.body.removeChild(ta);
+          showToast(ok ? okMsg : "Kopieren nicht m\xF6glich");
+        } catch (e) {
+          showToast("Kopieren nicht m\xF6glich");
+        }
+      };
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(t).then(() => showToast(okMsg), fallback);
+          return;
+        }
+      } catch (e) {
+      }
+      fallback();
     }
     function showToast(msg) {
       setToast(msg);
@@ -15738,16 +15781,9 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
               })
             ] })
           ] }),
-          /* Kiemelés (Fokus / Markierung) bleibt auch in der Patientenliste erhalten: die hervorgehobenen
-             Patienten stehen oben (mit Adresse/Kontakt/Termin), alle anderen sind ausgegraut */
-          ((therapistFocus || highlightedRowId) ? [
-            ...rows.filter((r) => (!r.archived || rowHasTreatmentThisMonth(r.cells)) && !isRowDimmed(r)).map((r, i) => {
-              /* bei Terapeuta-Fokus nach Nr. (dann Uhrzeit) sortieren = Reihenfolge des Tages */
-              const c = therapistFocus ? cellForFocusKey(r, therapistFocus.key) : null;
-              return { r, i, seq: c && c.seq ? Number(c.seq) : 99, time: c && c.time || "" };
-            }).sort((a, b) => a.seq - b.seq || a.time.localeCompare(b.time) || a.i - b.i).map((x) => x.r),
-            ...activeRows.filter((r) => isRowDimmed(r))
-          ] : activeRows).map((r) => {
+          /* Kiemelés (Terapeuta-Fokus / Sorszám-Markierung) bleibt beim Wechsel in die Patientenliste
+             erhalten: gleiche Reihenfolge wie bisher, nicht betroffene Patienten werden ausgegraut */
+          [...activeRows, ...(therapistFocus || highlightedRowId ? abgeschlossenRows.filter((r) => !isRowDimmed(r)) : [])].map((r) => {
             const focused = (therapistFocus || highlightedRowId) && !isRowDimmed(r);
             const dimmed = (therapistFocus || highlightedRowId) && !focused;
             const fc = therapistFocus && focused ? cellForFocusKey(r, therapistFocus.key) : null;
@@ -15757,7 +15793,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             const usedE = sumEinheiten(r);
             const dirC = DIRECTION_COLOR[r.direction || ""];
             const mC = mColor(r.m);
-            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "patient-card" + (focused ? " hl" : "") + (dimmed ? " dimmed" : ""), onClick: () => setDetailId(r.id), children: [
+            return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "patient-card" + (focused ? " hl" : "") + (dimmed ? " dimmed" : ""), role: "button", tabIndex: 0, onClick: () => setDetailId(r.id), children: [
               /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pc-top", children: [
                 /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-name", children: [
                   renderRowNum(r),
@@ -15791,8 +15827,19 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
                 fc.time || "",
                 fc.behandlung ? " \xB7 " + fc.behandlung : ""
               ] }),
-              r.address && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pc-address" + (focused ? " big" : ""), children: r.address }),
-              focused && r.contact && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pc-contact", children: r.contact })
+              r.address && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pc-address", children: r.address }),
+              r.contact && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "pc-address", children: r.contact }),
+              /* Adresse / Kontakt mit einem Tipp in die Zwischenablage kopieren */
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pc-copy", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "copy-btn", disabled: !r.address, onClick: (e) => {
+                  e.stopPropagation();
+                  copyToClipboard(r.address, "Adresse kopiert");
+                }, children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 14, height: 14 }), " Adresse"] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "copy-btn", disabled: !r.contact, onClick: (e) => {
+                  e.stopPropagation();
+                  copyToClipboard(r.contact, "Kontakt kopiert");
+                }, children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 14, height: 14 }), " Kontakt"] })
+              ] })
             ] }, r.id);
           }),
           activeRows.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "empty-state", children: 'Keine aktiven Patienten. Mit \u201E+ Patient" beginnen.' })
@@ -15948,6 +15995,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
           },
           onArchive: () => archivePatient(detailRow.id),
           onRemove: () => removePatient(detailRow.id),
+          onCopyText: copyToClipboard,
           onClose: () => setDetailId(null),
           editUnlocked
         }
@@ -16052,7 +16100,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
       ] }, a.id)) })
     ] });
   }
-  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onRemove, onClose, editUnlocked }) {
+  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onRemove, onClose, editUnlocked, onCopyText }) {
     const usedT = maxTNumber(row);
     const effMaxT = effMaxTOf(row);
     const pdWarn = tWarnLevel(usedT, effMaxT);
@@ -16218,11 +16266,17 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "month", value: row.startMonth || "", disabled: !editUnlocked, onChange: (e) => onField("startMonth", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Adresse" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "fg-label-row", children: ["Adresse", row.address && onCopyText && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { type: "button", className: "copy-btn small", onClick: (e) => {
+              e.preventDefault();
+              onCopyText(row.address, "Adresse kopiert");
+            }, children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 13, height: 13 }), " kopieren"] })] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.address, disabled: !editUnlocked, onChange: (e) => onField("address", e.target.value) })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "fg-full", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Kontakt" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "fg-label-row", children: ["Kontakt", row.contact && onCopyText && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { type: "button", className: "copy-btn small", onClick: (e) => {
+              e.preventDefault();
+              onCopyText(row.contact, "Kontakt kopiert");
+            }, children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ICopy, { width: 13, height: 13 }), " kopieren"] })] }),
             /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { rows: 2, value: row.contact, disabled: !editUnlocked, onChange: (e) => onField("contact", e.target.value) })
           ] }),
           /* Desktop v57.58: E-Mail-Feld mit Kopierknopf */
