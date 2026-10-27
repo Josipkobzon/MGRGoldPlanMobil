@@ -14022,6 +14022,23 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
     });
     return max;
   }
+  /* Stand eines Patienten an einem Tag: letzter Eintrag mit T-Wert bis einschliesslich uptoIdx.
+     E ist ein laufender (kumulierter) Wert — er wird NICHT aufsummiert, sondern vom selben Eintrag genommen. */
+  function teStandAt(row, uptoIdx) {
+    let t = 0, e = null;
+    const cells = row && row.cells || [];
+    const last = Math.min(uptoIdx == null ? cells.length - 1 : uptoIdx, cells.length - 1);
+    for (let i = 0; i <= last; i++) {
+      const c = cells[i];
+      if (!c || c.kh || c.schluss || c.pause || c.dialyse) continue;
+      const m = (c.behandlung || "").trim().match(/^T(\d+)$/i);
+      if (!m) continue;
+      t = parseInt(m[1], 10);
+      const ev = Number(c.einheiten);
+      e = c.einheiten !== "" && c.einheiten != null && !isNaN(ev) ? ev : e;
+    }
+    return { t, e: e == null ? 0 : e };
+  }
   function sumEinheiten(row) {
     let s = 0;
     (row.cells || []).forEach((c) => {
@@ -15800,10 +15817,13 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             const focused = (therapistFocus || highlightedRowId) && !isRowDimmed(r);
             const dimmed = (therapistFocus || highlightedRowId) && !focused;
             const fc = therapistFocus && focused ? cellForFocusKey(r, therapistFocus.key) : null;
-            const usedT = maxTNumber(r);
+            /* Stand am Fokus-Tag bzw. am im Tag-Fuel gewaehlten Tag (wie in der Tageszelle) */
+            const refIdx = therapistFocus && therapistFocus.key.startsWith("cur:") ? Number(therapistFocus.key.slice(4)) : selectedDayIdx;
+            const stand = teStandAt(r, refIdx);
+            const usedT = stand.t;
             const effMaxT = effMaxTOf(r);
             const warn = tWarnLevel(usedT, effMaxT);
-            const usedE = sumEinheiten(r);
+            const usedE = stand.e;
             const dirC = DIRECTION_COLOR[r.direction || ""];
             const mC = mColor(r.m);
             return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "patient-card" + (focused ? " hl" : "") + (dimmed ? " dimmed" : ""), role: "button", tabIndex: 0, onClick: () => setDetailId(r.id), children: [
@@ -15825,6 +15845,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
                   "E ",
                   usedE % 1 === 0 ? usedE : usedE.toFixed(1)
                 ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-stat dim", children: daysList[refIdx] ? `Stand ${pad2(daysList[refIdx].day)}.${pad2(month)}.` : "" }),
                 r.versicherung && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "pc-stat vers-" + r.versicherung, children: r.versicherung }),
                 r.verlaengerungFlag && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "pc-stat vl", children: [
                   "Verl. +",
@@ -15914,7 +15935,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
             " Monat leeren"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt alle gespeicherten Monate (allMonths) inkl. Plan Info, E-Mail und AUTO-Tabelle \u2014 identisch zum Desktop-Format (v57.68). \u2014 App-Version: Mobil v28 (Fokus-Sortierung nach Zusatznummer/Uhrzeit)." })
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "menu-hint", children: "Daten werden automatisch lokal auf diesem Ger\xE4t gespeichert. F\xFCr den Abgleich mit der Desktop-Version: JSON exportieren / importieren. Der Export enth\xE4lt alle gespeicherten Monate (allMonths) inkl. Plan Info, E-Mail und AUTO-Tabelle \u2014 identisch zum Desktop-Format (v57.68). \u2014 App-Version: Mobil v29 (T/E-Stand am gew\xE4hlten Tag)." })
       ] }),
       monthPickerOpen && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Sheet, { onClose: () => setMonthPickerOpen(false), title: "Monat w\xE4hlen", children: [
         /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mp-grid", children: [
@@ -15999,6 +16020,7 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
         PatientDetail,
         {
           row: detailRow,
+          refDayIdx: therapistFocus && therapistFocus.key.startsWith("cur:") ? Number(therapistFocus.key.slice(4)) : selectedDayIdx,
           daysList,
           month,
           year,
@@ -16114,11 +16136,12 @@ a.mini-btn { text-decoration: none; display: inline-flex; align-items: center; }
       ] }, a.id)) })
     ] });
   }
-  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onRemove, onClose, editUnlocked, onCopyText }) {
-    const usedT = maxTNumber(row);
+  function PatientDetail({ row, daysList, month, year, holidays, onField, onOpenCell, onArchive, onRemove, onClose, editUnlocked, onCopyText, refDayIdx }) {
+    const stand = teStandAt(row, refDayIdx);
+    const usedT = stand.t;
     const effMaxT = effMaxTOf(row);
     const pdWarn = tWarnLevel(usedT, effMaxT);
-    const usedE = sumEinheiten(row);
+    const usedE = stand.e;
     const weeks = (0, import_react.useMemo)(() => {
       const result = [];
       let current = new Array(7).fill(null);
